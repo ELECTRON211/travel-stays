@@ -143,7 +143,7 @@ function Hero() {
           <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Stays · Tours · Experiences
         </motion.span>
 
-        <h1 className="mt-6 max-w-4xl font-display text-5xl font-medium leading-[1.02] tracking-tight text-white sm:text-7xl lg:text-8xl">
+        <h1 className="mt-6 max-w-4xl font-display text-5xl font-medium leading-[1.02] tracking-tight text-white sm:text-7xl 2xl:text-8xl">
           <RevealWord delay={0.45}>Stay</RevealWord>
           <RevealWord delay={0.57}>somewhere</RevealWord>
           <RevealWord delay={0.69} className="italic text-emerald-300">
@@ -428,7 +428,7 @@ function ImageCard({ image, className = '', delay = 0, children }) {
         loading="lazy"
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
       />
-      <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-black/0" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/60 to-black/10" />
       <div className="relative flex h-full min-h-104 flex-col justify-end p-8 text-white sm:p-10">{children}</div>
     </Reveal>
   )
