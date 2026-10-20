@@ -5,10 +5,21 @@ import { useAuth } from '../context/AuthContext'
 import { initials } from '../lib/format'
 import Logo from './Logo'
 
-const links = [
-  { to: '/stays', label: 'Stays' },
-  { to: '/signup?role=host', label: 'Become a host' },
-]
+// Hosts get their hosting pages; logged-out visitors are invited to host.
+function linksFor(user) {
+  if (user?.role === 'host') {
+    return [
+      { to: '/stays', label: 'Stays' },
+      { to: '/host/listings', label: 'My listings' },
+      { to: '/host/listings/new', label: 'List your place' },
+    ]
+  }
+  if (user) return [{ to: '/stays', label: 'Stays' }]
+  return [
+    { to: '/stays', label: 'Stays' },
+    { to: '/signup?role=host', label: 'Become a host' },
+  ]
+}
 
 const roleLabels = { traveler: 'Traveler', host: 'Host', guide: 'Guide' }
 

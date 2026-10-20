@@ -89,7 +89,7 @@ export default function MyListings() {
             key={listing.id}
             className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 sm:flex-row sm:items-center"
           >
-            <div className="aspect-[4/3] w-full shrink-0 overflow-hidden rounded-xl sm:w-40">
+            <div className="aspect-4/3 w-full shrink-0 overflow-hidden rounded-xl sm:w-40">
               <ListingCover listing={listing} />
             </div>
 

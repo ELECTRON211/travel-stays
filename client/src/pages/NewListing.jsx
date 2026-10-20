@@ -228,7 +228,7 @@ export default function NewListing() {
         >
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {photos.map((photo, index) => (
-              <div key={photo.id} className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-gray-200">
+              <div key={photo.id} className="group relative aspect-4/3 overflow-hidden rounded-xl border border-gray-200">
                 <img src={photo.preview} alt="" className="h-full w-full object-cover" />
                 {index === 0 && (
                   <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold text-gray-800">
@@ -247,7 +247,7 @@ export default function NewListing() {
             ))}
 
             {photos.length < MAX_PHOTOS && (
-              <label className="flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 transition hover:border-emerald-500 hover:text-emerald-600">
+              <label className="flex aspect-4/3 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 transition hover:border-emerald-500 hover:text-emerald-600">
                 <ImagePlus className="h-7 w-7" />
                 <span className="text-sm font-medium">Add photos</span>
                 <input type="file" accept={PHOTO_TYPES.join(',')} multiple className="sr-only" onChange={addPhotos} />

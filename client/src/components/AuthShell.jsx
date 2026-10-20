@@ -14,7 +14,7 @@ export default function AuthShell({ title, subtitle, children }) {
         </div>
       </div>
 
-      <div className="relative hidden overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-500 lg:flex lg:items-end">
+      <div className="relative hidden overflow-hidden bg-linear-to-br from-emerald-700 via-emerald-600 to-teal-500 lg:flex lg:items-end">
         <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
         <div className="relative m-12 max-w-md rounded-2xl bg-white/10 p-8 text-white backdrop-blur">
           <ShieldCheck className="h-8 w-8" />

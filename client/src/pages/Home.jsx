@@ -32,7 +32,7 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-500">
+      <section className="relative overflow-hidden bg-linear-to-br from-emerald-700 via-emerald-600 to-teal-500">
         <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-32 -left-16 h-96 w-96 rounded-full bg-teal-300/20 blur-3xl" />
 
@@ -122,10 +122,10 @@ export default function Home() {
             </p>
           </div>
           <Link
-            to="/signup?role=host"
+            to={user?.role === 'host' ? '/host/listings/new' : '/signup?role=host'}
             className="flex shrink-0 items-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-white hover:bg-emerald-600"
           >
-            Become a host <ArrowRight className="h-4 w-4" />
+            {user?.role === 'host' ? 'List a new place' : 'Become a host'} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>

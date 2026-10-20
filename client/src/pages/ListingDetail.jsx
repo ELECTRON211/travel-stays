@@ -14,7 +14,7 @@ function Gallery({ listing }) {
 
   if (photos.length <= 1) {
     return (
-      <div className="aspect-[16/9] overflow-hidden rounded-2xl md:aspect-[21/9]">
+      <div className="aspect-video overflow-hidden rounded-2xl md:aspect-21/9">
         <ListingCover listing={listing} />
       </div>
     )

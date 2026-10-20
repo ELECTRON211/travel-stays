@@ -25,7 +25,7 @@ export function ListingCover({ listing, photo = listing.photos?.[0], className =
     return <img src={photo} alt={listing.title} loading="lazy" className={`h-full w-full object-cover ${className}`} />
   }
   return (
-    <div className={`grid h-full w-full place-items-center bg-gradient-to-br ${coverFor(listing.id)} ${className}`}>
+    <div className={`grid h-full w-full place-items-center bg-linear-to-br ${coverFor(listing.id)} ${className}`}>
       <Building2 className="h-14 w-14 text-white/80" />
     </div>
   )
@@ -37,7 +37,7 @@ export default function ListingCard({ listing }) {
       to={`/listings/${listing.id}`}
       className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg"
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-4/3 overflow-hidden">
         <ListingCover listing={listing} className="transition duration-300 group-hover:scale-105" />
         <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-gray-800 backdrop-blur">
           <MapPin className="h-3.5 w-3.5 text-emerald-600" />
@@ -77,7 +77,7 @@ export default function ListingCard({ listing }) {
 export function ListingCardSkeleton() {
   return (
     <div className="animate-pulse overflow-hidden rounded-2xl border border-gray-200 bg-white">
-      <div className="aspect-[4/3] bg-gray-200" />
+      <div className="aspect-4/3 bg-gray-200" />
       <div className="space-y-3 p-4">
         <div className="h-4 w-2/3 rounded bg-gray-200" />
         <div className="h-3 w-full rounded bg-gray-100" />

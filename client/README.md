@@ -18,7 +18,7 @@ cp .env.example .env   # then fill in your Supabase URL and anon key
 npm run dev            # http://localhost:5173
 ```
 
-The database tables and the sign-up trigger are in [`../supabase/schema.sql`](../supabase/schema.sql).
+The database tables and the sign-up trigger are in [`../supabase/schema.sql`](../supabase/schema.sql). Later changes are in [`../supabase/migrations/`](../supabase/migrations/) — run them in order in the Supabase SQL Editor.
 
 ## Project structure
 
@@ -44,8 +44,8 @@ Phase 1 of the PRD, in progress.
 
 - [x] Sign up / log in with roles (traveler, host, guide)
 - [x] Browse and search stays by city and guest count
-- [ ] Hosts create listings with photos
-- [ ] Listing detail page
+- [x] Hosts create, pause and delete listings with photos (Supabase Storage)
+- [x] Listing detail page
 - [ ] Booking with double-booking protection
 - [ ] Host dashboard
 - [ ] Reviews
