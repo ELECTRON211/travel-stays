@@ -5,14 +5,13 @@ import { formatNaira } from '../lib/format'
 import { propertyLabel } from '../lib/constants'
 import { fadeUp, stagger } from '../lib/motion'
 
-// Listings without photos get a consistent colour cover picked from their id.
+// Listings without photos get a soft, neutral placeholder; the tint varies
+// slightly by id so a grid of them doesn't look identical.
 const covers = [
-  'from-emerald-900 to-emerald-600',
-  'from-stone-800 to-stone-500',
-  'from-amber-800 to-orange-500',
-  'from-teal-900 to-cyan-600',
-  'from-rose-900 to-orange-500',
-  'from-emerald-950 to-teal-700',
+  'from-stone-200 via-stone-100 to-stone-300',
+  'from-stone-300 via-stone-100 to-stone-200',
+  'from-emerald-100/60 via-stone-100 to-stone-200',
+  'from-amber-100/60 via-stone-100 to-stone-200',
 ]
 
 function coverFor(id = '') {
@@ -27,13 +26,10 @@ export function ListingCover({ listing, photo = listing.photos?.[0], className =
     return <img src={photo} alt={listing.title} loading="lazy" className={`h-full w-full object-cover ${className}`} />
   }
   return (
-    <div className={`relative grid h-full w-full place-items-center overflow-hidden bg-linear-to-br ${coverFor(listing.id)} ${className}`}>
-      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/15 blur-2xl" />
-      <div className="absolute -bottom-12 -left-8 h-36 w-36 rounded-full bg-black/20 blur-2xl" />
-      <div className="relative flex flex-col items-center gap-2 text-white/90">
-        <Building2 className="h-10 w-10" strokeWidth={1.5} />
-        <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/70">Photos coming soon</span>
-      </div>
+    <div className={`relative h-full w-full overflow-hidden bg-linear-to-br ${coverFor(listing.id)} ${className}`}>
+      <div className="absolute -left-1/4 top-1/4 h-3/4 w-3/4 rounded-full bg-white/70 blur-3xl" />
+      <div className="absolute -bottom-1/4 -right-1/4 h-2/3 w-2/3 rounded-full bg-emerald-900/10 blur-3xl" />
+      <Building2 className="absolute right-4 top-4 h-7 w-7 text-stone-400/70" strokeWidth={1.25} />
     </div>
   )
 }

@@ -14,7 +14,7 @@ function Segment({ active, onClick, icon: Icon, label, value, placeholder, class
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-1 items-center gap-3 rounded-xl px-5 py-3 text-left transition-all duration-200 ${
+      className={`flex min-w-0 flex-1 items-center gap-3 rounded-2xl px-5 py-3 text-left transition-all duration-200 md:rounded-full md:px-4 lg:px-6 ${
         active ? 'bg-white shadow-lg shadow-stone-900/10' : 'hover:bg-stone-900/5'
       } ${className}`}
     >
@@ -29,7 +29,7 @@ function Segment({ active, onClick, icon: Icon, label, value, placeholder, class
   )
 }
 
-const Divider = () => <div className="hidden h-10 w-px shrink-0 bg-stone-300/70 lg:block" />
+const Divider = () => <div className="hidden h-8 w-px shrink-0 bg-stone-300/80 md:block" />
 
 function WherePanel({ query, onPick }) {
   const matches = DESTINATIONS.filter((d) => d.city.toLowerCase().includes(query.trim().toLowerCase()))
@@ -114,9 +114,9 @@ function GuestsPanel({ guests, onChange }) {
 
 // Where the dropdown sits under (or above, in the hero) each part of the bar.
 const panelWidths = {
-  where: 'lg:right-auto lg:w-96',
-  dates: 'lg:left-[18%] lg:right-auto lg:w-[42rem]',
-  guests: 'lg:left-auto lg:w-80',
+  where: 'md:right-auto md:w-96',
+  dates: 'md:left-[10%] md:right-auto md:w-[42rem]',
+  guests: 'md:left-auto md:w-80',
 }
 
 // Search bar with dropdowns for destination, dates and guests. Sends the
@@ -171,14 +171,14 @@ export default function SearchBar({ initial = {}, variant = 'page', mode }) {
     : 'bg-white/90 shadow-xl shadow-stone-900/5 ring-1 ring-stone-900/5 backdrop-blur-md'
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className={`relative rounded-2xl p-2 ${surface}`}>
+    <form ref={formRef} onSubmit={handleSubmit} className={`relative rounded-3xl p-2 md:rounded-full ${surface}`}>
       <div
-        className={`flex flex-col gap-1 rounded-xl transition-colors duration-300 lg:flex-row lg:items-center ${
+        className={`flex flex-col gap-1 rounded-2xl transition-colors duration-300 md:flex-row md:items-center md:gap-0 md:rounded-full ${
           open ? 'bg-stone-100/80' : ''
         }`}
       >
         <label
-          className={`flex flex-1 cursor-text items-center gap-3 rounded-xl px-5 py-3 transition-all duration-200 lg:flex-[1.3] ${
+          className={`flex min-w-0 flex-1 cursor-text items-center gap-3 rounded-2xl px-5 py-3 transition-all duration-200 md:flex-[1.3] md:rounded-full md:px-4 lg:px-6 ${
             open === 'where' ? 'bg-white shadow-lg shadow-stone-900/10' : 'hover:bg-stone-900/5'
           }`}
         >
@@ -230,10 +230,11 @@ export default function SearchBar({ initial = {}, variant = 'page', mode }) {
           type="submit"
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="flex items-center justify-center gap-2 rounded-xl bg-emerald-800 px-7 py-4 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition-colors hover:bg-emerald-900 lg:ml-1"
+          className="flex shrink-0 items-center justify-center gap-2 rounded-full bg-emerald-800 px-7 py-4 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 transition-colors hover:bg-emerald-900 md:ml-2 md:px-4 lg:px-7"
+          aria-label="Search"
         >
           <Search className="h-5 w-5" />
-          Search
+          <span className="md:hidden lg:inline">Search</span>
         </motion.button>
       </div>
 

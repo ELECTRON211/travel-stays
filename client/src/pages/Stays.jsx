@@ -218,13 +218,17 @@ export default function Stays() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-      <Reveal className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-        <div>
+    <div className="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
+      {/* Hero card: heading, discovery tabs and search grouped together */}
+      <Reveal className="relative z-20 rounded-3xl bg-white/70 px-4 py-8 text-center shadow-xl shadow-stone-900/5 ring-1 ring-stone-900/5 backdrop-blur-md sm:px-8 sm:py-10">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
+          <div className="absolute -top-24 left-1/2 h-48 w-[40rem] -translate-x-1/2 rounded-full bg-emerald-100/60 blur-3xl" />
+        </div>
+        <div className="relative">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-800">
             {city ? 'Destination' : 'Explore'}
           </p>
-          <h1 className="mt-3 font-display text-5xl font-medium tracking-tight text-stone-900 sm:text-6xl">
+          <h1 className="mt-2 font-display text-4xl font-medium tracking-tight text-stone-900 sm:text-5xl">
             {city ? (
               <>
                 {mode === 'stays' ? 'Stays' : mode === 'tours' ? 'Tours' : 'Trips'} in{' '}
