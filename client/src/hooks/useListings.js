@@ -1,31 +1,12 @@
-import { useEffect, useState } from 'react'
 import { fetchListings } from '../lib/listings'
+import { useAsync } from './useAsync'
 
-// Loads listings for a search and re-runs whenever the search changes.
-// `loading` is true until the result for the *current* search has arrived.
+// Loads active listings for a search and re-runs whenever the search changes.
 export function useListings({ city, guests, limit } = {}) {
-  const key = JSON.stringify({ city, guests, limit })
-  const [result, setResult] = useState({ key: null, listings: [], error: null })
+  const { data, error, loading } = useAsync(
+    () => fetchListings({ city, guests, limit }),
+    JSON.stringify({ city, guests, limit }),
+  )
 
-  useEffect(() => {
-    let ignore = false
-
-    fetchListings({ city, guests, limit })
-      .then((listings) => {
-        if (!ignore) setResult({ key, listings, error: null })
-      })
-      .catch((error) => {
-        if (!ignore) setResult({ key, listings: [], error: error.message })
-      })
-
-    return () => {
-      ignore = true
-    }
-  }, [key, city, guests, limit])
-
-  return {
-    listings: result.listings,
-    error: result.error,
-    loading: result.key !== key,
-  }
+  return { listings: data ?? [], error, loading }
 }
