@@ -1,8 +1,9 @@
-import { Building2, MapPin, Users } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { BedDouble, Building2, MapPin, Users } from 'lucide-react'
 import { formatNaira } from '../lib/format'
+import { propertyLabel } from '../lib/constants'
 
-// Listings have no photos yet, so each card gets a consistent colour cover
-// picked from its id. Swap this for the real photo once uploads exist.
+// Listings without photos get a consistent colour cover picked from their id.
 const covers = [
   'from-emerald-400 to-teal-600',
   'from-sky-400 to-indigo-600',
@@ -18,11 +19,26 @@ function coverFor(id = '') {
   return covers[hash]
 }
 
+// Shows the listing's first photo, or the colour cover if it has none.
+export function ListingCover({ listing, photo = listing.photos?.[0], className = '' }) {
+  if (photo) {
+    return <img src={photo} alt={listing.title} loading="lazy" className={`h-full w-full object-cover ${className}`} />
+  }
+  return (
+    <div className={`grid h-full w-full place-items-center bg-gradient-to-br ${coverFor(listing.id)} ${className}`}>
+      <Building2 className="h-14 w-14 text-white/80" />
+    </div>
+  )
+}
+
 export default function ListingCard({ listing }) {
   return (
-    <article className="group overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg">
-      <div className={`relative grid aspect-[4/3] place-items-center bg-gradient-to-br ${coverFor(listing.id)}`}>
-        <Building2 className="h-14 w-14 text-white/80 transition group-hover:scale-110" />
+    <Link
+      to={`/listings/${listing.id}`}
+      className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:-translate-y-0.5 hover:shadow-lg"
+    >
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <ListingCover listing={listing} className="transition duration-300 group-hover:scale-105" />
         <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-gray-800 backdrop-blur">
           <MapPin className="h-3.5 w-3.5 text-emerald-600" />
           {listing.city || 'Unknown city'}
@@ -30,22 +46,31 @@ export default function ListingCard({ listing }) {
       </div>
 
       <div className="p-4">
-        <h3 className="truncate font-semibold text-gray-900">{listing.title}</h3>
+        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+          {propertyLabel(listing.property_type)}
+        </p>
+        <h3 className="mt-1 truncate font-semibold text-gray-900">{listing.title}</h3>
         <p className="mt-1 line-clamp-2 min-h-10 text-sm text-gray-500">
           {listing.description || 'No description yet.'}
         </p>
 
         <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
-          <span className="flex items-center gap-1.5 text-sm text-gray-600">
-            <Users className="h-4 w-4" />
-            Up to {listing.max_guests ?? '—'} guests
+          <span className="flex items-center gap-3 text-sm text-gray-600">
+            <span className="flex items-center gap-1">
+              <Users className="h-4 w-4" />
+              {listing.max_guests ?? '—'}
+            </span>
+            <span className="flex items-center gap-1">
+              <BedDouble className="h-4 w-4" />
+              {listing.bedrooms ?? '—'}
+            </span>
           </span>
           <p className="text-sm text-gray-600">
             <span className="text-base font-bold text-gray-900">{formatNaira(listing.price_per_night)}</span> / night
           </p>
         </div>
       </div>
-    </article>
+    </Link>
   )
 }
 

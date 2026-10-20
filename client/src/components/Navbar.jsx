@@ -22,6 +22,7 @@ export default function Navbar() {
   const { user, loading, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const links = linksFor(user)
 
   return (
     <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur">
@@ -30,7 +31,7 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
-            <NavLink key={link.to} to={link.to} className={navClass}>
+            <NavLink key={link.to} to={link.to} className={navClass} end>
               {link.label}
             </NavLink>
           ))}
@@ -103,7 +104,7 @@ export default function Navbar() {
         <div className="border-t border-gray-200 bg-white px-4 py-4 md:hidden">
           <div className="flex flex-col gap-4">
             {links.map((link) => (
-              <NavLink key={link.to} to={link.to} className={navClass} onClick={() => setMobileOpen(false)}>
+              <NavLink key={link.to} to={link.to} className={navClass} onClick={() => setMobileOpen(false)} end>
                 {link.label}
               </NavLink>
             ))}
