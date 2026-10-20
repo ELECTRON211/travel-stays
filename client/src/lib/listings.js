@@ -6,7 +6,7 @@ import { supabase } from './supabase'
 const PHOTO_BUCKET = 'listing-photos'
 
 const LISTING_FIELDS =
-  'id, host_id, title, description, city, address, property_type, bedrooms, max_guests, price_per_night, photos, status, created_at'
+  'id, host_id, title, description, city, address, property_type, bedrooms, max_guests, price_per_night, photos, status, booking_mode, host_verified, rating, review_count, created_at'
 
 export async function fetchListings({ city, guests, type, limit } = {}) {
   let query = supabase

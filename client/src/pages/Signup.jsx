@@ -53,7 +53,7 @@ export default function Signup() {
         <Alert type="success">Click the link in the email to activate your account, then log in.</Alert>
         <Link
           to="/login"
-          className="mt-6 block rounded-xl bg-emerald-600 py-3 text-center font-semibold text-white hover:bg-emerald-700"
+          className="mt-6 block rounded-xl bg-emerald-800 py-3 text-center font-semibold text-white hover:bg-emerald-900"
         >
           Go to log in
         </Link>
@@ -67,7 +67,7 @@ export default function Signup() {
         {error && <Alert>{error}</Alert>}
 
         <fieldset>
-          <legend className="text-sm font-medium text-gray-700">I want to join as</legend>
+          <legend className="text-sm font-medium text-stone-700">I want to join as</legend>
           <div className="mt-1.5 grid grid-cols-3 gap-2">
             {roles.map(({ value, label, text, icon: Icon }) => (
               <button
@@ -85,9 +85,9 @@ export default function Signup() {
                   />
                 )}
                 <span className="relative block">
-                  <Icon className={`h-5 w-5 transition-colors ${role === value ? 'text-emerald-600' : 'text-gray-400'}`} />
-                  <span className="mt-2 block text-sm font-semibold text-gray-900">{label}</span>
-                  <span className="block text-xs text-gray-500">{text}</span>
+                  <Icon className={`h-5 w-5 transition-colors ${role === value ? 'text-emerald-600' : 'text-stone-400'}`} />
+                  <span className="mt-2 block text-sm font-semibold text-stone-900">{label}</span>
+                  <span className="block text-xs text-stone-500">{text}</span>
                 </span>
               </button>
             ))}
@@ -127,13 +127,13 @@ export default function Signup() {
 
         <button
           disabled={submitting}
-          className="w-full rounded-xl bg-emerald-600 py-3 font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
+          className="w-full rounded-xl bg-emerald-800 py-3 font-semibold text-white transition hover:bg-emerald-900 disabled:opacity-60"
         >
           {submitting ? 'Creating account…' : 'Create account'}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-500">
+      <p className="mt-6 text-center text-sm text-stone-500">
         Already have an account?{' '}
         <Link to="/login" className="font-semibold text-emerald-700 hover:text-emerald-800">
           Log in

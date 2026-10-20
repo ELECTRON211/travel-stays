@@ -29,7 +29,7 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="relative mt-12 overflow-hidden bg-ink text-gray-400">
+    <footer className="relative mt-12 overflow-hidden bg-ink text-stone-400">
       <div className="absolute -top-40 left-1/2 h-80 w-[60rem] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">

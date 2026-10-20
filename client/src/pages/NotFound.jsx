@@ -16,10 +16,10 @@ export default function NotFound() {
       <h1 className="mt-2 font-display text-3xl text-ink">
         You've wandered <em className="text-emerald-700">off the map.</em>
       </h1>
-      <p className="mt-3 text-gray-500">The page you are looking for doesn't exist or has moved.</p>
+      <p className="mt-3 text-stone-500">The page you are looking for doesn't exist or has moved.</p>
       <Link
         to="/"
-        className="mt-10 rounded-full bg-ink px-7 py-3 font-semibold text-white transition hover:bg-emerald-900"
+        className="mt-10 rounded-full bg-emerald-800 px-7 py-3 font-semibold text-white transition hover:bg-emerald-900"
       >
         Back to home
       </Link>

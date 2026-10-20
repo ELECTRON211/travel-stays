@@ -14,12 +14,12 @@ function StatusBadge({ status }) {
   return status === 'active' ? (
     <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">Active</span>
   ) : (
-    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">Paused</span>
+    <span className="rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-semibold text-stone-600">Paused</span>
   )
 }
 
 const actionClass =
-  'flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50'
+  'flex items-center gap-1.5 rounded-lg border border-stone-300 px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 disabled:opacity-50'
 
 export default function MyListings() {
   const { user } = useAuth()
@@ -57,11 +57,11 @@ export default function MyListings() {
           <h1 className="font-display text-5xl font-medium tracking-tight text-ink">
             My <em className="text-emerald-700">listings.</em>
           </h1>
-          <p className="mt-2 text-gray-500">Manage the places you host. Paused listings are hidden from search.</p>
+          <p className="mt-2 text-stone-500">Manage the places you host. Paused listings are hidden from search.</p>
         </div>
         <Link
           to="/host/listings/new"
-          className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+          className="flex items-center justify-center gap-2 rounded-xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-900"
         >
           <Plus className="h-4 w-4" /> New listing
         </Link>
@@ -71,16 +71,16 @@ export default function MyListings() {
         {(error || actionError) && <Alert>{error || actionError}</Alert>}
 
         {loading && !listings &&
-          Array.from({ length: 3 }, (_, i) => <div key={i} className="h-32 animate-pulse rounded-2xl bg-gray-100" />)}
+          Array.from({ length: 3 }, (_, i) => <div key={i} className="h-32 animate-pulse rounded-2xl bg-stone-100" />)}
 
         {listings?.length === 0 && (
-          <div className="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 px-6 py-16 text-center">
-            <Home className="h-12 w-12 text-gray-300" />
-            <h2 className="mt-4 font-semibold text-gray-900">You haven't listed a place yet</h2>
-            <p className="mt-1 text-sm text-gray-500">Create your first listing to start getting bookings.</p>
+          <div className="flex flex-col items-center rounded-2xl border border-dashed border-stone-300 px-6 py-16 text-center">
+            <Home className="h-12 w-12 text-stone-300" />
+            <h2 className="mt-4 font-semibold text-stone-900">You haven't listed a place yet</h2>
+            <p className="mt-1 text-sm text-stone-500">Create your first listing to start getting bookings.</p>
             <Link
               to="/host/listings/new"
-              className="mt-6 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+              className="mt-6 rounded-lg bg-emerald-800 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-900"
             >
               List your place
             </Link>
@@ -103,14 +103,14 @@ export default function MyListings() {
 
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <h2 className="truncate font-semibold text-gray-900">{listing.title}</h2>
+                <h2 className="truncate font-semibold text-stone-900">{listing.title}</h2>
                 <StatusBadge status={listing.status} />
               </div>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-stone-500">
                 {propertyLabel(listing.property_type)} · {listing.city} · up to {listing.max_guests} guests
               </p>
-              <p className="mt-2 text-sm text-gray-600">
-                <span className="font-bold text-gray-900">{formatNaira(listing.price_per_night)}</span> / night
+              <p className="mt-2 text-sm text-stone-600">
+                <span className="font-bold text-stone-900">{formatNaira(listing.price_per_night)}</span> / night
               </p>
             </div>
 

@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowLeft, BedDouble, CalendarCheck, Grid2x2, Home, MapPin, ShieldCheck, Users } from 'lucide-react'
+import { ArrowLeft, BedDouble, CalendarCheck, Grid2x2, Home, MapPin, ShieldCheck, Users, Zap } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useAsync } from '../hooks/useAsync'
 import { fetchListing } from '../lib/listings'
 import { formatNaira } from '../lib/format'
 import { propertyLabel } from '../lib/constants'
 import { ease, fadeUp, stagger } from '../lib/motion'
-import { ListingCover } from '../components/ListingCard'
+import { ListingCover, Rating, TrustBadges } from '../components/ListingCard'
 import Lightbox from '../components/Lightbox'
 import Reveal from '../components/Reveal'
 import NotFound from './NotFound'
@@ -71,7 +71,7 @@ function Fact({ icon: Icon, label, value }) {
   return (
     <div className="rounded-2xl bg-white p-5 ring-1 ring-black/5">
       <Icon className="h-6 w-6 text-emerald-600" strokeWidth={1.5} />
-      <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-gray-400">{label}</p>
+      <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-stone-400">{label}</p>
       <p className="mt-0.5 font-semibold text-ink">{value}</p>
     </div>
   )
@@ -113,7 +113,7 @@ export default function ListingDetail() {
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <Link
         to="/stays"
-        className="group inline-flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-ink"
+        className="group inline-flex items-center gap-2 text-sm font-medium text-stone-600 transition-colors hover:text-ink"
       >
         <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to stays
       </Link>
@@ -149,9 +149,13 @@ export default function ListingDetail() {
             >
               {listing.title}
             </motion.h1>
-            <motion.p variants={fadeUp} className="mt-3 flex items-center gap-1.5 text-gray-500">
-              <MapPin className="h-4 w-4" /> {listing.city}, Nigeria
-            </motion.p>
+            <motion.div variants={fadeUp} className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-stone-500">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" /> {listing.city}, Nigeria
+              </span>
+              <Rating listing={listing} />
+              <TrustBadges listing={listing} className="[&>span]:bg-stone-100 [&>span]:shadow-none" />
+            </motion.div>
           </motion.div>
 
           <Reveal delay={0.1} className="mt-10 grid grid-cols-3 gap-3">
@@ -162,7 +166,7 @@ export default function ListingDetail() {
 
           <Reveal className="mt-12 border-t border-black/5 pt-10">
             <h2 className="font-display text-2xl text-ink">About this place</h2>
-            <p className="mt-4 whitespace-pre-line text-lg leading-relaxed text-gray-600">
+            <p className="mt-4 whitespace-pre-line text-lg leading-relaxed text-stone-600">
               {listing.description || 'The host has not added a description yet.'}
             </p>
           </Reveal>
@@ -175,18 +179,19 @@ export default function ListingDetail() {
             transition={{ delay: 0.3, duration: 0.8, ease }}
             className="sticky top-24 rounded-4xl bg-white p-7 shadow-2xl shadow-emerald-950/10 ring-1 ring-black/5"
           >
-            <p className="text-gray-500">
+            <p className="text-stone-500">
               <span className="font-display text-4xl font-medium text-ink">{formatNaira(listing.price_per_night)}</span>{' '}
               / night
             </p>
 
             <button
               disabled
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-emerald-600 to-teal-500 py-4 font-semibold text-white opacity-60"
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-800 py-4 font-semibold text-white opacity-60"
             >
-              <CalendarCheck className="h-5 w-5" /> Reserve
+              {listing.booking_mode === 'instant' ? <Zap className="h-5 w-5" /> : <CalendarCheck className="h-5 w-5" />}
+              {listing.booking_mode === 'instant' ? 'Instant Book' : 'Request to book'}
             </button>
-            <p className="mt-3 text-center text-xs text-gray-500">Online booking is coming soon.</p>
+            <p className="mt-3 text-center text-xs text-stone-500">Online booking is coming soon.</p>
 
             <div className="mt-6 flex items-start gap-3 rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-900">
               <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-600" />

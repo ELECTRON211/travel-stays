@@ -74,7 +74,7 @@ export default function Navbar({ overlay = false }) {
                           : 'text-emerald-800'
                         : light
                           ? 'text-white/80 hover:text-white'
-                          : 'text-gray-600 hover:text-gray-900'
+                          : 'text-stone-600 hover:text-stone-900'
                     }`}
                   >
                     {link.label}
@@ -92,7 +92,7 @@ export default function Navbar({ overlay = false }) {
                 whileTap={{ scale: 0.96 }}
                 onClick={() => setMenuOpen(!menuOpen)}
                 className={`flex items-center gap-3 rounded-full py-1 pl-4 pr-1 transition ${
-                  light ? 'bg-white/15 text-white backdrop-blur-md hover:bg-white/25' : 'bg-white text-gray-700 ring-1 ring-black/10 hover:shadow-md'
+                  light ? 'bg-white/15 text-white backdrop-blur-md hover:bg-white/25' : 'bg-white text-stone-700 ring-1 ring-black/10 hover:shadow-md'
                 }`}
               >
                 <span className="text-sm font-medium">{user.fullName.split(' ')[0] || 'Account'}</span>
@@ -112,9 +112,9 @@ export default function Navbar({ overlay = false }) {
                       transition={{ duration: 0.2, ease }}
                       className="absolute right-0 z-20 mt-3 w-72 origin-top-right overflow-hidden rounded-2xl bg-white shadow-2xl shadow-black/10 ring-1 ring-black/5"
                     >
-                      <div className="border-b border-gray-100 px-5 py-4">
-                        <p className="truncate font-semibold text-gray-900">{user.fullName}</p>
-                        <p className="truncate text-sm text-gray-500">{user.email}</p>
+                      <div className="border-b border-stone-100 px-5 py-4">
+                        <p className="truncate font-semibold text-stone-900">{user.fullName}</p>
+                        <p className="truncate text-sm text-stone-500">{user.email}</p>
                         <span className="mt-3 inline-block rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
                           {roleLabels[user.role] ?? user.role}
                         </span>
@@ -124,7 +124,7 @@ export default function Navbar({ overlay = false }) {
                           setMenuOpen(false)
                           signOut()
                         }}
-                        className="flex w-full items-center gap-2 px-5 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                        className="flex w-full items-center gap-2 px-5 py-3.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
                       >
                         <LogOut className="h-4 w-4" /> Log out
                       </button>
@@ -138,7 +138,7 @@ export default function Navbar({ overlay = false }) {
               <Link
                 to="/login"
                 className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                  light ? 'text-white hover:bg-white/15' : 'text-gray-700 hover:bg-gray-100'
+                  light ? 'text-white hover:bg-white/15' : 'text-stone-700 hover:bg-stone-100'
                 }`}
               >
                 Log in
@@ -147,7 +147,7 @@ export default function Navbar({ overlay = false }) {
                 <Link
                   to="/signup"
                   className={`block rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg transition-colors ${
-                    light ? 'bg-white text-ink shadow-black/20' : 'bg-ink text-white shadow-black/10 hover:bg-emerald-900'
+                    light ? 'bg-white text-ink shadow-black/20' : 'bg-emerald-800 text-white shadow-emerald-900/20 hover:bg-emerald-900'
                   }`}
                 >
                   Sign up
@@ -158,7 +158,7 @@ export default function Navbar({ overlay = false }) {
         </div>
 
         <button
-          className={`rounded-full p-2 transition md:hidden ${light ? 'text-white hover:bg-white/15' : 'text-gray-700 hover:bg-gray-100'}`}
+          className={`rounded-full p-2 transition md:hidden ${light ? 'text-white hover:bg-white/15' : 'text-stone-700 hover:bg-stone-100'}`}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -189,7 +189,7 @@ export default function Navbar({ overlay = false }) {
                     onClick={() => setMobileOpen(false)}
                     className={({ isActive }) =>
                       `block rounded-xl px-3 py-3 text-base font-medium ${
-                        isActive ? 'bg-emerald-50 text-emerald-800' : 'text-gray-700'
+                        isActive ? 'bg-emerald-50 text-emerald-800' : 'text-stone-700'
                       }`
                     }
                   >
@@ -197,12 +197,12 @@ export default function Navbar({ overlay = false }) {
                   </NavLink>
                 </motion.div>
               ))}
-              <hr className="my-2 border-gray-100" />
+              <hr className="my-2 border-stone-100" />
               {user ? (
                 <>
                   <div className="px-3 py-2">
-                    <p className="font-semibold text-gray-900">{user.fullName}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-semibold text-stone-900">{user.fullName}</p>
+                    <p className="text-sm text-stone-500">
                       {user.email} · {roleLabels[user.role] ?? user.role}
                     </p>
                   </div>
@@ -211,7 +211,7 @@ export default function Navbar({ overlay = false }) {
                       setMobileOpen(false)
                       signOut()
                     }}
-                    className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium text-gray-700"
+                    className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium text-stone-700"
                   >
                     <LogOut className="h-4 w-4" /> Log out
                   </button>
@@ -221,14 +221,14 @@ export default function Navbar({ overlay = false }) {
                   <Link
                     to="/login"
                     onClick={() => setMobileOpen(false)}
-                    className="flex-1 rounded-full py-3 text-center text-sm font-semibold text-gray-700 ring-1 ring-gray-300"
+                    className="flex-1 rounded-full py-3 text-center text-sm font-semibold text-stone-700 ring-1 ring-stone-300"
                   >
                     Log in
                   </Link>
                   <Link
                     to="/signup"
                     onClick={() => setMobileOpen(false)}
-                    className="flex-1 rounded-full bg-ink py-3 text-center text-sm font-semibold text-white"
+                    className="flex-1 rounded-full bg-emerald-800 py-3 text-center text-sm font-semibold text-white"
                   >
                     Sign up
                   </Link>

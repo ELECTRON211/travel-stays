@@ -1,18 +1,18 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowUpRight, Building2, MapPin } from 'lucide-react'
+import { Building2, MapPin, ShieldCheck, Star, Zap } from 'lucide-react'
 import { formatNaira } from '../lib/format'
 import { propertyLabel } from '../lib/constants'
 import { fadeUp, stagger } from '../lib/motion'
 
 // Listings without photos get a consistent colour cover picked from their id.
 const covers = [
-  'from-emerald-800 to-teal-500',
-  'from-slate-800 to-slate-500',
-  'from-amber-700 to-orange-400',
-  'from-sky-800 to-cyan-500',
-  'from-rose-800 to-orange-400',
-  'from-indigo-800 to-violet-500',
+  'from-emerald-900 to-emerald-600',
+  'from-stone-800 to-stone-500',
+  'from-amber-800 to-orange-500',
+  'from-teal-900 to-cyan-600',
+  'from-rose-900 to-orange-500',
+  'from-emerald-950 to-teal-700',
 ]
 
 function coverFor(id = '') {
@@ -38,52 +38,95 @@ export function ListingCover({ listing, photo = listing.photos?.[0], className =
   )
 }
 
-export default function ListingCard({ listing }) {
+// Trust badges shown on top of the photo.
+export function TrustBadges({ listing, className = '' }) {
+  const badges = []
+  if (listing.host_verified) badges.push({ icon: ShieldCheck, label: 'Verified host', tone: 'text-emerald-800' })
+  if (listing.booking_mode === 'instant') badges.push({ icon: Zap, label: 'Instant Book', tone: 'text-amber-600' })
+  if (!badges.length) return null
+
   return (
-    <motion.div whileHover={{ y: -6 }} transition={{ type: 'spring', stiffness: 300, damping: 22 }}>
-      <Link to={`/listings/${listing.id}`} className="group block">
-        <div className="relative aspect-4/3 overflow-hidden rounded-3xl bg-gray-200 shadow-sm ring-1 ring-black/5 transition-shadow duration-500 group-hover:shadow-2xl group-hover:shadow-emerald-950/20">
-          <ListingCover listing={listing} className="transition-transform duration-1000 ease-out group-hover:scale-110" />
-          <div className="absolute inset-0 bg-linear-to-t from-black/50 via-black/0 to-black/0 opacity-70 transition-opacity duration-500 group-hover:opacity-100" />
-
-          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-gray-900 backdrop-blur-md">
-            {propertyLabel(listing.property_type)}
-          </span>
-          <span className="absolute bottom-3 left-4 flex items-center gap-1 text-sm font-medium text-white drop-shadow">
-            <MapPin className="h-4 w-4" />
-            {listing.city || 'Unknown city'}
-          </span>
-          <span className="absolute bottom-3 right-3 grid h-9 w-9 translate-y-3 place-items-center rounded-full bg-white text-gray-900 opacity-0 shadow-lg transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-            <ArrowUpRight className="h-4 w-4" />
-          </span>
-        </div>
-
-        <div className="mt-4 px-1">
-          <h3 className="truncate font-semibold text-gray-900 transition-colors group-hover:text-emerald-800">
-            {listing.title}
-          </h3>
-          <p className="mt-0.5 text-sm text-gray-500">
-            {listing.max_guests ?? '—'} guests · {listing.bedrooms ?? '—'}{' '}
-            {listing.bedrooms === 1 ? 'bedroom' : 'bedrooms'}
-          </p>
-          <p className="mt-2 text-sm">
-            <span className="font-semibold text-gray-900">{formatNaira(listing.price_per_night)}</span>{' '}
-            <span className="text-gray-500">/ night</span>
-          </p>
-        </div>
-      </Link>
-    </motion.div>
+    <div className={`flex flex-wrap gap-1.5 ${className}`}>
+      {badges.map(({ icon: Icon, label, tone }) => (
+        <span
+          key={label}
+          className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-stone-900 shadow-sm backdrop-blur-md"
+        >
+          <Icon className={`h-3.5 w-3.5 ${tone}`} fill={label === 'Instant Book' ? 'currentColor' : 'none'} />
+          {label}
+        </span>
+      ))}
+    </div>
   )
 }
 
+// "★ 4.8 (12)" once a listing has reviews, otherwise a "New" tag.
+export function Rating({ listing, className = '' }) {
+  if (!listing.review_count || listing.rating == null) {
+    return (
+      <span className={`rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800 ${className}`}>
+        New
+      </span>
+    )
+  }
+  return (
+    <span className={`flex items-center gap-1 text-sm text-stone-900 ${className}`}>
+      <Star className="h-3.5 w-3.5 fill-current" />
+      <span className="font-semibold">{Number(listing.rating).toFixed(1)}</span>
+      <span className="text-stone-500">({listing.review_count})</span>
+    </span>
+  )
+}
+
+export default function ListingCard({ listing }) {
+  return (
+    <Link
+      to={`/listings/${listing.id}`}
+      className="group block transition-transform duration-300 ease-out hover:scale-[1.02]"
+    >
+      <div className="relative aspect-4/3 overflow-hidden rounded-xl bg-stone-200 ring-1 ring-stone-900/5 transition-shadow duration-300 group-hover:shadow-xl group-hover:shadow-stone-900/15">
+        <ListingCover listing={listing} className="transition-transform duration-700 ease-out group-hover:scale-105" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/45 via-transparent to-transparent" />
+
+        <TrustBadges listing={listing} className="absolute left-3 top-3 right-3" />
+        <span className="absolute bottom-3 left-3 flex items-center gap-1 text-sm font-medium text-white drop-shadow">
+          <MapPin className="h-4 w-4" />
+          {listing.city || 'Unknown city'}
+        </span>
+      </div>
+
+      <div className="mt-3 px-0.5">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="truncate font-semibold tracking-tight text-stone-900">{listing.title}</h3>
+          <Rating listing={listing} className="shrink-0" />
+        </div>
+        <p className="mt-0.5 text-sm text-stone-500">
+          {propertyLabel(listing.property_type)} · {listing.max_guests ?? '—'} guests · {listing.bedrooms ?? '—'}{' '}
+          {listing.bedrooms === 1 ? 'bedroom' : 'bedrooms'}
+        </p>
+        <p className="mt-1.5 text-[15px]">
+          <span className="font-semibold text-stone-900">{formatNaira(listing.price_per_night)}</span>{' '}
+          <span className="text-stone-500">night</span>
+        </p>
+      </div>
+    </Link>
+  )
+}
+
+// Mirrors the card layout so the page doesn't jump when results arrive.
 export function ListingCardSkeleton() {
   return (
     <div>
-      <div className="shimmer aspect-4/3 rounded-3xl" />
-      <div className="mt-4 space-y-2 px-1">
-        <div className="shimmer h-4 w-2/3 rounded-full" />
-        <div className="shimmer h-3 w-1/3 rounded-full" />
-        <div className="shimmer h-3 w-1/4 rounded-full" />
+      <div className="shimmer relative aspect-4/3 rounded-xl">
+        <div className="absolute left-3 top-3 h-6 w-24 rounded-full bg-white/60" />
+      </div>
+      <div className="mt-3 space-y-2 px-0.5">
+        <div className="flex justify-between gap-3">
+          <div className="shimmer h-4 w-2/3 rounded-full" />
+          <div className="shimmer h-4 w-10 rounded-full" />
+        </div>
+        <div className="shimmer h-3 w-1/2 rounded-full" />
+        <div className="shimmer h-3.5 w-1/4 rounded-full" />
       </div>
     </div>
   )
@@ -94,7 +137,7 @@ const gridClass = 'grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-c
 export function ListingGrid({ listings, loading, error, skeletons = 8 }) {
   if (error) {
     return (
-      <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
         Could not load stays: {error}
       </div>
     )
@@ -114,7 +157,7 @@ export function ListingGrid({ listings, loading, error, skeletons = 8 }) {
   return (
     <motion.div
       key={listings.map((l) => l.id).join()}
-      variants={stagger(0.08)}
+      variants={stagger(0.07)}
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: '0px 0px -60px 0px' }}

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
 import {
@@ -13,6 +13,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import SearchBar from '../components/SearchBar'
+import DiscoveryToggle from '../components/DiscoveryToggle'
 import Reveal from '../components/Reveal'
 import { ListingGrid } from '../components/ListingCard'
 import { useListings } from '../hooks/useListings'
@@ -43,7 +44,7 @@ function SectionHeading({ eyebrow, title, accent, children }) {
       <h2 className="mt-3 font-display text-4xl font-medium tracking-tight text-ink sm:text-5xl">
         {title} <em className="text-emerald-700">{accent}</em>
       </h2>
-      {children && <p className="mt-4 max-w-xl text-gray-500">{children}</p>}
+      {children && <p className="mt-4 max-w-xl text-stone-500">{children}</p>}
     </Reveal>
   )
 }
@@ -95,6 +96,7 @@ function Hero() {
   const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '35%'])
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+  const [mode, setMode] = useState('stays')
 
   return (
     <section
@@ -113,6 +115,8 @@ function Hero() {
       </motion.div>
       <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/10 to-black/80" />
       <div className="absolute inset-0 bg-linear-to-r from-black/50 via-black/10 to-transparent" />
+      {/* Warm, cinematic tint */}
+      <div className="absolute inset-0 bg-linear-to-tr from-amber-900/35 via-transparent to-emerald-950/30 mix-blend-multiply" />
 
       <FloatingBadge
         icon={ShieldCheck}
@@ -134,16 +138,7 @@ function Hero() {
         style={{ y: contentY, opacity: contentOpacity }}
         className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8"
       >
-        <motion.span
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6, ease }}
-          className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-white backdrop-blur-md"
-        >
-          <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Stays · Tours · Experiences
-        </motion.span>
-
-        <h1 className="mt-6 max-w-4xl font-display text-5xl font-medium leading-[1.02] tracking-tight text-white sm:text-7xl 2xl:text-8xl">
+        <h1 className="max-w-4xl font-display text-5xl font-medium leading-[1.02] tracking-tight text-white sm:text-7xl 2xl:text-8xl">
           <RevealWord delay={0.45}>Stay</RevealWord>
           <RevealWord delay={0.57}>somewhere</RevealWord>
           <RevealWord delay={0.69} className="italic text-emerald-300">
@@ -167,7 +162,10 @@ function Hero() {
           transition={{ delay: 1.1, duration: 0.9, ease }}
           className="mt-10 max-w-5xl"
         >
-          <SearchBar variant="hero" />
+          <DiscoveryToggle value={mode} onChange={setMode} dark />
+          <div className="mt-4">
+            <SearchBar variant="hero" mode={mode} />
+          </div>
         </motion.div>
 
         <motion.div
@@ -206,7 +204,7 @@ function CityMarquee() {
                 key={city}
                 to={`/stays?city=${encodeURIComponent(city)}`}
                 tabIndex={copy === 1 ? -1 : undefined}
-                className="flex items-center font-display text-3xl text-gray-300 transition-colors duration-300 hover:text-emerald-700 sm:text-5xl"
+                className="flex items-center font-display text-3xl text-stone-300 transition-colors duration-300 hover:text-emerald-700 sm:text-5xl"
               >
                 <span className="px-6 sm:px-8">{city}</span>
                 <span className="text-lg text-emerald-500 sm:text-2xl">✦</span>
@@ -281,7 +279,7 @@ function LatestStays() {
       <ListingGrid listings={listings} loading={loading} error={error} skeletons={4} />
 
       {!loading && !error && listings.length === 0 && (
-        <p className="rounded-3xl border border-dashed border-gray-300 p-12 text-center text-gray-500">
+        <p className="rounded-3xl border border-dashed border-stone-300 p-12 text-center text-stone-500">
           No stays listed yet. Be the first host!
         </p>
       )}
@@ -316,14 +314,14 @@ function FeaturedCity() {
             <h2 className="mt-3 font-display text-6xl font-medium tracking-tight text-ink sm:text-8xl">Lagos</h2>
           </Reveal>
           <Reveal delay={0.1}>
-            <p className="mt-6 max-w-md text-lg leading-relaxed text-gray-600">
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-stone-600">
               From the beaches of Lekki to the galleries and restaurants of Victoria Island, Lagos never slows
               down. Find a stay close to the action, or a quiet retreat from it.
             </p>
           </Reveal>
           <Reveal delay={0.2} className="mt-8 flex flex-wrap gap-2">
             {['Beaches', 'Nightlife', 'Art & culture', 'Business hub'].map((tag) => (
-              <span key={tag} className="rounded-full bg-white px-4 py-2 text-sm text-gray-700 ring-1 ring-black/5">
+              <span key={tag} className="rounded-full bg-white px-4 py-2 text-sm text-stone-700 ring-1 ring-black/5">
                 {tag}
               </span>
             ))}
@@ -331,7 +329,7 @@ function FeaturedCity() {
           <Reveal delay={0.3} className="mt-10">
             <Link
               to="/stays?city=Lagos"
-              className="group inline-flex items-center gap-3 rounded-full bg-ink py-3 pl-6 pr-3 font-semibold text-white transition hover:bg-emerald-900"
+              className="group inline-flex items-center gap-3 rounded-full bg-emerald-800 py-3 pl-6 pr-3 font-semibold text-white transition hover:bg-emerald-900"
             >
               Explore stays in Lagos
               <span className="grid h-9 w-9 place-items-center rounded-full bg-white/15 transition-transform duration-500 group-hover:rotate-45">
@@ -368,7 +366,7 @@ function HowItWorks() {
               </span>
               <p className="mt-6 font-display text-sm italic text-emerald-700">Step 0{i + 1}</p>
               <h3 className="mt-1 text-xl font-semibold text-ink">{title}</h3>
-              <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-gray-500">{text}</p>
+              <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-stone-500">{text}</p>
             </Reveal>
           ))}
         </div>
@@ -399,7 +397,7 @@ function WhyUs() {
         <Reveal delay={0.1} className="rounded-4xl bg-emerald-100/70 p-10 md:col-span-2">
           <CreditCard className="h-9 w-9 text-emerald-700" strokeWidth={1.5} />
           <h3 className="mt-6 font-display text-3xl text-ink">Your money is protected</h3>
-          <p className="mt-3 max-w-lg text-gray-600">
+          <p className="mt-3 max-w-lg text-stone-600">
             Pay by card, bank transfer or USSD. We hold the payment and only release it to the host after you
             check in.
           </p>
@@ -407,12 +405,12 @@ function WhyUs() {
         <Reveal delay={0.2} className="rounded-4xl bg-amber-100/70 p-10">
           <Sparkles className="h-9 w-9 text-amber-700" strokeWidth={1.5} />
           <h3 className="mt-6 font-display text-2xl text-ink">Stays and tours together</h3>
-          <p className="mt-3 text-gray-600">Plan your bed and your adventures in one trip.</p>
+          <p className="mt-3 text-stone-600">Plan your bed and your adventures in one trip.</p>
         </Reveal>
         <Reveal delay={0.3} className="rounded-4xl bg-white p-10 ring-1 ring-black/5">
           <MapPin className="h-9 w-9 text-emerald-700" strokeWidth={1.5} />
           <h3 className="mt-6 font-display text-2xl text-ink">Local knowledge</h3>
-          <p className="mt-3 text-gray-600">Hosts and guides who know their city inside out.</p>
+          <p className="mt-3 text-stone-600">Hosts and guides who know their city inside out.</p>
         </Reveal>
       </div>
     </section>

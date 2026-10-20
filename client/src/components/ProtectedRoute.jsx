@@ -23,14 +23,14 @@ export default function ProtectedRoute({ role, children }) {
   if (role && user.role !== role) {
     return (
       <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
-        <span className="grid h-14 w-14 place-items-center rounded-full bg-gray-100">
-          <Lock className="h-6 w-6 text-gray-500" />
+        <span className="grid h-14 w-14 place-items-center rounded-full bg-stone-100">
+          <Lock className="h-6 w-6 text-stone-500" />
         </span>
-        <h1 className="mt-4 text-xl font-bold text-gray-900">This page is for {role}s</h1>
-        <p className="mt-2 text-gray-500">
+        <h1 className="mt-4 text-xl font-bold text-stone-900">This page is for {role}s</h1>
+        <p className="mt-2 text-stone-500">
           You're signed in as a {user.role}. Create a {role} account to use this page.
         </p>
-        <Link to="/" className="mt-8 rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700">
+        <Link to="/" className="mt-8 rounded-xl bg-emerald-800 px-6 py-3 font-semibold text-white hover:bg-emerald-900">
           Back to home
         </Link>
       </div>

@@ -56,13 +56,13 @@ export default function Login() {
         />
         <button
           disabled={submitting}
-          className="w-full rounded-xl bg-emerald-600 py-3 font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
+          className="w-full rounded-xl bg-emerald-800 py-3 font-semibold text-white transition hover:bg-emerald-900 disabled:opacity-60"
         >
           {submitting ? 'Logging in…' : 'Log in'}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-500">
+      <p className="mt-6 text-center text-sm text-stone-500">
         New to Travel &amp; Stays?{' '}
         <Link to="/signup" className="font-semibold text-emerald-700 hover:text-emerald-800">
           Create an account

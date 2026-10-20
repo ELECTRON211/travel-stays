@@ -5,12 +5,20 @@
 -- 1. New listing columns
 -- ---------------------------------------------------------------------------
 alter table public.listings
-  add column if not exists host_id uuid references public.profiles (id) on delete cascade,
+  add column if not exists host_id uuid references auth.users (id) on delete cascade,
   add column if not exists property_type text not null default 'apartment',
   add column if not exists bedrooms integer not null default 1,
   add column if not exists address text,
   add column if not exists photos text[] not null default '{}',
-  add column if not exists status text not null default 'active';
+  add column if not exists status text not null default 'active',
+  add column if not exists booking_mode text not null default 'request',
+  add column if not exists host_verified boolean not null default false,
+  add column if not exists rating numeric(2, 1),
+  add column if not exists review_count integer not null default 0;
+
+alter table public.listings drop constraint if exists listings_booking_mode_check;
+alter table public.listings add constraint listings_booking_mode_check
+  check (booking_mode in ('instant', 'request'));
 
 alter table public.listings drop constraint if exists listings_property_type_check;
 alter table public.listings add constraint listings_property_type_check
@@ -61,6 +69,17 @@ drop policy if exists "Hosts delete their own listings" on public.listings;
 create policy "Hosts delete their own listings"
   on public.listings for delete to authenticated
   using (host_id = auth.uid());
+
+-- Hosts may only write the columns they own. `host_verified` is set by an
+-- admin after checking documents, and `rating` / `review_count` are filled
+-- in from reviews — a host can't give themselves a badge or a 5-star rating.
+revoke insert, update on public.listings from authenticated;
+grant insert (host_id, title, description, city, address, property_type, bedrooms,
+              max_guests, price_per_night, photos, status, booking_mode)
+  on public.listings to authenticated;
+grant update (title, description, city, address, property_type, bedrooms,
+              max_guests, price_per_night, photos, status, booking_mode)
+  on public.listings to authenticated;
 
 -- ---------------------------------------------------------------------------
 -- 3. Photo storage

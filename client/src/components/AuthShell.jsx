@@ -19,7 +19,7 @@ export default function AuthShell({ title, subtitle, children }) {
           <motion.h1 variants={fadeUp} className="font-display text-4xl font-medium tracking-tight text-ink sm:text-5xl">
             {title}
           </motion.h1>
-          <motion.p variants={fadeUp} className="mt-3 text-gray-500">
+          <motion.p variants={fadeUp} className="mt-3 text-stone-500">
             {subtitle}
           </motion.p>
           <motion.div variants={fadeUp} className="mt-10">
@@ -60,10 +60,10 @@ export default function AuthShell({ title, subtitle, children }) {
 export function TextField({ icon: Icon, label, ...props }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
+      <span className="text-sm font-medium text-stone-700">{label}</span>
       <span className="mt-1.5 flex items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-black/10 transition-shadow focus-within:shadow-lg focus-within:shadow-emerald-600/10 focus-within:ring-2 focus-within:ring-emerald-500">
-        <Icon className="h-5 w-5 text-gray-400" />
-        <input className="w-full bg-transparent py-3.5 text-sm text-gray-900 outline-none" {...props} />
+        <Icon className="h-5 w-5 text-stone-400" />
+        <input className="w-full bg-transparent py-3.5 text-sm text-stone-900 outline-none" {...props} />
       </span>
     </label>
   )

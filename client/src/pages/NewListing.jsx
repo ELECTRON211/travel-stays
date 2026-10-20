@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { ImagePlus, Loader2, X } from 'lucide-react'
+import { CalendarCheck, ImagePlus, Loader2, X, Zap } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { createListing } from '../lib/listings'
 import { PROPERTY_TYPES } from '../lib/constants'
@@ -11,15 +11,20 @@ const MAX_PHOTOS = 8
 const MAX_PHOTO_MB = 5
 const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
+const BOOKING_MODES = [
+  { value: 'request', icon: CalendarCheck, title: 'Request to book', text: 'You review and approve every booking.' },
+  { value: 'instant', icon: Zap, title: 'Instant Book', text: 'Guests book right away. More bookings, less admin.' },
+]
+
 const inputClass =
-  'mt-1.5 w-full rounded-xl border border-gray-300 px-3 py-3 text-sm text-gray-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
+  'mt-1.5 w-full rounded-xl border border-stone-300 px-3 py-3 text-sm text-stone-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
 
 function Section({ title, description, children }) {
   return (
-    <section className="grid gap-6 border-b border-gray-200 py-8 md:grid-cols-3">
+    <section className="grid gap-6 border-b border-stone-200 py-8 md:grid-cols-3">
       <div>
-        <h2 className="font-semibold text-gray-900">{title}</h2>
-        <p className="mt-1 text-sm text-gray-500">{description}</p>
+        <h2 className="font-semibold text-stone-900">{title}</h2>
+        <p className="mt-1 text-sm text-stone-500">{description}</p>
       </div>
       <div className="space-y-5 md:col-span-2">{children}</div>
     </section>
@@ -29,9 +34,9 @@ function Section({ title, description, children }) {
 function Field({ label, hint, children }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
+      <span className="text-sm font-medium text-stone-700">{label}</span>
       {children}
-      {hint && <span className="mt-1 block text-xs text-gray-500">{hint}</span>}
+      {hint && <span className="mt-1 block text-xs text-stone-500">{hint}</span>}
     </label>
   )
 }
@@ -49,6 +54,7 @@ export default function NewListing() {
     max_guests: 2,
     bedrooms: 1,
     price_per_night: '',
+    booking_mode: 'request',
   })
   const [photos, setPhotos] = useState([]) // [{ id, file, preview }]
   const [error, setError] = useState('')
@@ -124,6 +130,7 @@ export default function NewListing() {
           max_guests: Number(form.max_guests),
           bedrooms: Number(form.bedrooms),
           price_per_night: Math.round(Number(form.price_per_night)),
+          booking_mode: form.booking_mode,
         },
         photos.map((p) => p.file),
       )
@@ -140,7 +147,7 @@ export default function NewListing() {
       <h1 className="font-display text-5xl font-medium tracking-tight text-ink">
         List your <em className="text-emerald-700">place.</em>
       </h1>
-      <p className="mt-2 text-gray-500">Tell travellers about your space. You can pause or delete it any time.</p>
+      <p className="mt-2 text-stone-500">Tell travellers about your space. You can pause or delete it any time.</p>
 
       {error && (
         <div className="mt-6">
@@ -161,7 +168,7 @@ export default function NewListing() {
           </Field>
 
           <div>
-            <span className="text-sm font-medium text-gray-700">Property type</span>
+            <span className="text-sm font-medium text-stone-700">Property type</span>
             <div className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {PROPERTY_TYPES.map((type) => (
                 <button
@@ -172,7 +179,7 @@ export default function NewListing() {
                   className={`rounded-xl border px-3 py-3 text-sm font-medium transition ${
                     form.property_type === type.value
                       ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-600/20'
-                      : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                      : 'border-stone-300 text-stone-700 hover:border-stone-400'
                   }`}
                 >
                   {type.label}
@@ -225,6 +232,36 @@ export default function NewListing() {
           </div>
         </Section>
 
+        <Section title="Booking mode" description="Decide whether guests can book straight away or need your approval.">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {BOOKING_MODES.map(({ value, icon: Icon, title, text }) => {
+              const active = form.booking_mode === value
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setForm({ ...form, booking_mode: value })}
+                  aria-pressed={active}
+                  className="relative rounded-xl bg-white p-5 text-left ring-1 ring-stone-900/10 transition hover:ring-stone-900/30"
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="booking-mode"
+                      className="absolute inset-0 rounded-xl bg-emerald-50 ring-2 ring-emerald-800"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative block">
+                    <Icon className={`h-6 w-6 ${active ? 'text-emerald-800' : 'text-stone-400'}`} />
+                    <span className="mt-3 block font-semibold text-stone-900">{title}</span>
+                    <span className="mt-1 block text-sm text-stone-500">{text}</span>
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </Section>
+
         <Section
           title="Photos"
           description={`Add up to ${MAX_PHOTOS} photos (JPG, PNG or WebP, max ${MAX_PHOTO_MB} MB each). The first one is your cover photo.`}
@@ -243,14 +280,14 @@ export default function NewListing() {
               >
                 <img src={photo.preview} alt="" className="h-full w-full object-cover" />
                 {index === 0 && (
-                  <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold text-gray-800">
+                  <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold text-stone-800">
                     Cover
                   </span>
                 )}
                 <button
                   type="button"
                   onClick={() => removePhoto(photo.id)}
-                  className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-white/90 text-gray-700 shadow hover:bg-white"
+                  className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-white/90 text-stone-700 shadow hover:bg-white"
                   aria-label="Remove photo"
                 >
                   <X className="h-4 w-4" />
@@ -260,7 +297,7 @@ export default function NewListing() {
             </AnimatePresence>
 
             {photos.length < MAX_PHOTOS && (
-              <motion.label layout className="flex aspect-4/3 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 transition hover:border-emerald-500 hover:text-emerald-600">
+              <motion.label layout className="flex aspect-4/3 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-stone-300 text-stone-500 transition hover:border-emerald-500 hover:text-emerald-600">
                 <ImagePlus className="h-7 w-7" />
                 <span className="text-sm font-medium">Add photos</span>
                 <input type="file" accept={PHOTO_TYPES.join(',')} multiple className="sr-only" onChange={addPhotos} />
@@ -270,12 +307,12 @@ export default function NewListing() {
         </Section>
 
         <div className="flex items-center justify-end gap-3 py-8">
-          <Link to="/host/listings" className="rounded-xl px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-100">
+          <Link to="/host/listings" className="rounded-xl px-5 py-3 text-sm font-semibold text-stone-700 hover:bg-stone-100">
             Cancel
           </Link>
           <button
             disabled={submitting}
-            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-xl bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-900 disabled:opacity-60"
           >
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {submitting ? 'Publishing…' : 'Publish listing'}
