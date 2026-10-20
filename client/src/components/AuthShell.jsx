@@ -28,7 +28,7 @@ export default function AuthShell({ title, subtitle, children }) {
         </motion.div>
       </div>
 
-      <div className="relative hidden p-3 lg:block">
+      <div className="relative hidden h-screen self-start p-3 lg:sticky lg:top-0 lg:block">
         <div className="relative h-full overflow-hidden rounded-4xl">
           <motion.img
             src={images.auth}
