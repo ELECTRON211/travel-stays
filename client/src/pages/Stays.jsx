@@ -240,13 +240,16 @@ export default function Stays() {
               </>
             )}
           </h1>
-        </div>
-        <DiscoveryToggle value={mode} onChange={(value) => setParam('mode', value === 'stays' ? '' : value)} />
-      </Reveal>
 
-      <Reveal delay={0.1} className="relative z-20 mt-8">
-        {/* key= resets the form fields when the URL search changes */}
-        <SearchBar key={searchParams.toString()} initial={Object.fromEntries(searchParams)} mode={mode} />
+          <div className="mt-6">
+            <DiscoveryToggle value={mode} onChange={(value) => setParam('mode', value === 'stays' ? '' : value)} />
+          </div>
+
+          <div className="mx-auto mt-5 max-w-5xl text-left">
+            {/* key= resets the form fields when the URL search changes */}
+            <SearchBar key={searchParams.toString()} initial={Object.fromEntries(searchParams)} mode={mode} />
+          </div>
+        </div>
       </Reveal>
 
       {mode !== 'stays' ? (
