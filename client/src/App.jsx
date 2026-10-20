@@ -1,7 +1,11 @@
 import { Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
+import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Stays from './pages/Stays'
+import ListingDetail from './pages/ListingDetail'
+import MyListings from './pages/MyListings'
+import NewListing from './pages/NewListing'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import NotFound from './pages/NotFound'
@@ -13,6 +17,26 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/stays" element={<Stays />} />
+        <Route path="/listings/:id" element={<ListingDetail />} />
+
+        {/* Host-only pages */}
+        <Route
+          path="/host/listings"
+          element={
+            <ProtectedRoute role="host">
+              <MyListings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/host/listings/new"
+          element={
+            <ProtectedRoute role="host">
+              <NewListing />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="*" element={<NotFound />} />
       </Route>
 

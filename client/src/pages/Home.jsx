@@ -3,6 +3,7 @@ import { ArrowRight, Compass, CreditCard, ShieldCheck } from 'lucide-react'
 import SearchBar from '../components/SearchBar'
 import { ListingGrid } from '../components/ListingCard'
 import { useListings } from '../hooks/useListings'
+import { useAuth } from '../context/AuthContext'
 
 const popularCities = ['Lagos', 'Abuja', 'Calabar', 'Port Harcourt', 'Ibadan']
 
@@ -25,6 +26,7 @@ const features = [
 ]
 
 export default function Home() {
+  const { user } = useAuth()
   const { listings, loading, error } = useListings({ limit: 8 })
 
   return (
