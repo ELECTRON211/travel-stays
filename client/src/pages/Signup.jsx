@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { Compass, Home, Lock, Luggage, Mail, User } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -74,15 +75,20 @@ export default function Signup() {
                 type="button"
                 onClick={() => setRole(value)}
                 aria-pressed={role === value}
-                className={`rounded-xl border p-3 text-left transition ${
-                  role === value
-                    ? 'border-emerald-600 bg-emerald-50 ring-2 ring-emerald-600/20'
-                    : 'border-gray-300 hover:border-gray-400'
-                }`}
+                className="relative rounded-2xl bg-white p-3 text-left ring-1 ring-black/10 transition hover:ring-black/20"
               >
-                <Icon className={`h-5 w-5 ${role === value ? 'text-emerald-600' : 'text-gray-400'}`} />
-                <span className="mt-2 block text-sm font-semibold text-gray-900">{label}</span>
-                <span className="block text-xs text-gray-500">{text}</span>
+                {role === value && (
+                  <motion.span
+                    layoutId="role-highlight"
+                    className="absolute inset-0 rounded-2xl bg-emerald-50 ring-2 ring-emerald-500"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative block">
+                  <Icon className={`h-5 w-5 transition-colors ${role === value ? 'text-emerald-600' : 'text-gray-400'}`} />
+                  <span className="mt-2 block text-sm font-semibold text-gray-900">{label}</span>
+                  <span className="block text-xs text-gray-500">{text}</span>
+                </span>
               </button>
             ))}
           </div>

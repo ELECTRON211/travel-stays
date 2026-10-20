@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { AnimatePresence, motion } from 'motion/react'
 import { ImagePlus, Loader2, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { createListing } from '../lib/listings'
@@ -136,7 +137,9 @@ export default function NewListing() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900">List your place</h1>
+      <h1 className="font-display text-5xl font-medium tracking-tight text-ink">
+        List your <em className="text-emerald-700">place.</em>
+      </h1>
       <p className="mt-2 text-gray-500">Tell travellers about your space. You can pause or delete it any time.</p>
 
       {error && (
@@ -227,8 +230,17 @@ export default function NewListing() {
           description={`Add up to ${MAX_PHOTOS} photos (JPG, PNG or WebP, max ${MAX_PHOTO_MB} MB each). The first one is your cover photo.`}
         >
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <AnimatePresence initial={false}>
             {photos.map((photo, index) => (
-              <div key={photo.id} className="group relative aspect-4/3 overflow-hidden rounded-xl border border-gray-200">
+              <motion.div
+                key={photo.id}
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                className="group relative aspect-4/3 overflow-hidden rounded-2xl ring-1 ring-black/10"
+              >
                 <img src={photo.preview} alt="" className="h-full w-full object-cover" />
                 {index === 0 && (
                   <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold text-gray-800">
@@ -243,15 +255,16 @@ export default function NewListing() {
                 >
                   <X className="h-4 w-4" />
                 </button>
-              </div>
+              </motion.div>
             ))}
+            </AnimatePresence>
 
             {photos.length < MAX_PHOTOS && (
-              <label className="flex aspect-4/3 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 transition hover:border-emerald-500 hover:text-emerald-600">
+              <motion.label layout className="flex aspect-4/3 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 text-gray-500 transition hover:border-emerald-500 hover:text-emerald-600">
                 <ImagePlus className="h-7 w-7" />
                 <span className="text-sm font-medium">Add photos</span>
                 <input type="file" accept={PHOTO_TYPES.join(',')} multiple className="sr-only" onChange={addPhotos} />
-              </label>
+              </motion.label>
             )}
           </div>
         </Section>

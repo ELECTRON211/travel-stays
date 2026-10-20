@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AnimatePresence, motion } from 'motion/react'
 import { Eye, Home, Pause, Play, Plus, Trash2 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useAsync } from '../hooks/useAsync'
@@ -53,7 +54,9 @@ export default function MyListings() {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">My listings</h1>
+          <h1 className="font-display text-5xl font-medium tracking-tight text-ink">
+            My <em className="text-emerald-700">listings.</em>
+          </h1>
           <p className="mt-2 text-gray-500">Manage the places you host. Paused listings are hidden from search.</p>
         </div>
         <Link
@@ -84,10 +87,15 @@ export default function MyListings() {
           </div>
         )}
 
-        {listings?.map((listing) => (
-          <div
+        <AnimatePresence initial={false}>
+        {listings?.map((listing, i) => (
+          <motion.div
             key={listing.id}
-            className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 sm:flex-row sm:items-center"
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0, transition: { delay: i * 0.05 } }}
+            exit={{ opacity: 0, x: -40, transition: { duration: 0.3 } }}
+            className="flex flex-col gap-4 rounded-3xl bg-white p-4 ring-1 ring-black/5 transition-shadow hover:shadow-lg sm:flex-row sm:items-center"
           >
             <div className="aspect-4/3 w-full shrink-0 overflow-hidden rounded-xl sm:w-40">
               <ListingCover listing={listing} />
@@ -122,8 +130,9 @@ export default function MyListings() {
                 <Trash2 className="h-4 w-4" /> Delete
               </button>
             </div>
-          </div>
+          </motion.div>
         ))}
+        </AnimatePresence>
       </div>
     </div>
   )

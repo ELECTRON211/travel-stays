@@ -1,27 +1,56 @@
+import { motion } from 'motion/react'
 import { ShieldCheck } from 'lucide-react'
+import { images } from '../lib/images'
+import { ease, fadeUp, stagger } from '../lib/motion'
 import Logo from './Logo'
 
-// Shared two-column layout for the log in and sign up pages.
+// Shared split-screen layout for the log in and sign up pages.
 export default function AuthShell({ title, subtitle, children }) {
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
+    <div className="grid min-h-screen bg-sand lg:grid-cols-2">
       <div className="flex flex-col px-4 py-8 sm:px-12">
         <Logo />
-        <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-12">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
-          <p className="mt-2 text-gray-500">{subtitle}</p>
-          <div className="mt-8">{children}</div>
-        </div>
+        <motion.div
+          variants={stagger(0.1, 0.1)}
+          initial="hidden"
+          animate="show"
+          className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-12"
+        >
+          <motion.h1 variants={fadeUp} className="font-display text-4xl font-medium tracking-tight text-ink sm:text-5xl">
+            {title}
+          </motion.h1>
+          <motion.p variants={fadeUp} className="mt-3 text-gray-500">
+            {subtitle}
+          </motion.p>
+          <motion.div variants={fadeUp} className="mt-10">
+            {children}
+          </motion.div>
+        </motion.div>
       </div>
 
-      <div className="relative hidden overflow-hidden bg-linear-to-br from-emerald-700 via-emerald-600 to-teal-500 lg:flex lg:items-end">
-        <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-        <div className="relative m-12 max-w-md rounded-2xl bg-white/10 p-8 text-white backdrop-blur">
-          <ShieldCheck className="h-8 w-8" />
-          <p className="mt-4 text-xl font-semibold leading-snug">
-            Every host and tour guide on Travel &amp; Stays is verified before they can list.
-          </p>
-          <p className="mt-3 text-sm text-emerald-50/80">Book stays and experiences with confidence.</p>
+      <div className="relative hidden p-3 lg:block">
+        <div className="relative h-full overflow-hidden rounded-4xl">
+          <motion.img
+            src={images.auth}
+            alt=""
+            initial={{ scale: 1.2 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 2.5, ease }}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" />
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.9, ease }}
+            className="absolute inset-x-10 bottom-10 rounded-3xl border border-white/20 bg-white/10 p-8 text-white backdrop-blur-xl"
+          >
+            <ShieldCheck className="h-8 w-8 text-emerald-300" />
+            <p className="mt-4 font-display text-3xl leading-snug">
+              Every host and tour guide is <em className="text-emerald-300">verified</em> before they can list.
+            </p>
+            <p className="mt-3 text-sm text-white/70">Book stays and experiences with confidence.</p>
+          </motion.div>
         </div>
       </div>
     </div>
@@ -32,9 +61,9 @@ export function TextField({ icon: Icon, label, ...props }) {
   return (
     <label className="block">
       <span className="text-sm font-medium text-gray-700">{label}</span>
-      <span className="mt-1.5 flex items-center gap-2 rounded-xl border border-gray-300 px-3 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20">
+      <span className="mt-1.5 flex items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-black/10 transition-shadow focus-within:shadow-lg focus-within:shadow-emerald-600/10 focus-within:ring-2 focus-within:ring-emerald-500">
         <Icon className="h-5 w-5 text-gray-400" />
-        <input className="w-full bg-transparent py-3 text-sm text-gray-900 outline-none" {...props} />
+        <input className="w-full bg-transparent py-3.5 text-sm text-gray-900 outline-none" {...props} />
       </span>
     </label>
   )
@@ -42,8 +71,14 @@ export function TextField({ icon: Icon, label, ...props }) {
 
 export function Alert({ type = 'error', children }) {
   const styles =
-    type === 'error'
-      ? 'border-red-200 bg-red-50 text-red-700'
-      : 'border-emerald-200 bg-emerald-50 text-emerald-800'
-  return <div className={`rounded-xl border px-4 py-3 text-sm ${styles}`}>{children}</div>
+    type === 'error' ? 'bg-red-50 text-red-700 ring-red-200' : 'bg-emerald-50 text-emerald-800 ring-emerald-200'
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -6, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      className={`rounded-2xl px-4 py-3 text-sm ring-1 ${styles}`}
+    >
+      {children}
+    </motion.div>
+  )
 }

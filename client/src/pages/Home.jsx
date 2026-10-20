@@ -297,7 +297,7 @@ function FeaturedCity() {
   return (
     <section ref={ref} className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-        <Reveal className="relative aspect-4/3 overflow-hidden rounded-[2rem] lg:aspect-4/5">
+        <Reveal className="relative aspect-4/3 overflow-hidden rounded-4xl lg:aspect-4/5">
           <motion.img
             src={images.lagos}
             alt="Aerial view of Lagos"
@@ -383,7 +383,7 @@ function WhyUs() {
       <SectionHeading eyebrow="Why Travel & Stays" title="Travel with" accent="peace of mind." />
 
       <div className="mt-12 grid gap-4 md:grid-cols-3 md:grid-rows-2">
-        <Reveal className="relative overflow-hidden rounded-[2rem] bg-ink p-10 text-white md:row-span-2">
+        <Reveal className="relative overflow-hidden rounded-4xl bg-ink p-10 text-white md:row-span-2">
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/30 blur-3xl" />
           <div className="relative flex h-full flex-col">
             <ShieldCheck className="h-10 w-10 text-emerald-400" strokeWidth={1.5} />
@@ -396,7 +396,7 @@ function WhyUs() {
             </p>
           </div>
         </Reveal>
-        <Reveal delay={0.1} className="rounded-[2rem] bg-emerald-100/70 p-10 md:col-span-2">
+        <Reveal delay={0.1} className="rounded-4xl bg-emerald-100/70 p-10 md:col-span-2">
           <CreditCard className="h-9 w-9 text-emerald-700" strokeWidth={1.5} />
           <h3 className="mt-6 font-display text-3xl text-ink">Your money is protected</h3>
           <p className="mt-3 max-w-lg text-gray-600">
@@ -404,12 +404,12 @@ function WhyUs() {
             check in.
           </p>
         </Reveal>
-        <Reveal delay={0.2} className="rounded-[2rem] bg-amber-100/70 p-10">
+        <Reveal delay={0.2} className="rounded-4xl bg-amber-100/70 p-10">
           <Sparkles className="h-9 w-9 text-amber-700" strokeWidth={1.5} />
           <h3 className="mt-6 font-display text-2xl text-ink">Stays and tours together</h3>
           <p className="mt-3 text-gray-600">Plan your bed and your adventures in one trip.</p>
         </Reveal>
-        <Reveal delay={0.3} className="rounded-[2rem] bg-white p-10 ring-1 ring-black/5">
+        <Reveal delay={0.3} className="rounded-4xl bg-white p-10 ring-1 ring-black/5">
           <MapPin className="h-9 w-9 text-emerald-700" strokeWidth={1.5} />
           <h3 className="mt-6 font-display text-2xl text-ink">Local knowledge</h3>
           <p className="mt-3 text-gray-600">Hosts and guides who know their city inside out.</p>
@@ -421,7 +421,7 @@ function WhyUs() {
 
 function ImageCard({ image, className = '', delay = 0, children }) {
   return (
-    <Reveal delay={delay} className={`group relative min-h-[26rem] overflow-hidden rounded-[2rem] ${className}`}>
+    <Reveal delay={delay} className={`group relative min-h-104 overflow-hidden rounded-4xl ${className}`}>
       <img
         src={image}
         alt=""
@@ -429,7 +429,7 @@ function ImageCard({ image, className = '', delay = 0, children }) {
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
       />
       <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-black/0" />
-      <div className="relative flex h-full min-h-[26rem] flex-col justify-end p-8 text-white sm:p-10">{children}</div>
+      <div className="relative flex h-full min-h-104 flex-col justify-end p-8 text-white sm:p-10">{children}</div>
     </Reveal>
   )
 }
