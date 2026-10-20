@@ -8,7 +8,7 @@ const PHOTO_BUCKET = 'listing-photos'
 const LISTING_FIELDS =
   'id, host_id, title, description, city, address, property_type, bedrooms, max_guests, price_per_night, photos, status, created_at'
 
-export async function fetchListings({ city, guests, limit } = {}) {
+export async function fetchListings({ city, guests, type, limit } = {}) {
   let query = supabase
     .from('listings')
     .select(LISTING_FIELDS)
@@ -17,6 +17,7 @@ export async function fetchListings({ city, guests, limit } = {}) {
 
   if (city) query = query.ilike('city', `%${city.trim()}%`)
   if (guests) query = query.gte('max_guests', Number(guests))
+  if (type) query = query.eq('property_type', type)
   if (limit) query = query.limit(limit)
 
   const { data, error } = await query

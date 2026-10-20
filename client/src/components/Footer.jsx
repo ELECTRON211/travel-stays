@@ -29,36 +29,46 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-400">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
-        <div>
-          <Logo light />
-          <p className="mt-4 text-sm leading-relaxed">
-            Verified places to stay and local experiences, booked in one place.
-          </p>
+    <footer className="relative mt-12 overflow-hidden bg-ink text-gray-400">
+      <div className="absolute -top-40 left-1/2 h-80 w-[60rem] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-5">
+          <div className="lg:col-span-2">
+            <Logo light />
+            <p className="mt-6 max-w-sm font-display text-3xl leading-snug text-white">
+              Wherever you're headed, <em className="text-emerald-400">feel at home.</em>
+            </p>
+          </div>
+
+          {columns.map((column) => (
+            <div key={column.title}>
+              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-white">{column.title}</h3>
+              <ul className="mt-5 space-y-3">
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    <Link to={link.to} className="text-sm transition-colors hover:text-emerald-400">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        {columns.map((column) => (
-          <div key={column.title}>
-            <h3 className="text-sm font-semibold text-white">{column.title}</h3>
-            <ul className="mt-4 space-y-3">
-              {column.links.map((link) => (
-                <li key={link.label}>
-                  <Link to={link.to} className="text-sm hover:text-white">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        <div className="mt-16 flex flex-col gap-2 border-t border-white/10 py-8 text-xs sm:flex-row sm:justify-between">
+          <p>© {new Date().getFullYear()} Travel &amp; Stays. All rights reserved.</p>
+          <p>Built for travellers across Nigeria.</p>
+        </div>
       </div>
 
-      <div className="border-t border-gray-800">
-        <p className="mx-auto max-w-7xl px-4 py-6 text-xs sm:px-6 lg:px-8">
-          © {new Date().getFullYear()} Travel &amp; Stays. All rights reserved.
-        </p>
-      </div>
+      <p
+        aria-hidden="true"
+        className="pointer-events-none -mb-[3vw] select-none whitespace-nowrap text-center font-display text-[15vw] leading-none text-white/[0.04]"
+      >
+        Travel &amp; Stays
+      </p>
     </footer>
   )
 }

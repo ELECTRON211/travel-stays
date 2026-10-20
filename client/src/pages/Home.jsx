@@ -1,134 +1,492 @@
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Compass, CreditCard, ShieldCheck } from 'lucide-react'
+import { motion, useScroll, useTransform } from 'motion/react'
+import {
+  ArrowRight,
+  ArrowUpRight,
+  CalendarCheck,
+  Compass,
+  CreditCard,
+  MapPin,
+  Search,
+  ShieldCheck,
+  Sparkles,
+} from 'lucide-react'
 import SearchBar from '../components/SearchBar'
+import Reveal from '../components/Reveal'
 import { ListingGrid } from '../components/ListingCard'
 import { useListings } from '../hooks/useListings'
 import { useAuth } from '../context/AuthContext'
+import { PROPERTY_TYPES } from '../lib/constants'
+import { images, propertyTypeImages } from '../lib/images'
+import { ease, fadeUp, stagger } from '../lib/motion'
 
-const popularCities = ['Lagos', 'Abuja', 'Calabar', 'Port Harcourt', 'Ibadan']
+const cities = ['Lagos', 'Abuja', 'Calabar', 'Port Harcourt', 'Ibadan', 'Enugu', 'Uyo', 'Benin City', 'Jos', 'Kano']
 
-const features = [
-  {
-    icon: ShieldCheck,
-    title: 'Verified hosts',
-    text: 'Every host and guide is ID-verified before their listing goes live.',
-  },
-  {
-    icon: CreditCard,
-    title: 'Secure payments',
-    text: 'Pay safely online. Hosts are paid only after you check in.',
-  },
-  {
-    icon: Compass,
-    title: 'Stays and tours together',
-    text: 'Book a place to stay and things to do at your destination in one trip.',
-  },
+const typeBlurbs = {
+  apartment: 'City living, your way',
+  guesthouse: 'Warm, local hospitality',
+  hotel_room: 'Comfort with service',
+  house: 'Room for everyone',
+}
+
+const steps = [
+  { icon: Search, title: 'Search', text: 'Pick a city, your dates and how many guests are coming.' },
+  { icon: CalendarCheck, title: 'Book', text: 'Choose a verified stay and pay securely in naira.' },
+  { icon: Compass, title: 'Explore', text: 'Check in, settle down and add local tours to your trip.' },
 ]
 
-export default function Home() {
-  const { user } = useAuth()
-  const { listings, loading, error } = useListings({ limit: 8 })
+function SectionHeading({ eyebrow, title, accent, children }) {
+  return (
+    <Reveal>
+      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-700">{eyebrow}</p>
+      <h2 className="mt-3 font-display text-4xl font-medium tracking-tight text-ink sm:text-5xl">
+        {title} <em className="text-emerald-700">{accent}</em>
+      </h2>
+      {children && <p className="mt-4 max-w-xl text-gray-500">{children}</p>}
+    </Reveal>
+  )
+}
+
+function FloatingBadge({ icon: Icon, title, text, className, delay, drift = 12 }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ delay, duration: 0.8, ease }}
+      className={`absolute hidden xl:block ${className}`}
+    >
+      <motion.div
+        animate={{ y: [0, -drift, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 p-3 pr-5 text-white shadow-2xl backdrop-blur-xl"
+      >
+        <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/20">
+          <Icon className="h-5 w-5" />
+        </span>
+        <span>
+          <span className="block text-sm font-semibold">{title}</span>
+          <span className="block text-xs text-white/70">{text}</span>
+        </span>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+// Headline words slide up from behind a mask, one after another.
+function RevealWord({ children, delay, className = '' }) {
+  return (
+    <span className="mr-[0.22em] inline-block overflow-hidden pb-[0.12em] align-bottom">
+      <motion.span
+        className={`inline-block ${className}`}
+        initial={{ y: '110%' }}
+        animate={{ y: 0 }}
+        transition={{ delay, duration: 0.9, ease }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  )
+}
+
+function Hero() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
+  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '35%'])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
   return (
-    <>
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-linear-to-br from-emerald-700 via-emerald-600 to-teal-500">
-        <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-32 -left-16 h-96 w-96 rounded-full bg-teal-300/20 blur-3xl" />
+    <section
+      ref={ref}
+      className="relative flex min-h-[100svh] items-end overflow-hidden rounded-b-[2.5rem] bg-ink pb-14 pt-32 sm:pb-20"
+    >
+      <motion.div style={{ y: imageY }} className="absolute inset-0">
+        <motion.img
+          src={images.hero}
+          alt=""
+          initial={{ scale: 1.25 }}
+          animate={{ scale: 1.05 }}
+          transition={{ duration: 2.8, ease }}
+          className="h-full w-full object-cover"
+        />
+      </motion.div>
+      <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/10 to-black/80" />
+      <div className="absolute inset-0 bg-linear-to-r from-black/50 via-black/10 to-transparent" />
 
-        <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 md:pt-24 lg:px-8">
-          <div className="max-w-2xl">
-            <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-50">
-              Stays · Tours · Experiences
-            </span>
-            <h1 className="mt-5 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
-              Find verified places to stay, wherever you travel.
-            </h1>
-            <p className="mt-4 text-lg text-emerald-50/90">
-              Discover trusted apartments, guesthouses and local tours across Nigeria, booked in one place.
-            </p>
-          </div>
+      <FloatingBadge
+        icon={ShieldCheck}
+        title="ID-verified hosts"
+        text="Every listing is checked"
+        className="right-[7%] top-[20%]"
+        delay={1.5}
+      />
+      <FloatingBadge
+        icon={CreditCard}
+        title="Secure payments"
+        text="Paid in naira, held safely"
+        className="right-[16%] top-[33%]"
+        delay={1.7}
+        drift={-10}
+      />
 
-          <div className="mt-10">
-            <SearchBar />
-          </div>
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity }}
+        className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8"
+      >
+        <motion.span
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.6, ease }}
+          className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-white backdrop-blur-md"
+        >
+          <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Stays · Tours · Experiences
+        </motion.span>
 
-          <div className="mt-6 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-emerald-50/80">Popular:</span>
-            {popularCities.map((city) => (
+        <h1 className="mt-6 max-w-4xl font-display text-5xl font-medium leading-[1.02] tracking-tight text-white sm:text-7xl lg:text-8xl">
+          <RevealWord delay={0.45}>Stay</RevealWord>
+          <RevealWord delay={0.57}>somewhere</RevealWord>
+          <RevealWord delay={0.69} className="italic text-emerald-300">
+            unforgettable.
+          </RevealWord>
+        </h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.95, duration: 0.8, ease }}
+          className="mt-6 max-w-xl text-lg leading-relaxed text-white/80"
+        >
+          Handpicked apartments, guesthouses and homes across Nigeria from verified hosts, with local tours
+          to match, all in one place.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1, duration: 0.9, ease }}
+          className="mt-10 max-w-5xl"
+        >
+          <SearchBar variant="hero" />
+        </motion.div>
+
+        <motion.div
+          variants={stagger(0.06, 1.35)}
+          initial="hidden"
+          animate="show"
+          className="mt-6 flex flex-wrap items-center gap-2"
+        >
+          <motion.span variants={fadeUp} className="mr-1 text-sm text-white/70">
+            Popular:
+          </motion.span>
+          {cities.slice(0, 5).map((city) => (
+            <motion.div key={city} variants={fadeUp}>
               <Link
-                key={city}
                 to={`/stays?city=${encodeURIComponent(city)}`}
-                className="rounded-full border border-white/30 px-3 py-1 text-sm text-white transition hover:bg-white/15"
+                className="block rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-sm text-white backdrop-blur-md transition hover:border-white/60 hover:bg-white/20"
               >
                 {city}
               </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
+
+function CityMarquee() {
+  return (
+    <div className="relative overflow-hidden py-12 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
+      <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+        {[0, 1].map((copy) => (
+          <div key={copy} className="flex shrink-0 items-center" aria-hidden={copy === 1}>
+            {cities.map((city) => (
+              <Link
+                key={city}
+                to={`/stays?city=${encodeURIComponent(city)}`}
+                tabIndex={copy === 1 ? -1 : undefined}
+                className="flex items-center font-display text-3xl text-gray-300 transition-colors duration-300 hover:text-emerald-700 sm:text-5xl"
+              >
+                <span className="px-6 sm:px-8">{city}</span>
+                <span className="text-lg text-emerald-500 sm:text-2xl">✦</span>
+              </Link>
             ))}
           </div>
-        </div>
-      </section>
+        ))}
+      </div>
+    </div>
+  )
+}
 
-      {/* Latest stays */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">Latest stays</h2>
-            <p className="mt-1 text-gray-500">Newly listed places from our hosts</p>
-          </div>
+function StayTypes() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <SectionHeading eyebrow="Find your style" title="Every kind of" accent="stay.">
+        From a studio in the city to a whole house for the family.
+      </SectionHeading>
+
+      <motion.div
+        variants={stagger(0.1)}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: '-80px' }}
+        className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4"
+      >
+        {PROPERTY_TYPES.map((type) => (
+          <motion.div key={type.value} variants={fadeUp}>
+            <Link to={`/stays?type=${type.value}`} className="group relative block aspect-3/4 overflow-hidden rounded-3xl">
+              <img
+                src={propertyTypeImages[type.value]}
+                alt=""
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4 sm:p-5">
+                <span>
+                  <span className="block font-display text-xl text-white sm:text-2xl">{type.label}</span>
+                  <span className="hidden text-sm text-white/70 sm:block">{typeBlurbs[type.value]}</span>
+                </span>
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition-all duration-500 group-hover:rotate-45 group-hover:bg-white group-hover:text-ink">
+                  <ArrowUpRight className="h-5 w-5" />
+                </span>
+              </div>
+            </Link>
+          </motion.div>
+        ))}
+      </motion.div>
+    </section>
+  )
+}
+
+function LatestStays() {
+  const { listings, loading, error } = useListings({ limit: 8 })
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mb-12 flex items-end justify-between gap-4">
+        <SectionHeading eyebrow="Just listed" title="Fresh places to" accent="stay." />
+        <Reveal>
           <Link
             to="/stays"
-            className="hidden items-center gap-1 text-sm font-semibold text-emerald-700 hover:text-emerald-800 sm:flex"
+            className="group hidden items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink shadow-sm ring-1 ring-black/5 transition hover:shadow-md sm:flex"
           >
-            View all <ArrowRight className="h-4 w-4" />
+            View all
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
-        </div>
+        </Reveal>
+      </div>
 
-        <ListingGrid listings={listings} loading={loading} error={error} skeletons={4} />
+      <ListingGrid listings={listings} loading={loading} error={error} skeletons={4} />
 
-        {!loading && !error && listings.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-gray-300 p-10 text-center text-gray-500">
-            No stays listed yet. Be the first host!
-          </p>
-        )}
-      </section>
+      {!loading && !error && listings.length === 0 && (
+        <p className="rounded-3xl border border-dashed border-gray-300 p-12 text-center text-gray-500">
+          No stays listed yet. Be the first host!
+        </p>
+      )}
+    </section>
+  )
+}
 
-      {/* Why us */}
-      <section className="bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h2 className="text-center text-2xl font-bold tracking-tight text-gray-900">
-            Why travel with Travel &amp; Stays
-          </h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {features.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="rounded-2xl border border-gray-200 bg-white p-6">
-                <span className="grid h-12 w-12 place-items-center rounded-xl bg-emerald-50 text-emerald-600">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <h3 className="mt-4 font-semibold text-gray-900">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-500">{text}</p>
-              </div>
+function FeaturedCity() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const imageY = useTransform(scrollYProgress, [0, 1], ['-12%', '12%'])
+
+  return (
+    <section ref={ref} className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <Reveal className="relative aspect-4/3 overflow-hidden rounded-[2rem] lg:aspect-4/5">
+          <motion.img
+            src={images.lagos}
+            alt="Aerial view of Lagos"
+            loading="lazy"
+            style={{ y: imageY, scale: 1.25 }}
+            className="h-full w-full object-cover"
+          />
+          <span className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-ink backdrop-blur-md">
+            <MapPin className="h-4 w-4 text-emerald-600" /> Lagos, Nigeria
+          </span>
+        </Reveal>
+
+        <div>
+          <Reveal>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-700">Destination spotlight</p>
+            <h2 className="mt-3 font-display text-6xl font-medium tracking-tight text-ink sm:text-8xl">Lagos</h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-gray-600">
+              From the beaches of Lekki to the galleries and restaurants of Victoria Island, Lagos never slows
+              down. Find a stay close to the action, or a quiet retreat from it.
+            </p>
+          </Reveal>
+          <Reveal delay={0.2} className="mt-8 flex flex-wrap gap-2">
+            {['Beaches', 'Nightlife', 'Art & culture', 'Business hub'].map((tag) => (
+              <span key={tag} className="rounded-full bg-white px-4 py-2 text-sm text-gray-700 ring-1 ring-black/5">
+                {tag}
+              </span>
             ))}
-          </div>
+          </Reveal>
+          <Reveal delay={0.3} className="mt-10">
+            <Link
+              to="/stays?city=Lagos"
+              className="group inline-flex items-center gap-3 rounded-full bg-ink py-3 pl-6 pr-3 font-semibold text-white transition hover:bg-emerald-900"
+            >
+              Explore stays in Lagos
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-white/15 transition-transform duration-500 group-hover:rotate-45">
+                <ArrowUpRight className="h-4 w-4" />
+              </span>
+            </Link>
+          </Reveal>
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
 
-      {/* Host call-to-action */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-gray-900 p-8 md:flex-row md:items-center md:p-12">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Have a space or run tours?</h2>
-            <p className="mt-2 max-w-xl text-gray-400">
-              List your apartment, guesthouse or experience and reach travellers already planning their trip.
+function HowItWorks() {
+  return (
+    <section className="py-16">
+      <div className="mx-auto max-w-7xl rounded-[2.5rem] bg-white px-6 py-20 shadow-sm ring-1 ring-black/5 sm:px-12">
+        <div className="text-center">
+          <SectionHeading eyebrow="How it works" title="Booked in three" accent="easy steps." />
+        </div>
+
+        <div className="relative mt-16 grid gap-12 md:grid-cols-3">
+          <motion.div
+            className="absolute left-[16%] right-[16%] top-8 hidden h-px origin-left bg-linear-to-r from-emerald-200 via-emerald-500 to-emerald-200 md:block"
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 1.4, ease, delay: 0.2 }}
+          />
+          {steps.map(({ icon: Icon, title, text }, i) => (
+            <Reveal key={title} delay={0.15 * i} className="relative text-center">
+              <span className="relative mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-linear-to-br from-emerald-500 to-teal-600 text-white shadow-xl shadow-emerald-600/30">
+                <Icon className="h-7 w-7" />
+              </span>
+              <p className="mt-6 font-display text-sm italic text-emerald-700">Step 0{i + 1}</p>
+              <h3 className="mt-1 text-xl font-semibold text-ink">{title}</h3>
+              <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-gray-500">{text}</p>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function WhyUs() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <SectionHeading eyebrow="Why Travel & Stays" title="Travel with" accent="peace of mind." />
+
+      <div className="mt-12 grid gap-4 md:grid-cols-3 md:grid-rows-2">
+        <Reveal className="relative overflow-hidden rounded-[2rem] bg-ink p-10 text-white md:row-span-2">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/30 blur-3xl" />
+          <div className="relative flex h-full flex-col">
+            <ShieldCheck className="h-10 w-10 text-emerald-400" strokeWidth={1.5} />
+            <h3 className="mt-auto pt-24 font-display text-4xl leading-tight">
+              Every host is <em className="text-emerald-400">verified.</em>
+            </h3>
+            <p className="mt-4 text-white/70">
+              Hosts and tour guides upload ID and property documents, and our team reviews them before a
+              single listing goes live.
             </p>
           </div>
+        </Reveal>
+        <Reveal delay={0.1} className="rounded-[2rem] bg-emerald-100/70 p-10 md:col-span-2">
+          <CreditCard className="h-9 w-9 text-emerald-700" strokeWidth={1.5} />
+          <h3 className="mt-6 font-display text-3xl text-ink">Your money is protected</h3>
+          <p className="mt-3 max-w-lg text-gray-600">
+            Pay by card, bank transfer or USSD. We hold the payment and only release it to the host after you
+            check in.
+          </p>
+        </Reveal>
+        <Reveal delay={0.2} className="rounded-[2rem] bg-amber-100/70 p-10">
+          <Sparkles className="h-9 w-9 text-amber-700" strokeWidth={1.5} />
+          <h3 className="mt-6 font-display text-2xl text-ink">Stays and tours together</h3>
+          <p className="mt-3 text-gray-600">Plan your bed and your adventures in one trip.</p>
+        </Reveal>
+        <Reveal delay={0.3} className="rounded-[2rem] bg-white p-10 ring-1 ring-black/5">
+          <MapPin className="h-9 w-9 text-emerald-700" strokeWidth={1.5} />
+          <h3 className="mt-6 font-display text-2xl text-ink">Local knowledge</h3>
+          <p className="mt-3 text-gray-600">Hosts and guides who know their city inside out.</p>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function ImageCard({ image, className = '', delay = 0, children }) {
+  return (
+    <Reveal delay={delay} className={`group relative min-h-[26rem] overflow-hidden rounded-[2rem] ${className}`}>
+      <img
+        src={image}
+        alt=""
+        loading="lazy"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-black/0" />
+      <div className="relative flex h-full min-h-[26rem] flex-col justify-end p-8 text-white sm:p-10">{children}</div>
+    </Reveal>
+  )
+}
+
+function CallsToAction({ isHost }) {
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="grid gap-4 lg:grid-cols-5">
+        <ImageCard image={images.host} className="lg:col-span-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-300">For hosts</p>
+          <h2 className="mt-3 max-w-md font-display text-4xl leading-tight sm:text-5xl">
+            Have a space? <em className="text-emerald-300">Earn from it.</em>
+          </h2>
+          <p className="mt-4 max-w-md text-white/75">
+            List your apartment, guesthouse or home and reach travellers already planning their trip.
+          </p>
           <Link
-            to={user?.role === 'host' ? '/host/listings/new' : '/signup?role=host'}
-            className="flex shrink-0 items-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 font-semibold text-white hover:bg-emerald-600"
+            to={isHost ? '/host/listings/new' : '/signup?role=host'}
+            className="mt-8 inline-flex w-fit items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-ink transition hover:bg-emerald-50"
           >
-            {user?.role === 'host' ? 'List a new place' : 'Become a host'} <ArrowRight className="h-4 w-4" />
+            {isHost ? 'List a new place' : 'Become a host'} <ArrowRight className="h-4 w-4" />
           </Link>
-        </div>
-      </section>
+        </ImageCard>
+
+        <ImageCard image={images.tours} className="lg:col-span-2" delay={0.1}>
+          <span className="w-fit rounded-full bg-amber-400 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-950">
+            Coming soon
+          </span>
+          <h2 className="mt-4 font-display text-4xl leading-tight">Tours &amp; experiences</h2>
+          <p className="mt-4 text-white/75">
+            Food tours, hikes and cultural days, bookable right alongside your stay.
+          </p>
+          <Link
+            to="/signup?role=guide"
+            className="mt-8 inline-flex w-fit items-center gap-2 rounded-full border border-white/40 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+          >
+            Become a guide <ArrowRight className="h-4 w-4" />
+          </Link>
+        </ImageCard>
+      </div>
+    </section>
+  )
+}
+
+export default function Home() {
+  const { user } = useAuth()
+
+  return (
+    <>
+      <Hero />
+      <CityMarquee />
+      <StayTypes />
+      <LatestStays />
+      <FeaturedCity />
+      <HowItWorks />
+      <WhyUs />
+      <CallsToAction isHost={user?.role === 'host'} />
     </>
   )
 }

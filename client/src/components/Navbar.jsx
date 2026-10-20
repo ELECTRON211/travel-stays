@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { initials } from '../lib/format'
+import { ease } from '../lib/motion'
 import Logo from './Logo'
 
 // Hosts get their hosting pages; logged-out visitors are invited to host.
@@ -21,89 +23,142 @@ function linksFor(user) {
   ]
 }
 
-const roleLabels = { traveler: 'Traveler', host: 'Host', guide: 'Guide' }
+const roleLabels = { traveler: 'Traveler', host: 'Host', guide: 'Guide', admin: 'Admin' }
 
-function navClass({ isActive }) {
-  return `text-sm font-medium transition-colors ${
-    isActive ? 'text-emerald-700' : 'text-gray-600 hover:text-gray-900'
-  }`
-}
-
-export default function Navbar() {
+// `overlay` = the navbar sits on top of a hero photo (home page). It stays
+// transparent with white text until the visitor scrolls.
+export default function Navbar({ overlay = false }) {
   const { user, loading, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const { scrollY } = useScroll()
+  useMotionValueEvent(scrollY, 'change', (y) => setScrolled(y > 24))
+
   const links = linksFor(user)
+  const light = overlay && !scrolled && !mobileOpen
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur">
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo />
+    <motion.header
+      initial={{ y: -24, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease }}
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 ${
+        light ? 'border-b border-transparent bg-transparent' : 'border-b border-black/5 bg-white/75 backdrop-blur-xl'
+      }`}
+    >
+      <nav
+        className={`mx-auto flex max-w-7xl items-center justify-between px-4 transition-[height] duration-500 sm:px-6 lg:px-8 ${
+          scrolled ? 'h-16' : 'h-20'
+        }`}
+      >
+        <Logo light={light} />
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-1 md:flex">
           {links.map((link) => (
-            <NavLink key={link.to} to={link.to} className={navClass} end>
-              {link.label}
+            <NavLink key={link.to} to={link.to} end className="relative rounded-full px-4 py-2 text-sm font-medium">
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className={`absolute inset-0 rounded-full ${light ? 'bg-white/15' : 'bg-emerald-50'}`}
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span
+                    className={`relative transition-colors ${
+                      isActive
+                        ? light
+                          ? 'text-white'
+                          : 'text-emerald-800'
+                        : light
+                          ? 'text-white/80 hover:text-white'
+                          : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    {link.label}
+                  </span>
+                </>
+              )}
             </NavLink>
           ))}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-2 md:flex">
           {loading ? null : user ? (
             <div className="relative">
-              <button
+              <motion.button
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="flex items-center gap-3 rounded-full border border-gray-200 py-1 pl-3 pr-1 transition hover:shadow-md"
+                className={`flex items-center gap-3 rounded-full py-1 pl-4 pr-1 transition ${
+                  light ? 'bg-white/15 text-white backdrop-blur-md hover:bg-white/25' : 'bg-white text-gray-700 ring-1 ring-black/10 hover:shadow-md'
+                }`}
               >
-                <span className="text-sm font-medium text-gray-700">
-                  {user.fullName.split(' ')[0] || 'Account'}
-                </span>
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-emerald-600 text-xs font-semibold text-white">
+                <span className="text-sm font-medium">{user.fullName.split(' ')[0] || 'Account'}</span>
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-linear-to-br from-emerald-500 to-teal-600 text-xs font-semibold text-white">
                   {initials(user.fullName)}
                 </span>
-              </button>
+              </motion.button>
 
-              {menuOpen && (
-                <>
-                  <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                  <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
-                    <div className="border-b border-gray-100 px-4 py-3">
-                      <p className="truncate text-sm font-semibold text-gray-900">{user.fullName}</p>
-                      <p className="truncate text-xs text-gray-500">{user.email}</p>
-                      <span className="mt-2 inline-block rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
-                        {roleLabels[user.role] ?? user.role}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setMenuOpen(false)
-                        signOut()
-                      }}
-                      className="flex w-full items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50"
+              <AnimatePresence>
+                {menuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95, y: -8 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                      transition={{ duration: 0.2, ease }}
+                      className="absolute right-0 z-20 mt-3 w-72 origin-top-right overflow-hidden rounded-2xl bg-white shadow-2xl shadow-black/10 ring-1 ring-black/5"
                     >
-                      <LogOut className="h-4 w-4" /> Log out
-                    </button>
-                  </div>
-                </>
-              )}
+                      <div className="border-b border-gray-100 px-5 py-4">
+                        <p className="truncate font-semibold text-gray-900">{user.fullName}</p>
+                        <p className="truncate text-sm text-gray-500">{user.email}</p>
+                        <span className="mt-3 inline-block rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                          {roleLabels[user.role] ?? user.role}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setMenuOpen(false)
+                          signOut()
+                        }}
+                        className="flex w-full items-center gap-2 px-5 py-3.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                      >
+                        <LogOut className="h-4 w-4" /> Log out
+                      </button>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
             <>
-              <Link to="/login" className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+              <Link
+                to="/login"
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  light ? 'text-white hover:bg-white/15' : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
                 Log in
               </Link>
-              <Link
-                to="/signup"
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
-              >
-                Sign up
-              </Link>
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                <Link
+                  to="/signup"
+                  className={`block rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg transition-colors ${
+                    light ? 'bg-white text-ink shadow-black/20' : 'bg-ink text-white shadow-black/10 hover:bg-emerald-900'
+                  }`}
+                >
+                  Sign up
+                </Link>
+              </motion.div>
             </>
           )}
         </div>
 
         <button
-          className="rounded-lg p-2 text-gray-700 hover:bg-gray-100 md:hidden"
+          className={`rounded-full p-2 transition md:hidden ${light ? 'text-white hover:bg-white/15' : 'text-gray-700 hover:bg-gray-100'}`}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -111,54 +166,78 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {mobileOpen && (
-        <div className="border-t border-gray-200 bg-white px-4 py-4 md:hidden">
-          <div className="flex flex-col gap-4">
-            {links.map((link) => (
-              <NavLink key={link.to} to={link.to} className={navClass} onClick={() => setMobileOpen(false)} end>
-                {link.label}
-              </NavLink>
-            ))}
-            <hr className="border-gray-100" />
-            {user ? (
-              <>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{user.fullName}</p>
-                  <p className="text-xs text-gray-500">
-                    {user.email} · {roleLabels[user.role] ?? user.role}
-                  </p>
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease }}
+            className="overflow-hidden border-t border-black/5 bg-white md:hidden"
+          >
+            <div className="flex flex-col gap-1 px-4 py-4">
+              {links.map((link, i) => (
+                <motion.div
+                  key={link.to}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.05 * i + 0.1 }}
+                >
+                  <NavLink
+                    to={link.to}
+                    end
+                    onClick={() => setMobileOpen(false)}
+                    className={({ isActive }) =>
+                      `block rounded-xl px-3 py-3 text-base font-medium ${
+                        isActive ? 'bg-emerald-50 text-emerald-800' : 'text-gray-700'
+                      }`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                </motion.div>
+              ))}
+              <hr className="my-2 border-gray-100" />
+              {user ? (
+                <>
+                  <div className="px-3 py-2">
+                    <p className="font-semibold text-gray-900">{user.fullName}</p>
+                    <p className="text-sm text-gray-500">
+                      {user.email} · {roleLabels[user.role] ?? user.role}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false)
+                      signOut()
+                    }}
+                    className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium text-gray-700"
+                  >
+                    <LogOut className="h-4 w-4" /> Log out
+                  </button>
+                </>
+              ) : (
+                <div className="flex gap-3 pt-1">
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 rounded-full py-3 text-center text-sm font-semibold text-gray-700 ring-1 ring-gray-300"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 rounded-full bg-ink py-3 text-center text-sm font-semibold text-white"
+                  >
+                    Sign up
+                  </Link>
                 </div>
-                <button
-                  onClick={() => {
-                    setMobileOpen(false)
-                    signOut()
-                  }}
-                  className="flex items-center gap-2 text-sm font-medium text-gray-700"
-                >
-                  <LogOut className="h-4 w-4" /> Log out
-                </button>
-              </>
-            ) : (
-              <div className="flex gap-3">
-                <Link
-                  to="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex-1 rounded-lg border border-gray-300 py-2 text-center text-sm font-medium text-gray-700"
-                >
-                  Log in
-                </Link>
-                <Link
-                  to="/signup"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex-1 rounded-lg bg-emerald-600 py-2 text-center text-sm font-semibold text-white"
-                >
-                  Sign up
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </header>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   )
 }
