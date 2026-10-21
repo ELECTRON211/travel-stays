@@ -32,6 +32,7 @@ import { propertyLabel } from '../lib/constants'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import { ListingCover, TrustBadges } from '../components/ListingCard'
 import { Alert } from '../components/AuthShell'
+import TypeWriter from '../components/TypeWriter'
 
 const VIEW_KEY = 'host-listings-view'
 
@@ -415,7 +416,7 @@ function EmptyState() {
       </div>
 
       <h2 className="mt-8 font-display text-3xl tracking-tight text-stone-900">
-        Your first guests are <em className="text-emerald-800">waiting.</em>
+        Your first guests are <em className="text-emerald-800"><TypeWriter text="waiting." /></em>
       </h2>
       <p className="mx-auto mt-3 max-w-md text-stone-500">
         You haven't listed a place yet. It only takes a few minutes, and you can pause or edit it any time.
@@ -539,7 +540,7 @@ export default function MyListings() {
             Host dashboard
           </motion.p>
           <motion.h1 variants={fadeUp} className="mt-2 font-display text-5xl font-medium tracking-tight text-stone-900">
-            My <em className="text-emerald-800">listings.</em>
+            My <em className="text-emerald-800"><TypeWriter text="listings." /></em>
           </motion.h1>
           <motion.p variants={fadeUp} className="mt-2 text-stone-500">
             {firstName ? `Welcome back, ${firstName}. ` : ''}Manage your places, availability and earnings in one place.

@@ -3,10 +3,11 @@ import { ShieldCheck } from 'lucide-react'
 import { images } from '../lib/images'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import Logo from './Logo'
+import TypeWriter from './TypeWriter'
 
 const DEFAULT_QUOTE = (
   <>
-    Every host and tour guide is <em className="text-emerald-300">verified</em> before they can list.
+    Every host and tour guide is <em className="text-emerald-300"><TypeWriter text="verified" /></em> before they can list.
   </>
 )
 
@@ -31,7 +32,7 @@ export default function AuthShell({
           className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-12"
         >
           <motion.h1 variants={fadeUp} className="font-display text-4xl font-medium tracking-tight text-ink sm:text-5xl">
-            {title}
+            <TypeWriter text={title} />
           </motion.h1>
           <motion.p variants={fadeUp} className="mt-3 text-stone-500">
             {subtitle}

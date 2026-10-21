@@ -3,6 +3,7 @@ import { CreditCard, Lock, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
 import { SUPPORT_EMAIL } from './InfoPage'
+import TypeWriter from './TypeWriter'
 
 const explore = {
   title: 'Explore',
@@ -68,7 +69,7 @@ export default function Footer() {
           <div className="sm:col-span-2">
             <Logo light />
             <p className="mt-6 max-w-sm font-display text-3xl leading-snug text-white">
-              Wherever you're headed, <em className="text-emerald-400">feel at home.</em>
+              Wherever you're headed, <em className="text-emerald-400"><TypeWriter text="feel at home." /></em>
             </p>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}

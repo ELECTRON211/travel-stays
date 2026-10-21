@@ -7,6 +7,7 @@ import { useAsync } from '../hooks/useAsync'
 import { fetchSavedListings } from '../lib/saved'
 import { fadeUp, stagger } from '../lib/motion'
 import { ListingGrid } from '../components/ListingCard'
+import TypeWriter from '../components/TypeWriter'
 
 export default function Saved() {
   const { user } = useAuth()
@@ -21,7 +22,7 @@ export default function Saved() {
           Wishlist
         </motion.p>
         <motion.h1 variants={fadeUp} className="mt-2 font-display text-5xl font-medium tracking-tight text-stone-900">
-          Saved <em className="text-emerald-800">stays.</em>
+          Saved <em className="text-emerald-800"><TypeWriter text="stays." /></em>
         </motion.h1>
         <motion.p variants={fadeUp} className="mt-2 text-stone-500">
           Places you've hearted, ready for when you're ready to book.

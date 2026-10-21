@@ -8,6 +8,7 @@ import { useToast } from '../context/ToastContext'
 import { AMENITIES, CANCELLATION_POLICIES, HOUSE_RULES, PROPERTY_TYPES } from '../lib/constants'
 import { formatTime } from '../lib/dates'
 import { Alert } from '../components/AuthShell'
+import TypeWriter from '../components/TypeWriter'
 
 const MAX_PHOTOS = 8
 const MAX_PHOTO_MB = 5
@@ -209,7 +210,7 @@ export default function NewListing({ existing = null }) {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-display text-5xl font-medium tracking-tight text-ink">
-        {editing ? 'Edit your' : 'List your'} <em className="text-emerald-700">{editing ? 'listing.' : 'place.'}</em>
+        {editing ? 'Edit your' : 'List your'} <em className="text-emerald-700"><TypeWriter text={editing ? 'listing.' : 'place.'} /></em>
       </h1>
       <p className="mt-2 text-stone-500">
         {editing

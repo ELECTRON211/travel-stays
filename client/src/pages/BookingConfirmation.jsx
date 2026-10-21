@@ -11,6 +11,7 @@ import { ease, fadeUp, stagger } from '../lib/motion'
 import { ListingCover } from '../components/ListingCard'
 import { Alert } from '../components/AuthShell'
 import NotFound from './NotFound'
+import TypeWriter from '../components/TypeWriter'
 
 // A check mark that draws itself, with a small burst of dots around it.
 function ConfirmedMark() {
@@ -82,7 +83,7 @@ function statusContent(booking) {
         mark: <ConfirmedMark />,
         title: (
           <>
-            You're going to <em className="text-emerald-800">{city}!</em>
+            You're going to <em className="text-emerald-800"><TypeWriter text={`${city}!`} /></em>
           </>
         ),
         text: 'Your stay is confirmed and these dates are now yours.',
@@ -92,7 +93,7 @@ function statusContent(booking) {
         mark: <StatusIcon icon={Hourglass} tone="bg-amber-100 text-amber-700" />,
         title: (
           <>
-            Request <em className="text-emerald-800">sent.</em>
+            Request <em className="text-emerald-800"><TypeWriter text="sent." /></em>
           </>
         ),
         text: "The host will review your request soon. We're holding your dates until they respond.",

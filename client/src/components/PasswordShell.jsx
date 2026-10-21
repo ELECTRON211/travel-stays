@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { ArrowLeft, Check, ShieldCheck } from 'lucide-react'
 import { ease } from '../lib/motion'
 import Logo from './Logo'
+import TypeWriter from './TypeWriter'
 
 const STEPS = ['Enter email', 'Check inbox', 'New password']
 
@@ -97,7 +98,7 @@ export default function PasswordShell({ step, icon: Icon, title, subtitle, child
             <StepIndicator step={step} />
 
             <h1 className="mt-8 text-center font-display text-3xl font-medium tracking-tight text-stone-900 sm:text-4xl">
-              {title}
+              {typeof title === 'string' ? <TypeWriter text={title} /> : title}
             </h1>
             {subtitle && <p className="mt-2 text-center text-stone-500">{subtitle}</p>}
 

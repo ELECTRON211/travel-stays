@@ -16,6 +16,7 @@ import {
 import Reveal from '../components/Reveal'
 import { images } from '../lib/images'
 import { ease, fadeUp, stagger } from '../lib/motion'
+import TypeWriter from '../components/TypeWriter'
 
 const AUDIENCES = [
   {
@@ -122,7 +123,7 @@ export default function About() {
               variants={fadeUp}
               className="mt-4 font-display text-5xl font-medium leading-tight tracking-tight text-white sm:text-6xl"
             >
-              Travel that feels like <em className="text-emerald-300">home.</em>
+              Travel that feels like <em className="text-emerald-300"><TypeWriter text="home." /></em>
             </motion.h1>
             <motion.p variants={fadeUp} className="mt-5 text-lg leading-relaxed text-white/80">
               Travel &amp; Stays is a marketplace for places to stay and things to do across Nigeria — built so
@@ -137,7 +138,7 @@ export default function About() {
         <Reveal>
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-800">Why we exist</p>
           <h2 className="mt-3 font-display text-4xl tracking-tight text-stone-900 sm:text-5xl">
-            Booking a trip shouldn't feel like a <em className="text-emerald-800">gamble.</em>
+            Booking a trip shouldn't feel like a <em className="text-emerald-800"><TypeWriter text="gamble." /></em>
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-stone-600">
             Too often, finding a place to stay means scrolling social media, sending money to someone you've never
@@ -152,7 +153,7 @@ export default function About() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
           <h2 className="font-display text-4xl tracking-tight text-stone-900">
-            Made for <em className="text-emerald-800">everyone</em> on the journey
+            Made for <em className="text-emerald-800"><TypeWriter text="everyone" /></em> on the journey
           </h2>
         </Reveal>
         <motion.div
@@ -204,7 +205,7 @@ export default function About() {
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-300">What makes us different</p>
             <h2 className="mt-3 max-w-2xl font-display text-4xl tracking-tight">
-              Trust is built in, <em className="text-emerald-300">not bolted on.</em>
+              Trust is built in, <em className="text-emerald-300"><TypeWriter text="not bolted on." /></em>
             </h2>
           </Reveal>
           <motion.div
@@ -230,7 +231,7 @@ export default function About() {
         <Reveal className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-800">Where we're going</p>
           <h2 className="mt-3 font-display text-4xl tracking-tight text-stone-900">
-            Just getting <em className="text-emerald-800">started.</em>
+            Just getting <em className="text-emerald-800"><TypeWriter text="started." /></em>
           </h2>
         </Reveal>
         <div className="relative mt-14 space-y-10 pl-10">
@@ -270,7 +271,7 @@ export default function About() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal className="flex flex-col items-center rounded-[2.5rem] bg-white px-6 py-16 text-center shadow-sm ring-1 ring-stone-900/5">
           <h2 className="font-display text-4xl tracking-tight text-stone-900">
-            Ready when <em className="text-emerald-800">you</em> are.
+            Ready when <em className="text-emerald-800"><TypeWriter text="you" /></em> are.
           </h2>
           <p className="mt-3 max-w-lg text-stone-600">
             Find somewhere to stay for your next trip, or start earning from your space today.

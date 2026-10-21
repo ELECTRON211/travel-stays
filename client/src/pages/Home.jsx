@@ -21,6 +21,7 @@ import { useAuth } from '../context/AuthContext'
 import { PROPERTY_TYPES } from '../lib/constants'
 import { images, propertyTypeImages } from '../lib/images'
 import { ease, fadeUp, stagger } from '../lib/motion'
+import TypeWriter, { RotatingTyper } from '../components/TypeWriter'
 
 const cities = ['Lagos', 'Abuja', 'Calabar', 'Port Harcourt', 'Ibadan', 'Enugu', 'Uyo', 'Benin City', 'Jos', 'Kano']
 
@@ -42,7 +43,7 @@ function SectionHeading({ eyebrow, title, accent, children }) {
     <Reveal>
       <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-700">{eyebrow}</p>
       <h2 className="mt-3 font-display text-4xl font-medium tracking-tight text-ink sm:text-5xl">
-        {title} <em className="text-emerald-700">{accent}</em>
+        {title} <em className="text-emerald-700"><TypeWriter text={accent} /></em>
       </h2>
       {children && <p className="mt-4 max-w-xl text-stone-500">{children}</p>}
     </Reveal>
@@ -141,9 +142,10 @@ function Hero() {
         <h1 className="max-w-4xl font-display text-5xl font-medium leading-[1.02] tracking-tight text-white sm:text-7xl 2xl:text-8xl">
           <RevealWord delay={0.45}>Stay</RevealWord>
           <RevealWord delay={0.57}>somewhere</RevealWord>
-          <RevealWord delay={0.69} className="italic text-emerald-300">
-            unforgettable.
-          </RevealWord>
+          <RotatingTyper
+            words={['unforgettable.', 'by the beach.', 'in Lagos.', 'close to home.', 'in Calabar.']}
+            className="block min-h-[1.1em] italic text-emerald-300"
+          />
         </h1>
 
         <motion.p
@@ -195,16 +197,20 @@ function Hero() {
 
 function CityMarquee() {
   return (
-    <div className="relative overflow-hidden py-12 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
+    <div className="relative overflow-hidden border-y border-stone-900/5 py-10 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
       <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
         {[0, 1].map((copy) => (
           <div key={copy} className="flex shrink-0 items-center" aria-hidden={copy === 1}>
-            {cities.map((city) => (
+            {cities.map((city, i) => (
               <Link
                 key={city}
                 to={`/stays?city=${encodeURIComponent(city)}`}
                 tabIndex={copy === 1 ? -1 : undefined}
-                className="flex items-center font-display text-3xl text-stone-300 transition-colors duration-300 hover:text-emerald-700 sm:text-5xl"
+                className={`flex items-center font-display text-3xl transition-colors duration-300 sm:text-5xl ${
+                  i % 2
+                    ? 'text-transparent [-webkit-text-stroke:1.5px_#78716c] hover:text-emerald-700 hover:[-webkit-text-stroke:1.5px_#047857]'
+                    : 'text-stone-700 hover:text-emerald-700'
+                }`}
               >
                 <span className="px-6 sm:px-8">{city}</span>
                 <span className="text-lg text-emerald-500 sm:text-2xl">✦</span>
@@ -386,7 +392,7 @@ function WhyUs() {
           <div className="relative flex h-full flex-col">
             <ShieldCheck className="h-10 w-10 text-emerald-400" strokeWidth={1.5} />
             <h3 className="mt-auto pt-24 font-display text-4xl leading-tight">
-              Every host is <em className="text-emerald-400">verified.</em>
+              Every host is <em className="text-emerald-400"><TypeWriter text="verified." /></em>
             </h3>
             <p className="mt-4 text-white/70">
               Hosts and tour guides upload ID and property documents, and our team reviews them before a
@@ -439,7 +445,7 @@ function CallsToAction({ isHost }) {
         <ImageCard image={images.host} className="lg:col-span-3">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-300">For hosts</p>
           <h2 className="mt-3 max-w-md font-display text-4xl leading-tight sm:text-5xl">
-            Have a space? <em className="text-emerald-300">Earn from it.</em>
+            Have a space? <em className="text-emerald-300"><TypeWriter text="Earn from it." /></em>
           </h2>
           <p className="mt-4 max-w-md text-white/75">
             List your apartment, guesthouse or home and reach travellers already planning their trip.

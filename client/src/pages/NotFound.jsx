@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { Compass } from 'lucide-react'
+import TypeWriter from '../components/TypeWriter'
 
 export default function NotFound() {
   return (
@@ -14,7 +15,7 @@ export default function NotFound() {
       </motion.span>
       <p className="mt-8 font-display text-8xl font-medium text-ink">404</p>
       <h1 className="mt-2 font-display text-3xl text-ink">
-        You've wandered <em className="text-emerald-700">off the map.</em>
+        You've wandered <em className="text-emerald-700"><TypeWriter text="off the map." /></em>
       </h1>
       <p className="mt-3 text-stone-500">The page you are looking for doesn't exist or has moved.</p>
       <Link

@@ -19,6 +19,7 @@ import { ListingGrid } from '../components/ListingCard'
 import { useListings } from '../hooks/useListings'
 import { DESTINATIONS, PROPERTY_TYPES, propertyLabel } from '../lib/constants'
 import { fadeUp, stagger } from '../lib/motion'
+import TypeWriter from '../components/TypeWriter'
 
 const sorters = {
   newest: () => 0, // already ordered newest-first by the query
@@ -59,11 +60,11 @@ function ComingSoon({ mode, city }) {
           <h2 className="mt-5 font-display text-4xl font-medium leading-tight tracking-tight text-stone-900">
             {tours ? (
               <>
-                Tours &amp; experiences are <em className="text-emerald-800">almost here.</em>
+                Tours &amp; experiences are <em className="text-emerald-800"><TypeWriter text="almost here." /></em>
               </>
             ) : (
               <>
-                One trip, <em className="text-emerald-800">one itinerary.</em>
+                One trip, <em className="text-emerald-800"><TypeWriter text="one itinerary." /></em>
               </>
             )}
           </h2>
@@ -239,11 +240,11 @@ export default function Stays() {
             {city ? (
               <>
                 {mode === 'stays' ? 'Stays' : mode === 'tours' ? 'Tours' : 'Trips'} in{' '}
-                <em className="text-emerald-800">{city}</em>
+                <em className="text-emerald-800"><TypeWriter text={city} /></em>
               </>
             ) : (
               <>
-                Find your next <em className="text-emerald-800">{mode === 'stays' ? 'stay.' : 'adventure.'}</em>
+                Find your next <em className="text-emerald-800"><TypeWriter text={mode === 'stays' ? 'stay.' : 'adventure.'} /></em>
               </>
             )}
           </h1>

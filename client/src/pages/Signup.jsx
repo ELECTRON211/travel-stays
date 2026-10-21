@@ -8,6 +8,7 @@ import { images } from '../lib/images'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
+import TypeWriter from '../components/TypeWriter'
 
 const roles = [
   { value: 'traveler', label: 'Traveler', text: 'Book stays and tours', icon: Luggage },
@@ -79,7 +80,7 @@ export default function Signup() {
       image={images.signup}
       quote={
         <>
-          Find a stay you'll love, or <em className="text-emerald-300">earn from your space.</em>
+          Find a stay you'll love, or <em className="text-emerald-300"><TypeWriter text="earn from your space." /></em>
         </>
       }
       quoteNote="Free to join. It takes less than a minute."

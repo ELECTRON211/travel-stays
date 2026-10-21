@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import { fadeUp, stagger } from '../lib/motion'
 import Reveal from './Reveal'
+import TypeWriter from './TypeWriter'
 
 export const SUPPORT_EMAIL = 'afolabiprosper329@gmail.com'
 
@@ -16,7 +17,7 @@ export default function InfoPage({ eyebrow, title, accent, intro, updated, child
           variants={fadeUp}
           className="mt-2 font-display text-5xl font-medium tracking-tight text-stone-900 sm:text-6xl"
         >
-          {title} {accent && <em className="text-emerald-800">{accent}</em>}
+          {title} {accent && <em className="text-emerald-800"><TypeWriter text={accent} /></em>}
         </motion.h1>
         {intro && (
           <motion.p variants={fadeUp} className="mt-4 text-lg leading-relaxed text-stone-600">

@@ -44,6 +44,24 @@ body {
   animation: var(--animate-shimmer);
 }
 
+/* Blinking cursor used by the TypeWriter component. */
+.typing-caret {
+  display: inline-block;
+  width: 0.07em;
+  height: 0.85em;
+  margin-left: 0.06em;
+  vertical-align: -0.06em;
+  border-radius: 1px;
+  background: currentColor;
+  animation: caret-blink 1s step-end infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,
   .shimmer {

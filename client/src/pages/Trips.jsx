@@ -10,6 +10,7 @@ import { formatNaira } from '../lib/format'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import { ListingCover } from '../components/ListingCard'
 import { Alert } from '../components/AuthShell'
+import TypeWriter from '../components/TypeWriter'
 
 const TABS = [
   { value: 'upcoming', label: 'Upcoming' },
@@ -139,7 +140,7 @@ export default function Trips() {
           Your travels
         </motion.p>
         <motion.h1 variants={fadeUp} className="mt-2 font-display text-5xl font-medium tracking-tight text-stone-900">
-          My <em className="text-emerald-800">trips.</em>
+          My <em className="text-emerald-800"><TypeWriter text="trips." /></em>
         </motion.h1>
         <motion.p variants={fadeUp} className="mt-2 text-stone-500">
           Every stay you've booked, all in one place.
