@@ -22,6 +22,7 @@ import { changePassword, updateProfile } from '../lib/profile'
 import { initials, maskEmail, maskPhone } from '../lib/format'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import { Alert } from '../components/AuthShell'
+import TypeWriter from '../components/TypeWriter'
 
 const ROLE_LABELS = { traveler: 'Traveler', host: 'Host', guide: 'Tour guide', admin: 'Admin' }
 const PHONE_PATTERN = /^[0-9+() -]{7,20}$/
@@ -366,7 +367,7 @@ export default function Profile() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-800">Your profile</p>
             <h1 className="mt-1 font-display text-4xl font-medium tracking-tight text-stone-900 sm:text-5xl">
-              {user.fullName || 'Welcome'}
+              <TypeWriter text={user.fullName || 'Welcome'} speed={45} />
             </h1>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
               <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-800">

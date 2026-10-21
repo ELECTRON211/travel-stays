@@ -11,7 +11,7 @@ export default function InfoPage({ eyebrow, title, accent, intro, updated, child
     <div className="mx-auto max-w-3xl px-4 pb-20 pt-8 sm:px-6">
       <motion.header variants={stagger(0.08)} initial="hidden" animate="show">
         <motion.p variants={fadeUp} className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-800">
-          {eyebrow}
+          <TypeWriter text={eyebrow} speed={35} delay={0} />
         </motion.p>
         <motion.h1
           variants={fadeUp}

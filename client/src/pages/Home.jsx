@@ -41,7 +41,9 @@ const steps = [
 function SectionHeading({ eyebrow, title, accent, children }) {
   return (
     <Reveal>
-      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-700">{eyebrow}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-700">
+        <TypeWriter text={eyebrow} speed={35} delay={0} />
+      </p>
       <h2 className="mt-3 font-display text-4xl font-medium tracking-tight text-ink sm:text-5xl">
         {title} <em className="text-emerald-700"><TypeWriter text={accent} /></em>
       </h2>

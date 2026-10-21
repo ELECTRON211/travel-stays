@@ -234,7 +234,7 @@ export default function Stays() {
         </div>
         <div className="relative">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-800">
-            {city ? 'Destination' : 'Explore'}
+            <TypeWriter text={city ? 'Destination' : 'Explore'} speed={40} delay={0} />
           </p>
           <h1 className="mt-2 font-display text-4xl font-medium tracking-tight text-stone-900 sm:text-5xl">
             {city ? (

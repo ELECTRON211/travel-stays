@@ -6,6 +6,9 @@ import DateRangePicker from './DateRangePicker'
 import { DESTINATIONS } from '../lib/constants'
 import { formatShortDate } from '../lib/dates'
 import { ease } from '../lib/motion'
+import { useTypingCycle } from '../hooks/useTypingCycle'
+
+const PLACEHOLDER_IDEAS = ['Try “Lagos”', 'Try “Calabar”', 'Try “Abuja”', 'Try “Port Harcourt”', 'Try “Enugu”']
 
 const labelClass = 'block text-[11px] font-semibold uppercase tracking-[0.15em] text-stone-500'
 
@@ -131,6 +134,7 @@ export default function SearchBar({ initial = {}, variant = 'page', mode }) {
   const [guests, setGuests] = useState({ adults: Number(initial.guests) || 0, children: 0 })
   const totalGuests = guests.adults + guests.children
   const hero = variant === 'hero'
+  const typedHint = useTypingCycle(PLACEHOLDER_IDEAS, { enabled: !city && open !== 'where', pause: 1400 })
 
   // Close the dropdown on a click outside the bar or on Escape.
   useEffect(() => {
@@ -188,7 +192,7 @@ export default function SearchBar({ initial = {}, variant = 'page', mode }) {
             <input
               ref={cityInputRef}
               className="w-full bg-transparent text-sm font-medium text-stone-900 placeholder-stone-400 outline-none"
-              placeholder="Search destinations"
+              placeholder={open === 'where' || !typedHint ? 'Search destinations' : typedHint}
               value={city}
               onFocus={() => setOpen('where')}
               onChange={(e) => {

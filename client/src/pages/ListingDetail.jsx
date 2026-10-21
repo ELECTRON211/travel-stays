@@ -16,6 +16,7 @@ import Reveal from '../components/Reveal'
 import SaveButton from '../components/SaveButton'
 import ShareButton from '../components/ShareButton'
 import NotFound from './NotFound'
+import TypeWriter from '../components/TypeWriter'
 
 function AmenitiesSection({ listing }) {
   const offered = AMENITIES.filter((a) => listing.amenities?.includes(a.value))
@@ -242,7 +243,7 @@ export default function ListingDetail() {
               variants={fadeUp}
               className="mt-3 font-display text-4xl font-medium leading-tight tracking-tight text-ink sm:text-5xl"
             >
-              {listing.title}
+              <TypeWriter text={listing.title} speed={28} />
             </motion.h1>
             <motion.div variants={fadeUp} className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-stone-500">
               <span className="flex items-center gap-1.5">

@@ -1,5 +1,6 @@
-import { motion } from 'motion/react'
-import { ShieldCheck } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
+import { Pause, Play, ShieldCheck } from 'lucide-react'
 import { images } from '../lib/images'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import Logo from './Logo'
@@ -10,6 +11,70 @@ const DEFAULT_QUOTE = (
     Every host and tour guide is <em className="text-emerald-300"><TypeWriter text="verified" /></em> before they can list.
   </>
 )
+
+// The photo is shown straight away; the video (if any) loads behind it and
+// fades in once it can play. Skipped for people who ask their device to
+// reduce motion or to save data. A pause button keeps it accessible.
+function MediaPanel({ image, video }) {
+  const reduceMotion = useReducedMotion()
+  const videoRef = useRef(null)
+  const [ready, setReady] = useState(false)
+  const [paused, setPaused] = useState(false)
+  const saveData = typeof navigator !== 'undefined' && navigator.connection?.saveData
+  const playVideo = Boolean(video) && !reduceMotion && !saveData
+
+  function togglePlayback() {
+    const el = videoRef.current
+    if (!el) return
+    if (el.paused) el.play()
+    else el.pause()
+    setPaused(el.paused)
+  }
+
+  return (
+    <>
+      <motion.img
+        key={image}
+        src={image}
+        alt=""
+        initial={{ scale: 1.2 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 2.5, ease }}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      {playVideo && (
+        <>
+          <video
+            ref={videoRef}
+            key={video}
+            src={video}
+            poster={image}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            onCanPlay={() => setReady(true)}
+            className={`absolute inset-0 h-full w-full scale-105 object-cover transition-opacity duration-[1500ms] ${
+              ready ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+          {ready && (
+            <button
+              type="button"
+              onClick={togglePlayback}
+              className="absolute right-5 top-5 z-10 grid h-10 w-10 place-items-center rounded-full bg-black/30 text-white backdrop-blur-md transition hover:bg-black/50"
+              aria-label={paused ? 'Play background video' : 'Pause background video'}
+            >
+              {paused ? <Play className="h-4 w-4" fill="currentColor" /> : <Pause className="h-4 w-4" fill="currentColor" />}
+            </button>
+          )}
+        </>
+      )}
+    </>
+  )
+}
 
 // Shared split-screen layout for the log in and sign up pages. Each page can
 // pass its own photo and quote for the right-hand panel.
