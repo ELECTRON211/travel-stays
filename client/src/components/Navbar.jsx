@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { LogOut, Luggage, Menu, UserRound, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { initials } from '../lib/format'
+import { initials, maskEmail } from '../lib/format'
 import { ease } from '../lib/motion'
 import Logo from './Logo'
 
