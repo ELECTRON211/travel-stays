@@ -78,18 +78,21 @@ export default function PasswordShell({ step, icon: Icon, title, subtitle, child
             transition={{ duration: 0.6, ease }}
             className="relative w-full max-w-md rounded-[2rem] bg-white/90 p-8 pt-14 shadow-2xl shadow-stone-900/10 ring-1 ring-stone-900/5 backdrop-blur-md sm:p-10 sm:pt-16"
           >
-            {/* Floating icon badge */}
-            <motion.span
-              key={step}
-              initial={{ scale: 0.5, rotate: -15, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 16, delay: 0.15 }}
-              className="absolute -top-9 left-1/2 grid h-[4.5rem] w-[4.5rem] -translate-x-1/2 place-items-center rounded-2xl bg-linear-to-br from-emerald-600 to-emerald-900 text-white shadow-xl shadow-emerald-900/30 ring-8 ring-sand"
-            >
-              <motion.span animate={{ y: [0, -3, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
-                <Icon className="h-8 w-8" strokeWidth={1.75} />
+            {/* Floating icon badge. The outer div positions it; the inner one
+                animates, so the animation can't override the centring. */}
+            <div className="absolute inset-x-0 -top-9 flex justify-center">
+              <motion.span
+                key={step}
+                initial={{ scale: 0.5, rotate: -15, opacity: 0 }}
+                animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 16, delay: 0.15 }}
+                className="grid h-18 w-18 place-items-center rounded-2xl bg-linear-to-br from-emerald-600 to-emerald-900 text-white shadow-xl shadow-emerald-900/30 ring-8 ring-sand"
+              >
+                <motion.span animate={{ y: [0, -3, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
+                  <Icon className="h-8 w-8" strokeWidth={1.75} />
+                </motion.span>
               </motion.span>
-            </motion.span>
+            </div>
 
             <StepIndicator step={step} />
 
