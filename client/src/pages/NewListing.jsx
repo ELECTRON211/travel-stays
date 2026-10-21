@@ -168,22 +168,22 @@ export default function NewListing({ existing = null }) {
     setSubmitting(true)
     try {
       const values = {
-          title: form.title.trim(),
-          property_type: form.property_type,
-          description: form.description.trim(),
-          city: form.city.trim(),
-          address: form.address.trim() || null,
-          max_guests: Number(form.max_guests),
-          bedrooms: Number(form.bedrooms),
-          price_per_night: Math.round(Number(form.price_per_night)),
-          cleaning_fee: Math.max(Math.round(Number(form.cleaning_fee) || 0), 0),
-          booking_mode: form.booking_mode,
-          amenities: form.amenities,
-          house_rules: form.house_rules,
-          extra_rules: form.extra_rules.trim() || null,
-          check_in_time: form.check_in_time,
-          check_out_time: form.check_out_time,
-          cancellation_policy: form.cancellation_policy,
+        title: form.title.trim(),
+        property_type: form.property_type,
+        description: form.description.trim(),
+        city: form.city.trim(),
+        address: form.address.trim() || null,
+        max_guests: Number(form.max_guests),
+        bedrooms: Number(form.bedrooms),
+        price_per_night: Math.round(Number(form.price_per_night)),
+        cleaning_fee: Math.max(Math.round(Number(form.cleaning_fee) || 0), 0),
+        booking_mode: form.booking_mode,
+        amenities: form.amenities,
+        house_rules: form.house_rules,
+        extra_rules: form.extra_rules.trim() || null,
+        check_in_time: form.check_in_time,
+        check_out_time: form.check_out_time,
+        cancellation_policy: form.cancellation_policy,
       }
 
       if (editing) {
@@ -463,10 +463,18 @@ export default function NewListing({ existing = null }) {
                 className="group relative aspect-4/3 overflow-hidden rounded-2xl ring-1 ring-black/10"
               >
                 <img src={photo.preview} alt="" className="h-full w-full object-cover" />
-                {index === 0 && (
+                {index === 0 ? (
                   <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold text-stone-800">
                     Cover
                   </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => makeCover(photo.id)}
+                    className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-stone-800 opacity-0 shadow transition group-hover:opacity-100 focus:opacity-100"
+                  >
+                    Make cover
+                  </button>
                 )}
                 <button
                   type="button"
@@ -499,7 +507,13 @@ export default function NewListing({ existing = null }) {
             className="flex items-center gap-2 rounded-xl bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-900 disabled:opacity-60"
           >
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            {submitting ? 'Publishing…' : 'Publish listing'}
+            {editing
+              ? submitting
+                ? 'Saving…'
+                : 'Save changes'
+              : submitting
+                ? 'Publishing…'
+                : 'Publish listing'}
           </button>
         </div>
       </form>
