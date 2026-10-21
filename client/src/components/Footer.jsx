@@ -17,6 +17,7 @@ const explore = {
 const support = {
   title: 'Support',
   links: [
+    { to: '/about', label: 'About us' },
     { to: '/help', label: 'Help centre' },
     { to: '/help#cancellation', label: 'Cancellation options' },
     { to: '/help#safety', label: 'Safety tips' },

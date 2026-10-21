@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import { markActive } from '../lib/session'
 import { images } from '../lib/images'
 import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
 
 const roles = [
@@ -16,6 +17,7 @@ const roles = [
 
 export default function Signup() {
   const { user } = useAuth()
+  const toast = useToast()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const presetRole = roles.some((r) => r.value === searchParams.get('role')) ? searchParams.get('role') : 'traveler'
@@ -46,7 +48,13 @@ export default function Signup() {
     setSubmitting(false)
 
     if (error) setError(error.message)
-    else if (data.session) navigate('/', { replace: true })
+    else if (data.session) {
+      toast.show({
+        title: `Welcome to Travel & Stays, ${fullName.trim().split(' ')[0]}!`,
+        description: 'Your account is ready.',
+      })
+      navigate('/', { replace: true })
+    }
     else setConfirmEmail(true) // email confirmation is switched on in Supabase
   }
 

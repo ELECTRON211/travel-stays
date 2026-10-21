@@ -25,6 +25,7 @@ function linksFor(user) {
   }
   return [
     { to: '/stays', label: 'Stays' },
+    { to: '/about', label: 'About' },
     { to: '/signup?role=host', label: 'Become a host' },
   ]
 }
