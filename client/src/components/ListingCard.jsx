@@ -4,6 +4,7 @@ import { Building2, MapPin, ShieldCheck, Star, Zap } from 'lucide-react'
 import { formatNaira } from '../lib/format'
 import { propertyLabel } from '../lib/constants'
 import { fadeUp, stagger } from '../lib/motion'
+import SaveButton from './SaveButton'
 
 // Listings without photos get a soft, neutral placeholder; the tint varies
 // slightly by id so a grid of them doesn't look identical.
@@ -86,7 +87,8 @@ export default function ListingCard({ listing, search = '' }) {
         <ListingCover listing={listing} className="transition-transform duration-700 ease-out group-hover:scale-105" />
         <div className="absolute inset-0 bg-linear-to-t from-black/45 via-transparent to-transparent" />
 
-        <TrustBadges listing={listing} className="absolute left-3 top-3 right-3" />
+        <TrustBadges listing={listing} className="absolute left-3 right-14 top-3" />
+        <SaveButton listingId={listing.id} className="absolute right-3 top-3" />
         <span className="absolute bottom-3 left-3 flex items-center gap-1 text-sm font-medium text-white drop-shadow">
           <MapPin className="h-4 w-4" />
           {listing.city || 'Unknown city'}

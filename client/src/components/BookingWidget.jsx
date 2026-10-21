@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { CalendarCheck, ChevronDown, Loader2, Minus, Plus, ShieldCheck, Zap } from 'lucide-react'
+import { CalendarCheck, CalendarX, ChevronDown, Loader2, Minus, Plus, ShieldCheck, Zap } from 'lucide-react'
+import { cancellationPolicy } from '../lib/constants'
 import { useAuth } from '../context/AuthContext'
 import { useAsync } from '../hooks/useAsync'
 import { createBooking, fetchBookedRanges, quote } from '../lib/bookings'
@@ -224,6 +225,10 @@ export default function BookingWidget({ listing, initial = {} }) {
               : instant
                 ? "You'll be confirmed straight away. No payment is taken yet."
                 : 'The host reviews your request first. No payment is taken yet.'}
+          </p>
+          <p className="mt-2 flex items-center justify-center gap-1.5 text-center text-xs font-medium text-emerald-800">
+            <CalendarX className="h-3.5 w-3.5" />
+            {cancellationPolicy(listing.cancellation_policy).short}
           </p>
 
           {/* Price breakdown */}
