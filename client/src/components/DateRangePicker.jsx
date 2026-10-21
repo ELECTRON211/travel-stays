@@ -29,7 +29,7 @@ function Month({ year, month, checkIn, rangeEnd, today, onPick, onHover }) {
         {cells.map((iso, i) => {
           if (!iso) return <span key={`blank-${i}`} />
 
-          const disabled = iso < today
+          const disabled = isDisabled(iso)
           const isStart = iso === checkIn
           const isEnd = iso === rangeEnd
           const inRange = checkIn && rangeEnd && iso > checkIn && iso < rangeEnd
@@ -67,8 +67,9 @@ function Month({ year, month, checkIn, rangeEnd, today, onPick, onHover }) {
 }
 
 // Two-month calendar (one on phones). First click picks check-in, second
-// picks check-out; hovering previews the range in between.
-export default function DateRangePicker({ checkIn, checkOut, onChange }) {
+// picks check-out; hovering previews the range in between. `blockedRanges`
+// ([{ check_in, check_out }]) are nights already booked by someone else.
+export default function DateRangePicker({ checkIn, checkOut, onChange, blockedRanges = [] }) {
   const today = todayISO()
   const start = parseISODate(checkIn || today)
   const [view, setView] = useState({ year: start.getFullYear(), month: start.getMonth() })
@@ -78,6 +79,20 @@ export default function DateRangePicker({ checkIn, checkOut, onChange }) {
   const atFirstMonth = view.year === now.getFullYear() && view.month === now.getMonth()
   const next = new Date(view.year, view.month + 1, 1)
   const rangeEnd = checkOut || (checkIn && hover > checkIn ? hover : '')
+
+  const nightTaken = (iso) => blockedRanges.some((r) => iso >= r.check_in && iso < r.check_out)
+  // While choosing check-out, the stay can't run past the next booked night
+  // (checking out on the morning someone else arrives is fine).
+  const choosingEnd = Boolean(checkIn && !checkOut)
+  const lastCheckOut = choosingEnd
+    ? blockedRanges.map((r) => r.check_in).filter((d) => d > checkIn).sort()[0]
+    : undefined
+
+  function isDisabled(iso) {
+    if (iso < today) return true
+    if (choosingEnd && iso > checkIn) return Boolean(lastCheckOut && iso > lastCheckOut)
+    return nightTaken(iso)
+  }
 
   function shift(delta) {
     const d = new Date(view.year, view.month + delta, 1)
@@ -89,7 +104,7 @@ export default function DateRangePicker({ checkIn, checkOut, onChange }) {
     else onChange({ checkIn, checkOut: iso })
   }
 
-  const monthProps = { checkIn, rangeEnd, today, onPick: pick, onHover: setHover }
+  const monthProps = { checkIn, rangeEnd, isDisabled, onPick: pick, onHover: setHover }
 
   return (
     <div onMouseLeave={() => setHover('')}>
