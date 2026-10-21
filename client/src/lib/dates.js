@@ -21,6 +21,15 @@ export function formatShortDate(value) {
   return parseISODate(value).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' })
 }
 
+export function formatLongDate(value) {
+  return parseISODate(value).toLocaleDateString('en-NG', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
 export function nightsBetween(checkIn, checkOut) {
   return Math.round((parseISODate(checkOut) - parseISODate(checkIn)) / 86_400_000)
 }
