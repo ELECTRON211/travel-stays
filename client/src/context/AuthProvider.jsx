@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { AuthContext } from './AuthContext'
 import { IDLE_TIMEOUT_MINUTES, clearActivity } from '../lib/session'
@@ -10,6 +11,7 @@ export default function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [profileVersion, setProfileVersion] = useState(0) // bump to re-load the profile after edits
   const toast = useToast()
+  const navigate = useNavigate()
 
   // 1. Restore the session on page load, then keep listening for login/logout.
   useEffect(() => {
@@ -67,10 +69,18 @@ export default function AuthProvider({ children }) {
   const value = {
     user,
     loading,
-    // Pass { reason: 'idle' } when logging out because of inactivity.
-    signOut: async ({ reason } = {}) => {
+    // Logs out on this device and leaves the page. Options:
+    //   reason: 'idle'      → the "logged out for your security" message
+    //   redirectTo / state  → where to go afterwards (home by default)
+    signOut: async ({ reason, redirectTo = '/', state } = {}) => {
       clearActivity()
-      await supabase.auth.signOut()
+      // 'local' clears the session on this device immediately, without
+      // waiting on the server — so logging out works even on a bad connection.
+      const { error } = await supabase.auth.signOut({ scope: 'local' })
+      if (error) console.error('Sign out problem (logged out locally anyway):', error.message)
+      setSession(null)
+      setProfile(null)
+      navigate(redirectTo, { replace: true, state })
       toast.show(
         reason === 'idle'
           ? {

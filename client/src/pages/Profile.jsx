@@ -420,7 +420,7 @@ export default function Profile() {
             ))}
             <button
               type="button"
-              onClick={signOut}
+              onClick={() => signOut()}
               className="flex w-full items-center gap-4 p-5 text-left transition-colors hover:bg-red-50"
             >
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-red-50 text-red-600">

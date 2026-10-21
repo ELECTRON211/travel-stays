@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Clock } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
@@ -12,7 +12,6 @@ const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchst
 // them during the final minute so they can stay logged in.
 export default function SessionTimeout() {
   const { user, signOut } = useAuth()
-  const navigate = useNavigate()
   const { pathname } = useLocation()
   const [secondsLeft, setSecondsLeft] = useState(null) // null = no warning showing
   const warningRef = useRef(false)
@@ -39,8 +38,7 @@ export default function SessionTimeout() {
       clearActivity()
       warningRef.current = false
       setSecondsLeft(null)
-      await signOut({ reason: 'idle' })
-      navigate('/login', { replace: true, state: { reason: 'idle' } })
+      await signOut({ reason: 'idle', redirectTo: '/login', state: { reason: 'idle' } })
     }
 
     function check() {
@@ -65,7 +63,7 @@ export default function SessionTimeout() {
       ACTIVITY_EVENTS.forEach((event) => window.removeEventListener(event, onActivity))
       clearInterval(timer)
     }
-  }, [userId, signOut, navigate, pathname])
+  }, [userId, signOut, pathname])
 
   function stayLoggedIn() {
     markActive()
