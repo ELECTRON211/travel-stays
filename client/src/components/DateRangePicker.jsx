@@ -4,7 +4,7 @@ import { nightsBetween, parseISODate, toISODate, todayISO } from '../lib/dates'
 
 const WEEKDAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
-function Month({ year, month, checkIn, rangeEnd, today, onPick, onHover }) {
+function Month({ year, month, checkIn, rangeEnd, isDisabled, onPick, onHover }) {
   const first = new Date(year, month, 1)
   const offset = (first.getDay() + 6) % 7 // weeks start on Monday
   const days = new Date(year, month + 1, 0).getDate()
