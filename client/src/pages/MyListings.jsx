@@ -5,6 +5,7 @@ import {
   Building2,
   CalendarCheck,
   CalendarDays,
+  Check,
   CircleCheck,
   Eye,
   ImagePlus,
@@ -19,11 +20,14 @@ import {
   Star,
   Trash2,
   Wallet,
+  X,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useAsync } from '../hooks/useAsync'
 import { deleteListing, fetchHostListings, updateListingStatus } from '../lib/listings'
-import { formatNaira } from '../lib/format'
+import { fetchHostBookings, hostPayout, respondToBooking } from '../lib/bookings'
+import { formatShortDate, todayISO } from '../lib/dates'
+import { formatNaira, initials } from '../lib/format'
 import { propertyLabel } from '../lib/constants'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import { ListingCover, TrustBadges } from '../components/ListingCard'
@@ -259,6 +263,126 @@ function ListRow({ listing, busy, onToggle, onDelete }) {
   )
 }
 
+function GuestAvatar({ name }) {
+  return (
+    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-linear-to-br from-emerald-600 to-teal-600 text-sm font-semibold text-white">
+      {initials(name)}
+    </span>
+  )
+}
+
+function stayLabel(booking) {
+  return `${formatShortDate(booking.check_in)} – ${formatShortDate(booking.check_out)} · ${booking.guests} ${
+    booking.guests === 1 ? 'guest' : 'guests'
+  } · ${booking.nights} ${booking.nights === 1 ? 'night' : 'nights'}`
+}
+
+// Pending requests the host must answer, and confirmed guests on the way.
+function HostBookings({ bookings, respondingId, onRespond }) {
+  const today = todayISO()
+  const requests = bookings.filter((b) => b.status === 'pending' && b.check_out >= today)
+  const upcoming = bookings.filter((b) => b.status === 'confirmed' && b.check_out >= today)
+  if (!requests.length && !upcoming.length) return null
+
+  return (
+    <div className="mt-10 grid gap-6 lg:grid-cols-2">
+      <section>
+        <h2 className="flex items-center gap-2 font-display text-2xl tracking-tight text-stone-900">
+          Booking requests
+          {requests.length > 0 && (
+            <span className="rounded-full bg-amber-100 px-2.5 py-0.5 font-sans text-xs font-bold text-amber-800">
+              {requests.length} new
+            </span>
+          )}
+        </h2>
+        <div className="mt-4 space-y-3">
+          {requests.length === 0 && (
+            <p className="rounded-2xl bg-white p-5 text-sm text-stone-500 ring-1 ring-stone-900/5">
+              You're all caught up. New requests will appear here.
+            </p>
+          )}
+          <AnimatePresence initial={false}>
+            {requests.map((b) => (
+              <motion.div
+                key={b.id}
+                layout
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: 40, transition: { duration: 0.25 } }}
+                className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-amber-200"
+              >
+                <div className="flex items-start gap-3">
+                  <GuestAvatar name={b.guest_name} />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-stone-600">
+                      <span className="font-semibold text-stone-900">{b.guest_name}</span> wants to stay at{' '}
+                      <Link to={`/listings/${b.listing_id}`} className="font-medium text-stone-900 underline-offset-4 hover:underline">
+                        {b.listing?.title ?? 'your listing'}
+                      </Link>
+                    </p>
+                    <p className="mt-1 text-sm text-stone-500">{stayLabel(b)}</p>
+                    <p className="mt-1 text-sm">
+                      You earn <span className="font-semibold text-stone-900">{formatNaira(hostPayout(b))}</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    disabled={respondingId === b.id}
+                    onClick={() => onRespond(b, false)}
+                    className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-stone-700 ring-1 ring-stone-300 transition hover:ring-stone-900 disabled:opacity-50"
+                  >
+                    <X className="h-4 w-4" /> Decline
+                  </button>
+                  <button
+                    type="button"
+                    disabled={respondingId === b.id}
+                    onClick={() => onRespond(b, true)}
+                    className="flex items-center gap-1.5 rounded-full bg-emerald-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:opacity-50"
+                  >
+                    <Check className="h-4 w-4" /> Accept
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="font-display text-2xl tracking-tight text-stone-900">Upcoming guests</h2>
+        <div className="mt-4 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-900/5">
+          {upcoming.length === 0 ? (
+            <p className="p-5 text-sm text-stone-500">No confirmed guests yet.</p>
+          ) : (
+            <ul className="divide-y divide-stone-100">
+              {upcoming.slice(0, 6).map((b) => (
+                <motion.li
+                  key={b.id}
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex items-center gap-3 p-4"
+                >
+                  <GuestAvatar name={b.guest_name} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium text-stone-900">
+                      {b.guest_name} <span className="font-normal text-stone-500">· {b.listing?.title}</span>
+                    </p>
+                    <p className="text-sm text-stone-500">{stayLabel(b)}</p>
+                  </div>
+                  <span className="text-sm font-semibold text-stone-900">{formatNaira(hostPayout(b))}</span>
+                </motion.li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+    </div>
+  )
+}
+
 function EmptyState() {
   return (
     <motion.div
@@ -323,6 +447,25 @@ export default function MyListings() {
   const [view, setView] = useState(readSavedView)
   const [busyId, setBusyId] = useState(null)
   const [actionError, setActionError] = useState('')
+  const {
+    data: bookings,
+    error: bookingsError,
+    reload: reloadBookings,
+  } = useAsync(() => fetchHostBookings(user.id), `bookings-${user.id}`)
+  const [respondingId, setRespondingId] = useState(null)
+
+  async function respond(booking, accept) {
+    setActionError('')
+    setRespondingId(booking.id)
+    try {
+      await respondToBooking(booking.id, accept)
+      reloadBookings()
+    } catch (err) {
+      setActionError(err.message)
+    } finally {
+      setRespondingId(null)
+    }
+  }
 
   function changeView(next) {
     setView(next)
@@ -360,12 +503,20 @@ export default function MyListings() {
   const activeCount = listings?.filter((l) => l.status === 'active').length ?? 0
   const firstName = user.fullName.split(' ')[0]
 
-  // Bookings and payouts arrive with the booking feature, so these start at zero.
+  const confirmed = (bookings ?? []).filter((b) => ['confirmed', 'completed'].includes(b.status))
+  const pendingCount = (bookings ?? []).filter((b) => b.status === 'pending' && b.check_out >= todayISO()).length
+  const earnings = confirmed.reduce((sum, b) => sum + hostPayout(b), 0)
+
   const stats = [
     { icon: Building2, label: 'Total listings', value: total },
     { icon: CircleCheck, label: 'Active', value: activeCount, hint: `${total - activeCount} paused` },
-    { icon: CalendarCheck, label: 'Total bookings', value: 0, hint: 'Online booking opens soon' },
-    { icon: Wallet, label: 'Est. earnings', value: formatNaira(0), hint: 'After platform fees' },
+    {
+      icon: CalendarCheck,
+      label: 'Total bookings',
+      value: confirmed.length,
+      hint: pendingCount ? `${pendingCount} awaiting your reply` : 'Confirmed stays',
+    },
+    { icon: Wallet, label: 'Est. earnings', value: formatNaira(earnings), hint: 'From confirmed stays' },
   ]
 
   const cardProps = (listing) => ({
@@ -418,7 +569,11 @@ export default function MyListings() {
         </motion.div>
       )}
 
-      <div className="mt-6 space-y-4">{(error || actionError) && <Alert>{error || actionError}</Alert>}</div>
+      <div className="mt-6 space-y-4">
+        {(error || actionError || bookingsError) && <Alert>{error || actionError || bookingsError}</Alert>}
+      </div>
+
+      {bookings && <HostBookings bookings={bookings} respondingId={respondingId} onRespond={respond} />}
 
       {listings?.length === 0 ? (
         <div className="mt-6">

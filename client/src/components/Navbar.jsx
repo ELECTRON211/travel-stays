@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
-import { LogOut, Menu, X } from 'lucide-react'
+import { LogOut, Luggage, Menu, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { initials } from '../lib/format'
 import { ease } from '../lib/motion'
@@ -16,7 +16,12 @@ function linksFor(user) {
       { to: '/host/listings/new', label: 'List your place' },
     ]
   }
-  if (user) return [{ to: '/stays', label: 'Stays' }]
+  if (user) {
+    return [
+      { to: '/stays', label: 'Stays' },
+      { to: '/trips', label: 'My trips' },
+    ]
+  }
   return [
     { to: '/stays', label: 'Stays' },
     { to: '/signup?role=host', label: 'Become a host' },
@@ -119,6 +124,13 @@ export default function Navbar({ overlay = false }) {
                           {roleLabels[user.role] ?? user.role}
                         </span>
                       </div>
+                      <Link
+                        to="/trips"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex w-full items-center gap-2 px-5 py-3.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
+                      >
+                        <Luggage className="h-4 w-4" /> My trips
+                      </Link>
                       <button
                         onClick={() => {
                           setMenuOpen(false)
