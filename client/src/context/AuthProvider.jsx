@@ -39,7 +39,7 @@ export default function AuthProvider({ children }) {
     return () => {
       ignore = true
     }
-  }, [session])
+  }, [session, profileVersion])
 
   // Only trust the profile if it belongs to the current user (avoids showing
   // the previous user's name for a moment after switching accounts). If the
@@ -53,6 +53,10 @@ export default function AuthProvider({ children }) {
         email: session.user.email,
         fullName: activeProfile?.full_name ?? metadata.full_name ?? '',
         role: activeProfile?.role ?? metadata.role ?? 'traveler',
+        phone: activeProfile?.phone ?? '',
+        bio: activeProfile?.bio ?? '',
+        createdAt: activeProfile?.created_at ?? session.user.created_at,
+        emailConfirmed: Boolean(session.user.email_confirmed_at),
       }
     : null
 
@@ -60,6 +64,7 @@ export default function AuthProvider({ children }) {
     user,
     loading,
     signOut: () => supabase.auth.signOut(),
+    refreshProfile: () => setProfileVersion((v) => v + 1),
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
