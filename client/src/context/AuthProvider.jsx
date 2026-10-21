@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { AuthContext } from './AuthContext'
+import { clearActivity } from '../lib/session'
 
 export default function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
@@ -64,7 +65,10 @@ export default function AuthProvider({ children }) {
   const value = {
     user,
     loading,
-    signOut: () => supabase.auth.signOut(),
+    signOut: () => {
+      clearActivity()
+      return supabase.auth.signOut()
+    },
     refreshProfile: () => setProfileVersion((v) => v + 1),
   }
 

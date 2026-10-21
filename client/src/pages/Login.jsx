@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Lock, Mail } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { IDLE_TIMEOUT_MINUTES, markActive } from '../lib/session'
 import { useAuth } from '../context/AuthContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
 
@@ -23,6 +24,9 @@ export default function Login() {
     setError('')
     setSubmitting(true)
 
+    // Start the inactivity clock fresh *before* the session appears, so an old
+    // timestamp from a previous visit can't log the user straight back out.
+    markActive()
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     setSubmitting(false)
 
@@ -33,6 +37,12 @@ export default function Login() {
   return (
     <AuthShell title="Welcome back" subtitle="Log in to manage your trips and bookings.">
       <form onSubmit={handleSubmit} className="space-y-5">
+        {location.state?.reason === 'idle' && !error && (
+          <Alert type="success">
+            You were logged out after {IDLE_TIMEOUT_MINUTES} minutes of inactivity to keep your account safe. Please
+            log in again.
+          </Alert>
+        )}
         {error && <Alert>{error}</Alert>}
         <TextField
           icon={Mail}

@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
+import SessionTimeout from './components/SessionTimeout'
 import Home from './pages/Home'
 import Stays from './pages/Stays'
 import ListingDetail from './pages/ListingDetail'
@@ -15,7 +16,9 @@ import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <SessionTimeout />
+      <Routes>
       {/* Pages with the navbar and footer */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
@@ -71,6 +74,7 @@ export default function App() {
       {/* Full-screen auth pages */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-    </Routes>
+      </Routes>
+    </>
   )
 }

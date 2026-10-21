@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { Compass, Home, Lock, Luggage, Mail, User } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { markActive } from '../lib/session'
 import { useAuth } from '../context/AuthContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
 
@@ -35,6 +36,7 @@ export default function Signup() {
 
     // full_name and role are stored on the auth user; a database trigger
     // copies them into the `profiles` table (see supabase/schema.sql).
+    markActive() // fresh inactivity clock for the new session
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
