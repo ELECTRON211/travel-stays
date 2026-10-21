@@ -8,6 +8,7 @@ import ListingDetail from './pages/ListingDetail'
 import MyListings from './pages/MyListings'
 import NewListing from './pages/NewListing'
 import EditListing from './pages/EditListing'
+import HostCalendar from './pages/HostCalendar'
 import BookingConfirmation from './pages/BookingConfirmation'
 import Trips from './pages/Trips'
 import Profile from './pages/Profile'
@@ -76,6 +77,14 @@ export default function App() {
           element={
             <ProtectedRoute role="host">
               <MyListings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/host/listings/:id/calendar"
+          element={
+            <ProtectedRoute role="host">
+              <HostCalendar />
             </ProtectedRoute>
           }
         />

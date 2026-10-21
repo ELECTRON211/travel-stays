@@ -124,12 +124,12 @@ function ActionMenu({ listing, busy, onToggle, onDelete }) {
               <Link to={`/host/listings/${listing.id}/edit`} className={`${itemClass} text-stone-700 hover:bg-stone-50`}>
                 <Pencil className="h-4 w-4" /> Edit listing
               </Link>
-              <span className={`${itemClass} cursor-not-allowed text-stone-400`}>
+              <Link
+                to={`/host/listings/${listing.id}/calendar`}
+                className={`${itemClass} text-stone-700 hover:bg-stone-50`}
+              >
                 <CalendarDays className="h-4 w-4" /> View calendar
-                <span className="ml-auto rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
-                  Soon
-                </span>
-              </span>
+              </Link>
               <button
                 type="button"
                 onClick={() => {

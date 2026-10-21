@@ -13,6 +13,13 @@ export function parseISODate(value) {
   return new Date(y, m - 1, d)
 }
 
+// addDays("2026-11-30", 1) → "2026-12-01"
+export function addDays(value, days) {
+  const d = parseISODate(value)
+  d.setDate(d.getDate() + days)
+  return toISODate(d)
+}
+
 export function todayISO() {
   return toISODate(new Date())
 }
