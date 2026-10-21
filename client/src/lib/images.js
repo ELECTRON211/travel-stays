@@ -17,6 +17,8 @@ const mixkit = (id) => `https://assets.mixkit.co/videos/${id}/${id}-720.mp4`
 export const videos = {
   login: mixkit(6773), // resort pool among palm trees
   signup: mixkit(6907), // tropical bay with hills and beach
+  hero: mixkit(26128), // thatched beach umbrellas at golden hour
+  showcase: mixkit(9902), // aerial view of a seaside resort
 }
 
 export const propertyTypeImages = {

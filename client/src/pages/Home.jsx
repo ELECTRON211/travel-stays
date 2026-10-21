@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
 import {
   ArrowRight,
@@ -10,8 +10,12 @@ import {
   MapPin,
   Search,
   ShieldCheck,
+  Pause,
+  Play,
   Sparkles,
 } from 'lucide-react'
+import BackgroundVideo from '../components/BackgroundVideo'
+import VideoModal from '../components/VideoModal'
 import SearchBar from '../components/SearchBar'
 import DiscoveryToggle from '../components/DiscoveryToggle'
 import Reveal from '../components/Reveal'
@@ -19,7 +23,7 @@ import { ListingGrid } from '../components/ListingCard'
 import { useListings } from '../hooks/useListings'
 import { useAuth } from '../context/AuthContext'
 import { PROPERTY_TYPES } from '../lib/constants'
-import { images, propertyTypeImages } from '../lib/images'
+import { images, propertyTypeImages, videos } from '../lib/images'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import TypeWriter, { RotatingTyper } from '../components/TypeWriter'
 
@@ -99,13 +103,33 @@ function Hero() {
   const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '35%'])
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
-  const [mode, setMode] = useState('stays')
+  const navigate = useNavigate()
+  const [videoReady, setVideoReady] = useState(false)
+  const [videoPaused, setVideoPaused] = useState(false)
+  const [showVideo, setShowVideo] = useState(false)
 
   return (
     <section
       ref={ref}
       className="relative flex min-h-[100svh] items-end overflow-hidden rounded-b-[2.5rem] bg-ink pb-14 pt-32 sm:pb-20"
     >
+      <VideoModal
+        open={showVideo}
+        onClose={() => setShowVideo(false)}
+        src={videos.showcase}
+        poster={images.hero}
+        title="Seaside escapes, city apartments and quiet guesthouses: find yours on Travel & Stays."
+      />
+      {videoReady && (
+        <button
+          type="button"
+          onClick={() => setVideoPaused(!videoPaused)}
+          className="absolute bottom-6 right-6 z-20 grid h-10 w-10 place-items-center rounded-full bg-black/30 text-white backdrop-blur-md transition hover:bg-black/50"
+          aria-label={videoPaused ? 'Play background video' : 'Pause background video'}
+        >
+          {videoPaused ? <Play className="h-4 w-4" fill="currentColor" /> : <Pause className="h-4 w-4" fill="currentColor" />}
+        </button>
+      )}
       <motion.div style={{ y: imageY }} className="absolute inset-0">
         <motion.img
           src={images.hero}
@@ -114,6 +138,14 @@ function Hero() {
           animate={{ scale: 1.05 }}
           transition={{ duration: 2.8, ease }}
           className="h-full w-full object-cover"
+        />
+        {/* Cinematic background video on larger screens; the photo stays as its poster. */}
+        <BackgroundVideo
+          src={videos.hero}
+          poster={images.hero}
+          paused={videoPaused}
+          onReady={() => setVideoReady(true)}
+          className="absolute inset-0 h-full w-full scale-105 object-cover"
         />
       </motion.div>
       <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/10 to-black/80" />
@@ -166,9 +198,27 @@ function Hero() {
           transition={{ delay: 1.1, duration: 0.9, ease }}
           className="mt-10 max-w-5xl"
         >
-          <DiscoveryToggle value={mode} onChange={setMode} dark />
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Each tab takes you to that part of the site. */}
+            <DiscoveryToggle
+              value="stays"
+              onChange={(mode) => navigate(mode === 'stays' ? '/stays' : `/stays?mode=${mode}`)}
+              dark
+            />
+            <button
+              type="button"
+              onClick={() => setShowVideo(true)}
+              className="group flex items-center gap-2.5 rounded-full bg-white/10 py-1 pl-1 pr-4 text-sm font-medium text-white ring-1 ring-white/20 backdrop-blur-md transition hover:bg-white/20"
+            >
+              <span className="relative grid h-9 w-9 place-items-center rounded-full bg-white text-emerald-900">
+                <span className="absolute inset-0 animate-ping rounded-full bg-white/40" />
+                <Play className="relative h-4 w-4 translate-x-px" fill="currentColor" />
+              </span>
+              Watch the video
+            </button>
+          </div>
           <div className="mt-4">
-            <SearchBar variant="hero" mode={mode} />
+            <SearchBar variant="hero" />
           </div>
         </motion.div>
 
