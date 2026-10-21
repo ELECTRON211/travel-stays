@@ -4,8 +4,22 @@ import { images } from '../lib/images'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import Logo from './Logo'
 
-// Shared split-screen layout for the log in and sign up pages.
-export default function AuthShell({ title, subtitle, children }) {
+const DEFAULT_QUOTE = (
+  <>
+    Every host and tour guide is <em className="text-emerald-300">verified</em> before they can list.
+  </>
+)
+
+// Shared split-screen layout for the log in and sign up pages. Each page can
+// pass its own photo and quote for the right-hand panel.
+export default function AuthShell({
+  title,
+  subtitle,
+  children,
+  image = images.auth,
+  quote = DEFAULT_QUOTE,
+  quoteNote = 'Book stays and experiences with confidence.',
+}) {
   return (
     <div className="grid min-h-screen bg-sand lg:grid-cols-2">
       <div className="flex flex-col px-4 py-8 sm:px-12">

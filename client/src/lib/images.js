@@ -5,7 +5,8 @@ const unsplash = (id, width = 1600) =>
 export const images = {
   hero: unsplash('1520250497591-112f2f40a3f4', 2200),
   lagos: unsplash('1618828665011-0abd973f7bb8', 1400),
-  auth: unsplash('1596394516093-501ba68a0ba6', 1600),
+  auth: unsplash('1596394516093-501ba68a0ba6', 1600), // log in: bed on a mountain deck
+  signup: unsplash('1540541338287-41700207dee6', 1600), // sign up: palm-lined villa at sunset
   host: unsplash('1600596542815-ffad4c1539a9', 1600),
   tours: unsplash('1469854523086-cc02fe5d8800', 1200),
 }
