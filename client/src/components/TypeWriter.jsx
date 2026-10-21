@@ -21,12 +21,12 @@ export default function TypeWriter({ text, speed = 55, delay = 200, className = 
   }, [inView, done, text, count, speed, delay])
 
   return (
+    // Bottom layer: the real text, transparent — it reserves the space and is
+    // what screen readers read and what gets copied (once). Top layer: the
+    // typed letters, purely visual.
     <span ref={ref} className={`inline-grid ${className}`}>
-      <span className="sr-only">{text}</span>
-      <span aria-hidden="true" className="invisible col-start-1 row-start-1">
-        {text}
-      </span>
-      <span aria-hidden="true" className="col-start-1 row-start-1">
+      <span className="col-start-1 row-start-1 text-transparent">{text}</span>
+      <span aria-hidden="true" className="pointer-events-none col-start-1 row-start-1 select-none">
         {reduceMotion ? text : text.slice(0, count)}
         {!done && <span className="typing-caret" />}
       </span>

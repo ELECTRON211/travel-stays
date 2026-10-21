@@ -29,6 +29,35 @@ const sorters = {
 
 const typeOptions = [{ value: '', label: 'All stays' }, ...PROPERTY_TYPES]
 
+// Each discovery tab has its own heading.
+const HEADINGS = {
+  stays: {
+    eyebrow: 'Explore stays',
+    lead: 'Find your next',
+    accent: 'stay.',
+    sub: 'Apartments, guesthouses, hotel rooms and whole homes from verified hosts.',
+  },
+  tours: {
+    eyebrow: 'Tours & experiences',
+    lead: 'Discover local',
+    accent: 'experiences.',
+    sub: 'Food tours, hikes and cultural days led by guides who know their city.',
+  },
+  trips: {
+    eyebrow: 'Combined trips',
+    lead: 'Plan the',
+    accent: 'whole trip.',
+    sub: 'Your stay and your tours together, in one simple itinerary.',
+  },
+}
+
+function headingFor(mode, city) {
+  const base = HEADINGS[mode] ?? HEADINGS.stays
+  if (!city) return base
+  const noun = { stays: 'Stays', tours: 'Tours', trips: 'Trips' }[mode] ?? 'Stays'
+  return { ...base, eyebrow: `Destination · ${base.eyebrow.replace('Explore ', '')}`, lead: `${noun} in`, accent: city }
+}
+
 const tourCategories = [
   { icon: UtensilsCrossed, label: 'Food tours', text: 'Suya spots, buka favourites and market walks' },
   { icon: Mountain, label: 'Adventure', text: 'Hikes, waterfalls and canopy walks' },
@@ -206,6 +235,7 @@ export default function Stays() {
   const guests = searchParams.get('guests') ?? ''
   const type = searchParams.get('type') ?? ''
   const mode = searchParams.get('mode') ?? 'stays'
+  const heading = headingFor(mode, city)
   const [sort, setSort] = useState('newest')
 
   const { listings, loading, error } = useListings({ city, guests, type })
@@ -234,20 +264,12 @@ export default function Stays() {
         </div>
         <div className="relative">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-800">
-            <TypeWriter text={city ? 'Destination' : 'Explore'} speed={40} delay={0} />
+            <TypeWriter text={heading.eyebrow} speed={40} delay={0} />
           </p>
           <h1 className="mt-2 font-display text-4xl font-medium tracking-tight text-stone-900 sm:text-5xl">
-            {city ? (
-              <>
-                {mode === 'stays' ? 'Stays' : mode === 'tours' ? 'Tours' : 'Trips'} in{' '}
-                <em className="text-emerald-800"><TypeWriter text={city} /></em>
-              </>
-            ) : (
-              <>
-                Find your next <em className="text-emerald-800"><TypeWriter text={mode === 'stays' ? 'stay.' : 'adventure.'} /></em>
-              </>
-            )}
+            {heading.lead} <em className="text-emerald-800"><TypeWriter text={heading.accent} /></em>
           </h1>
+          <p className="mx-auto mt-3 max-w-xl text-stone-500">{heading.sub}</p>
 
           <div className="mt-6">
             <DiscoveryToggle value={mode} onChange={(value) => setParam('mode', value === 'stays' ? '' : value)} />
