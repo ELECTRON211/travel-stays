@@ -9,6 +9,7 @@ export default function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [profileVersion, setProfileVersion] = useState(0) // bump to re-load the profile after edits
+  const toast = useToast()
 
   // 1. Restore the session on page load, then keep listening for login/logout.
   useEffect(() => {

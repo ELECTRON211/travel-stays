@@ -3,12 +3,14 @@ import { motion } from 'motion/react'
 import { Heart } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useSaved } from '../context/SavedContext'
+import { useToast } from '../context/ToastContext'
 
 // Heart button for the wishlist. `overlay` sits on a photo; `pill` is a
 // labelled button for the listing page. Logged-out visitors go to log in.
 export default function SaveButton({ listingId, variant = 'overlay', className = '' }) {
   const { user } = useAuth()
   const { isSaved, toggle } = useSaved()
+  const toast = useToast()
   const navigate = useNavigate()
   const location = useLocation()
   const saved = isSaved(listingId)
@@ -22,8 +24,18 @@ export default function SaveButton({ listingId, variant = 'overlay', className =
     }
     try {
       await toggle(listingId)
+      toast.show(
+        saved
+          ? { type: 'info', title: 'Removed from saved', description: 'This stay is no longer on your wishlist.' }
+          : {
+              type: 'saved',
+              title: 'Saved to your wishlist',
+              description: "We'll keep it here for when you're ready to book.",
+              action: { label: 'View saved stays', to: '/saved' },
+            },
+      )
     } catch (error) {
-      console.error('Could not update saved listings:', error.message)
+      toast.show({ type: 'error', title: "Couldn't update your wishlist", description: error.message })
     }
   }
 

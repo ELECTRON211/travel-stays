@@ -39,7 +39,7 @@ export default function SessionTimeout() {
       clearActivity()
       warningRef.current = false
       setSecondsLeft(null)
-      await signOut()
+      await signOut({ reason: 'idle' })
       navigate('/login', { replace: true, state: { reason: 'idle' } })
     }
 

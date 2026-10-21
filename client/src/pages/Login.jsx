@@ -4,10 +4,12 @@ import { Lock, Mail } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { IDLE_TIMEOUT_MINUTES, markActive } from '../lib/session'
 import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
 
 export default function Login() {
   const { user } = useAuth()
+  const toast = useToast()
   const navigate = useNavigate()
   const location = useLocation()
   const redirectTo = location.state?.from ?? '/'
@@ -27,11 +29,19 @@ export default function Login() {
     // Start the inactivity clock fresh *before* the session appears, so an old
     // timestamp from a previous visit can't log the user straight back out.
     markActive()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     setSubmitting(false)
 
-    if (error) setError(error.message)
-    else navigate(redirectTo, { replace: true })
+    if (error) {
+      setError(error.message)
+      return
+    }
+    const firstName = data.user?.user_metadata?.full_name?.split(' ')[0]
+    toast.show({
+      title: `Welcome back${firstName ? `, ${firstName}` : ''}!`,
+      description: "You're logged in. Where to next?",
+    })
+    navigate(redirectTo, { replace: true })
   }
 
   return (
