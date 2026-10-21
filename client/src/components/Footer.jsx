@@ -1,33 +1,51 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
 
-const columns = [
-  {
-    title: 'Explore',
-    links: [
-      { to: '/stays', label: 'All stays' },
-      { to: '/stays?city=Lagos', label: 'Stays in Lagos' },
-      { to: '/stays?city=Abuja', label: 'Stays in Abuja' },
-      { to: '/stays?city=Calabar', label: 'Stays in Calabar' },
-    ],
-  },
-  {
-    title: 'Hosting',
-    links: [
-      { to: '/signup?role=host', label: 'Become a host' },
-      { to: '/signup?role=guide', label: 'Become a tour guide' },
-    ],
-  },
-  {
-    title: 'Account',
-    links: [
-      { to: '/login', label: 'Log in' },
-      { to: '/signup', label: 'Create account' },
-    ],
-  },
-]
+const explore = {
+  title: 'Explore',
+  links: [
+    { to: '/stays', label: 'All stays' },
+    { to: '/stays?city=Lagos', label: 'Stays in Lagos' },
+    { to: '/stays?city=Abuja', label: 'Stays in Abuja' },
+    { to: '/stays?city=Calabar', label: 'Stays in Calabar' },
+  ],
+}
+
+// The Hosting and Account columns depend on who is logged in, so a logged-in
+// user never sees "Log in" or "Create account".
+function columnsFor(user) {
+  const hosting =
+    user?.role === 'host'
+      ? [
+          { to: '/host/listings', label: 'My listings' },
+          { to: '/host/listings/new', label: 'List your place' },
+        ]
+      : user
+        ? [{ to: '/stays?mode=tours', label: 'Tours & experiences' }]
+        : [
+            { to: '/signup?role=host', label: 'Become a host' },
+            { to: '/signup?role=guide', label: 'Become a tour guide' },
+          ]
+
+  const account = user
+    ? [
+        { to: '/profile', label: 'Profile' },
+        { to: '/trips', label: 'My trips' },
+        { to: '/saved', label: 'Saved' },
+      ]
+    : [
+        { to: '/login', label: 'Log in' },
+        { to: '/signup', label: 'Create account' },
+      ]
+
+  return [explore, { title: 'Hosting', links: hosting }, { title: 'Account', links: account }]
+}
 
 export default function Footer() {
+  const { user } = useAuth()
+  const columns = columnsFor(user)
+
   return (
     <footer className="relative mt-12 overflow-hidden bg-ink text-stone-400">
       <div className="absolute -top-40 left-1/2 h-80 w-[60rem] -translate-x-1/2 rounded-full bg-emerald-500/10 blur-3xl" />
