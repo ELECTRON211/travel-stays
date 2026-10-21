@@ -1,17 +1,105 @@
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowLeft, BedDouble, Grid2x2, Home, MapPin, Users } from 'lucide-react'
+import { ArrowLeft, BedDouble, CalendarX, Clock, Grid2x2, Home, MapPin, ScrollText, Users } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useAsync } from '../hooks/useAsync'
+import { useListings } from '../hooks/useListings'
 import { fetchListing } from '../lib/listings'
-import { propertyLabel } from '../lib/constants'
+import { AMENITIES, HOUSE_RULES, cancellationPolicy, propertyLabel } from '../lib/constants'
+import { formatTime } from '../lib/dates'
 import { ease, fadeUp, stagger } from '../lib/motion'
-import { ListingCover, Rating, TrustBadges } from '../components/ListingCard'
+import { ListingCover, ListingGrid, Rating, TrustBadges } from '../components/ListingCard'
 import Lightbox from '../components/Lightbox'
 import BookingWidget from '../components/BookingWidget'
 import Reveal from '../components/Reveal'
+import SaveButton from '../components/SaveButton'
+import ShareButton from '../components/ShareButton'
 import NotFound from './NotFound'
+
+function AmenitiesSection({ listing }) {
+  const offered = AMENITIES.filter((a) => listing.amenities?.includes(a.value))
+  if (!offered.length) return null
+
+  return (
+    <Reveal className="mt-12 border-t border-black/5 pt-10">
+      <h2 className="font-display text-2xl text-ink">What this place offers</h2>
+      <div className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2">
+        {offered.map(({ value, label, icon: Icon }) => (
+          <div key={value} className="flex items-center gap-3 text-stone-700">
+            <Icon className="h-5 w-5 shrink-0 text-emerald-800" strokeWidth={1.75} />
+            {label}
+          </div>
+        ))}
+      </div>
+    </Reveal>
+  )
+}
+
+function ThingsToKnow({ listing }) {
+  const rules = HOUSE_RULES.filter((r) => listing.house_rules?.includes(r.value))
+  const policy = cancellationPolicy(listing.cancellation_policy)
+
+  return (
+    <Reveal className="mt-12 border-t border-black/5 pt-10">
+      <h2 className="font-display text-2xl text-ink">Things to know</h2>
+      <div className="mt-6 grid gap-8 sm:grid-cols-2">
+        <div>
+          <h3 className="flex items-center gap-2 font-semibold text-stone-900">
+            <ScrollText className="h-4 w-4 text-emerald-800" /> House rules
+          </h3>
+          <ul className="mt-3 space-y-2.5 text-sm text-stone-600">
+            <li className="flex items-center gap-2.5">
+              <Clock className="h-4 w-4 text-stone-400" /> Check-in after {formatTime(listing.check_in_time || '14:00')}
+            </li>
+            <li className="flex items-center gap-2.5">
+              <Clock className="h-4 w-4 text-stone-400" /> Check-out before {formatTime(listing.check_out_time || '11:00')}
+            </li>
+            {rules.map(({ value, label, icon: Icon }) => (
+              <li key={value} className="flex items-center gap-2.5">
+                <Icon className="h-4 w-4 text-stone-400" /> {label}
+              </li>
+            ))}
+          </ul>
+          {listing.extra_rules && (
+            <p className="mt-3 whitespace-pre-line rounded-xl bg-stone-100/70 p-3 text-sm text-stone-600">
+              {listing.extra_rules}
+            </p>
+          )}
+        </div>
+        <div>
+          <h3 className="flex items-center gap-2 font-semibold text-stone-900">
+            <CalendarX className="h-4 w-4 text-emerald-800" /> Cancellation policy
+          </h3>
+          <p className="mt-3 inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
+            {policy.label}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-stone-600">{policy.text}</p>
+        </div>
+      </div>
+    </Reveal>
+  )
+}
+
+// Up to four other active stays in the same city.
+function SimilarStays({ listing }) {
+  const { listings, loading } = useListings({ city: listing.city, limit: 5 })
+  const others = listings.filter((l) => l.id !== listing.id).slice(0, 4)
+  if (!loading && !others.length) return null
+
+  return (
+    <section className="mt-20 border-t border-black/5 pt-12">
+      <Reveal>
+        <h2 className="font-display text-3xl tracking-tight text-ink">
+          More stays in <em className="text-emerald-800">{listing.city}</em>
+        </h2>
+      </Reveal>
+      <div className="mt-8">
+        <ListingGrid listings={others} loading={loading} skeletons={4} />
+      </div>
+    </section>
+  )
+}
 
 // Big cover photo on the left, up to four smaller photos on the right.
 // Clicking any photo opens the full-screen viewer.
@@ -112,12 +200,18 @@ export default function ListingDetail() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <Link
-        to="/stays"
-        className="group inline-flex items-center gap-2 text-sm font-medium text-stone-600 transition-colors hover:text-ink"
-      >
-        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to stays
-      </Link>
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          to="/stays"
+          className="group inline-flex items-center gap-2 text-sm font-medium text-stone-600 transition-colors hover:text-ink"
+        >
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to stays
+        </Link>
+        <div className="flex items-center gap-2">
+          <ShareButton title={listing.title} />
+          <SaveButton listingId={listing.id} variant="pill" />
+        </div>
+      </div>
 
       {isOwner && (
         <motion.div
@@ -171,6 +265,9 @@ export default function ListingDetail() {
               {listing.description || 'The host has not added a description yet.'}
             </p>
           </Reveal>
+
+          <AmenitiesSection listing={listing} />
+          <ThingsToKnow listing={listing} />
         </div>
 
         <aside>
@@ -184,6 +281,8 @@ export default function ListingDetail() {
           </motion.div>
         </aside>
       </div>
+
+      <SimilarStays listing={listing} />
 
       <Lightbox
         photos={listing.photos ?? []}
