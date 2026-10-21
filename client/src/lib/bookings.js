@@ -33,6 +33,47 @@ export async function createBooking({ listingId, checkIn, checkOut, guests }) {
   return data
 }
 
+const LISTING_SUMMARY = 'listing:listings(id, title, city, photos, property_type, booking_mode)'
+
+// What the host earns from a booking: the nights plus cleaning fee. The
+// service fee is the platform's.
+export function hostPayout(booking) {
+  return booking.price_per_night * booking.nights + booking.cleaning_fee
+}
+
+export async function fetchMyTrips(travelerId) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select(`*, ${LISTING_SUMMARY}`)
+    .eq('traveler_id', travelerId)
+    .order('check_in', { ascending: false })
+  if (error) throw error
+  return data ?? []
+}
+
+// Bookings on the host's listings, each with the guest's name attached.
+export async function fetchHostBookings(hostId) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select(`*, ${LISTING_SUMMARY}`)
+    .eq('host_id', hostId)
+    .order('check_in', { ascending: true })
+  if (error) throw error
+
+  const guestIds = [...new Set((data ?? []).map((b) => b.traveler_id))]
+  let names = {}
+  if (guestIds.length) {
+    const { data: profiles } = await supabase.from('profiles').select('id, full_name').in('id', guestIds)
+    names = Object.fromEntries((profiles ?? []).map((p) => [p.id, p.full_name]))
+  }
+  return (data ?? []).map((b) => ({ ...b, guest_name: names[b.traveler_id] || 'Guest' }))
+}
+
+export async function respondToBooking(id, accept) {
+  const { error } = await supabase.rpc('respond_to_booking', { p_booking_id: id, p_accept: accept })
+  if (error) throw new Error(error.message)
+}
+
 export async function cancelBooking(id) {
   const { error } = await supabase.rpc('cancel_booking', { p_booking_id: id })
   if (error) throw new Error(error.message)
