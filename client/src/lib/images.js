@@ -11,6 +11,14 @@ export const images = {
   tours: unsplash('1469854523086-cc02fe5d8800', 1200),
 }
 
+// Free stock video from Mixkit (no attribution required), 720p.
+const mixkit = (id) => `https://assets.mixkit.co/videos/${id}/${id}-720.mp4`
+
+export const videos = {
+  login: mixkit(6773), // resort pool among palm trees
+  signup: mixkit(6907), // tropical bay with hills and beach
+}
+
 export const propertyTypeImages = {
   apartment: unsplash('1522708323590-d24dbb6b0267', 900),
   guesthouse: unsplash('1566073771259-6a8506099945', 900),

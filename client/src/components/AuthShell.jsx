@@ -18,6 +18,7 @@ export default function AuthShell({
   subtitle,
   children,
   image = images.auth,
+  video,
   quote = DEFAULT_QUOTE,
   quoteNote = 'Book stays and experiences with confidence.',
 }) {
@@ -45,15 +46,7 @@ export default function AuthShell({
 
       <div className="relative hidden h-screen self-start p-3 lg:sticky lg:top-0 lg:block">
         <div className="relative h-full overflow-hidden rounded-4xl">
-          <motion.img
-            key={image}
-            src={image}
-            alt=""
-            initial={{ scale: 1.2 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 2.5, ease }}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+          <MediaPanel image={image} video={video} />
           <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" />
           <motion.div
             initial={{ opacity: 0, y: 40 }}

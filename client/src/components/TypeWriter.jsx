@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInView, useReducedMotion } from 'motion/react'
+import { useTypingCycle } from '../hooks/useTypingCycle'
 
 // Types `text` out letter by letter, with a blinking cursor, the first time
 // it scrolls into view. The full text is laid out invisibly underneath so the
@@ -34,36 +35,15 @@ export default function TypeWriter({ text, speed = 55, delay = 200, className = 
 }
 
 // Types a word, pauses, deletes it and moves on to the next — forever.
-export function RotatingTyper({ words, typeSpeed = 70, deleteSpeed = 35, pause = 1800, className = '' }) {
+export function RotatingTyper({ words, typeSpeed, deleteSpeed, pause, className = '' }) {
   const reduceMotion = useReducedMotion()
-  const [index, setIndex] = useState(0)
-  const [length, setLength] = useState(0)
-  const [deleting, setDeleting] = useState(false)
-  const word = words[index]
-
-  useEffect(() => {
-    if (reduceMotion) return
-    let timer
-    if (!deleting && length < word.length) {
-      timer = setTimeout(() => setLength(length + 1), typeSpeed)
-    } else if (!deleting) {
-      timer = setTimeout(() => setDeleting(true), pause)
-    } else if (length > 0) {
-      timer = setTimeout(() => setLength(length - 1), deleteSpeed)
-    } else {
-      timer = setTimeout(() => {
-        setDeleting(false)
-        setIndex((index + 1) % words.length)
-      }, 250)
-    }
-    return () => clearTimeout(timer)
-  }, [reduceMotion, word, length, deleting, index, words.length, typeSpeed, deleteSpeed, pause])
+  const text = useTypingCycle(words, { enabled: !reduceMotion, typeSpeed, deleteSpeed, pause })
 
   return (
     <span className={className}>
       <span className="sr-only">{words[0]}</span>
       <span aria-hidden="true">
-        {reduceMotion ? words[0] : word.slice(0, length)}
+        {reduceMotion ? words[0] : text}
         {!reduceMotion && <span className="typing-caret" />}
       </span>
     </span>
