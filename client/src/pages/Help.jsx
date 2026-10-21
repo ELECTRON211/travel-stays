@@ -33,7 +33,7 @@ const FAQ_GROUPS = [
     items: [
       {
         q: 'When do I pay?',
-        a: 'Online payment through Paystack (card, bank transfer and USSD) is coming soon. Until then, no payment is taken when you book.',
+        a: 'Once your booking is confirmed — straight away for Instant Book, or when the host accepts your request — open it from My trips and press Pay now. Payment is handled securely by Paystack by card, bank transfer or USSD.',
       },
       {
         q: 'What is the service fee?',

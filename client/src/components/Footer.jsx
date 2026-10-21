@@ -80,7 +80,7 @@ export default function Footer() {
                 <Lock className="h-3.5 w-3.5 text-emerald-400" /> Secure connection
               </span>
               <span className="flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1.5 ring-1 ring-white/10">
-                <CreditCard className="h-3.5 w-3.5 text-emerald-400" /> Payments by Paystack · coming soon
+                <CreditCard className="h-3.5 w-3.5 text-emerald-400" /> Secured by Paystack
               </span>
             </div>
           </div>

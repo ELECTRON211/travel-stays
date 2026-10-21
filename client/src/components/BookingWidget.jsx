@@ -223,8 +223,8 @@ export default function BookingWidget({ listing, initial = {} }) {
             {!user
               ? "You'll need a free account to book."
               : instant
-                ? "You'll be confirmed straight away. No payment is taken yet."
-                : 'The host reviews your request first. No payment is taken yet.'}
+                ? "You'll be confirmed straight away, then pay securely with Paystack."
+                : "The host reviews your request first. You'll pay once it's accepted."}
           </p>
           <p className="mt-2 flex items-center justify-center gap-1.5 text-center text-xs font-medium text-emerald-800">
             <CalendarX className="h-3.5 w-3.5" />

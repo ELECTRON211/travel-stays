@@ -372,7 +372,14 @@ function HostBookings({ bookings, respondingId, onRespond }) {
                     </p>
                     <p className="text-sm text-stone-500">{stayLabel(b)}</p>
                   </div>
-                  <span className="text-sm font-semibold text-stone-900">{formatNaira(hostPayout(b))}</span>
+                  <span className="text-right text-sm">
+                    <span className="block font-semibold text-stone-900">{formatNaira(hostPayout(b))}</span>
+                    <span
+                      className={`text-xs font-semibold ${b.payment_status === 'paid' ? 'text-emerald-700' : 'text-amber-700'}`}
+                    >
+                      {b.payment_status === 'paid' ? 'Paid' : 'Awaiting payment'}
+                    </span>
+                  </span>
                 </motion.li>
               ))}
             </ul>

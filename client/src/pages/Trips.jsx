@@ -51,8 +51,17 @@ function TripCard({ trip, isPast }) {
         <div>
           <div className="flex items-start justify-between gap-3">
             <h3 className="font-semibold tracking-tight text-stone-900">{listing.title}</h3>
-            <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${status.className}`}>
-              {status.label}
+            <span className="flex shrink-0 flex-wrap justify-end gap-1.5">
+              {trip.status === 'confirmed' && !isPast && (
+                <span
+                  className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                    trip.payment_status === 'paid' ? 'bg-emerald-800 text-white' : 'bg-amber-100 text-amber-800'
+                  }`}
+                >
+                  {trip.payment_status === 'paid' ? 'Paid' : 'Payment due'}
+                </span>
+              )}
+              <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${status.className}`}>{status.label}</span>
             </span>
           </div>
           {listing.city && (

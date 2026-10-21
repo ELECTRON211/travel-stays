@@ -43,8 +43,8 @@ export default function Terms() {
           <li>The price shown before you book includes the nightly rate, any cleaning fee and a 10% service fee.</li>
           <li>Prices are in Nigerian naira (₦). The price is fixed at the moment you book.</li>
           <li>
-            Payments will be processed securely by Paystack. Travel &amp; Stays never sees or stores your full card
-            details.
+            Payments are processed securely by Paystack once a booking is confirmed. Travel &amp; Stays never sees or
+            stores your full card details.
           </li>
         </ul>
       </InfoSection>

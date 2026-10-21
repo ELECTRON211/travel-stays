@@ -77,7 +77,8 @@ export default function Privacy() {
       <InfoSection title="Where it's stored">
         <p>
           Your data is stored with Supabase, our database and hosting provider, and is sent over encrypted (HTTPS)
-          connections. Payments will be handled by Paystack; we never store your card details.
+          connections. Payments are handled by Paystack; we keep only a payment reference and status, never your card
+          details.
         </p>
       </InfoSection>
 
