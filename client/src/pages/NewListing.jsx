@@ -4,12 +4,16 @@ import { AnimatePresence, motion } from 'motion/react'
 import { CalendarCheck, ImagePlus, Loader2, X, Zap } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { createListing } from '../lib/listings'
-import { PROPERTY_TYPES } from '../lib/constants'
+import { AMENITIES, CANCELLATION_POLICIES, HOUSE_RULES, PROPERTY_TYPES } from '../lib/constants'
+import { formatTime } from '../lib/dates'
 import { Alert } from '../components/AuthShell'
 
 const MAX_PHOTOS = 8
 const MAX_PHOTO_MB = 5
 const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+
+// 06:00 to 23:00 on the hour, for check-in / check-out times.
+const HOURS = Array.from({ length: 18 }, (_, i) => `${String(i + 6).padStart(2, '0')}:00`)
 
 const BOOKING_MODES = [
   { value: 'request', icon: CalendarCheck, title: 'Request to book', text: 'You review and approve every booking.' },
@@ -56,6 +60,12 @@ export default function NewListing() {
     price_per_night: '',
     cleaning_fee: '',
     booking_mode: 'request',
+    amenities: [],
+    house_rules: [],
+    extra_rules: '',
+    check_in_time: '14:00',
+    check_out_time: '11:00',
+    cancellation_policy: 'moderate',
   })
   const [photos, setPhotos] = useState([]) // [{ id, file, preview }]
   const [error, setError] = useState('')
@@ -70,6 +80,12 @@ export default function NewListing() {
 
   function update(field) {
     return (e) => setForm({ ...form, [field]: e.target.value })
+  }
+
+  // Adds or removes a value from a list field (amenities, house rules).
+  function toggleIn(field, value) {
+    const list = form[field]
+    setForm({ ...form, [field]: list.includes(value) ? list.filter((v) => v !== value) : [...list, value] })
   }
 
   function addPhotos(e) {
@@ -133,6 +149,12 @@ export default function NewListing() {
           price_per_night: Math.round(Number(form.price_per_night)),
           cleaning_fee: Math.max(Math.round(Number(form.cleaning_fee) || 0), 0),
           booking_mode: form.booking_mode,
+          amenities: form.amenities,
+          house_rules: form.house_rules,
+          extra_rules: form.extra_rules.trim() || null,
+          check_in_time: form.check_in_time,
+          check_out_time: form.check_out_time,
+          cancellation_policy: form.cancellation_policy,
         },
         photos.map((p) => p.file),
       )
@@ -242,6 +264,111 @@ export default function NewListing() {
                 onChange={update('cleaning_fee')}
               />
             </Field>
+          </div>
+        </Section>
+
+        <Section title="Amenities" description="Tick everything guests can use. Power and security matter a lot to travellers.">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {AMENITIES.map(({ value, label, icon: Icon }) => {
+              const on = form.amenities.includes(value)
+              return (
+                <motion.button
+                  key={value}
+                  type="button"
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => toggleIn('amenities', value)}
+                  aria-pressed={on}
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-3 text-left text-sm font-medium transition ${
+                    on
+                      ? 'bg-emerald-50 text-emerald-900 ring-2 ring-emerald-800'
+                      : 'bg-white text-stone-700 ring-1 ring-stone-900/10 hover:ring-stone-900/30'
+                  }`}
+                >
+                  <Icon className={`h-4.5 w-4.5 shrink-0 ${on ? 'text-emerald-800' : 'text-stone-400'}`} />
+                  {label}
+                </motion.button>
+              )
+            })}
+          </div>
+        </Section>
+
+        <Section title="House rules" description="Set expectations so there are no surprises for you or your guests.">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Check-in from">
+              <select className={inputClass} value={form.check_in_time} onChange={update('check_in_time')}>
+                {HOURS.map((h) => (
+                  <option key={h} value={h}>
+                    {formatTime(h)}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Check-out by">
+              <select className={inputClass} value={form.check_out_time} onChange={update('check_out_time')}>
+                {HOURS.map((h) => (
+                  <option key={h} value={h}>
+                    {formatTime(h)}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {HOUSE_RULES.map(({ value, label, icon: Icon }) => {
+              const on = form.house_rules.includes(value)
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => toggleIn('house_rules', value)}
+                  aria-pressed={on}
+                  className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+                    on ? 'bg-emerald-800 text-white' : 'bg-white text-stone-700 ring-1 ring-stone-900/10 hover:ring-stone-900/30'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" /> {label}
+                </button>
+              )
+            })}
+          </div>
+          <Field label="Anything else? (optional)">
+            <textarea
+              rows={3}
+              maxLength={500}
+              className={inputClass}
+              placeholder="e.g. Please remove shoes indoors. Visitors must leave by 9pm."
+              value={form.extra_rules}
+              onChange={update('extra_rules')}
+            />
+          </Field>
+        </Section>
+
+        <Section title="Cancellation policy" description="Pick one of three standard policies. Guests see it before they book.">
+          <div className="grid gap-3 sm:grid-cols-3">
+            {CANCELLATION_POLICIES.map(({ value, label, short }) => {
+              const active = form.cancellation_policy === value
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setForm({ ...form, cancellation_policy: value })}
+                  aria-pressed={active}
+                  className="relative rounded-xl bg-white p-4 text-left ring-1 ring-stone-900/10 transition hover:ring-stone-900/30"
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="cancellation-policy"
+                      className="absolute inset-0 rounded-xl bg-emerald-50 ring-2 ring-emerald-800"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative block">
+                    <span className="block font-semibold text-stone-900">{label}</span>
+                    <span className="mt-1 block text-sm text-stone-500">{short}</span>
+                  </span>
+                </button>
+              )
+            })}
           </div>
         </Section>
 
