@@ -210,6 +210,13 @@ export default function Stays() {
   const { listings, loading, error } = useListings({ city, guests, type })
   const sorted = [...listings].sort(sorters[sort])
 
+  // Pass the chosen dates and guests on to each listing's booking box.
+  const carried = new URLSearchParams()
+  for (const key of ['checkin', 'checkout', 'guests']) {
+    if (searchParams.get(key)) carried.set(key, searchParams.get(key))
+  }
+  const bookingSearch = carried.size ? `?${carried}` : ''
+
   function setParam(key, value) {
     const next = new URLSearchParams(searchParams)
     if (value) next.set(key, value)

@@ -161,7 +161,7 @@ export function ListingGrid({ listings, loading, error, skeletons = 8, search = 
     >
       {listings.map((listing) => (
         <motion.div key={listing.id} variants={fadeUp}>
-          <ListingCard listing={listing} />
+          <ListingCard listing={listing} search={search} />
         </motion.div>
       ))}
     </motion.div>
