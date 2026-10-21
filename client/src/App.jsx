@@ -13,6 +13,9 @@ import Profile from './pages/Profile'
 import Saved from './pages/Saved'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import Help from './pages/Help'
+import Terms from './pages/Terms'
+import Privacy from './pages/Privacy'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import NotFound from './pages/NotFound'
@@ -27,6 +30,9 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/stays" element={<Stays />} />
         <Route path="/listings/:id" element={<ListingDetail />} />
+        <Route path="/help" element={<Help />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
 
         <Route
           path="/saved"

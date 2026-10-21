@@ -8,12 +8,14 @@ import Footer from './Footer'
 // Every page renders inside this shell. On the home page the navbar floats
 // transparently over the hero photo; elsewhere the content starts below it.
 export default function Layout() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const overlay = pathname === '/'
 
+  // Start each new page at the top — unless the link points at a section
+  // (e.g. /help#safety), which the page scrolls to itself.
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [pathname])
+    if (!hash) window.scrollTo(0, 0)
+  }, [pathname, hash])
 
   return (
     <div className="flex min-h-screen flex-col">
