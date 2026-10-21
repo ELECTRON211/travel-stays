@@ -6,6 +6,7 @@ export default function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [profileVersion, setProfileVersion] = useState(0) // bump to re-load the profile after edits
 
   // 1. Restore the session on page load, then keep listening for login/logout.
   useEffect(() => {
