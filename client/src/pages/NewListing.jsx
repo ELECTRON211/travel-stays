@@ -130,6 +130,7 @@ export default function NewListing() {
           max_guests: Number(form.max_guests),
           bedrooms: Number(form.bedrooms),
           price_per_night: Math.round(Number(form.price_per_night)),
+          cleaning_fee: Math.max(Math.round(Number(form.cleaning_fee) || 0), 0),
           booking_mode: form.booking_mode,
         },
         photos.map((p) => p.file),
@@ -211,7 +212,7 @@ export default function NewListing() {
         </Section>
 
         <Section title="Space and price" description="How many people fit, and what does a night cost?">
-          <div className="grid gap-5 sm:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Max guests">
               <input type="number" min="1" className={inputClass} value={form.max_guests} onChange={update('max_guests')} />
             </Field>
@@ -227,6 +228,17 @@ export default function NewListing() {
                 placeholder="e.g. 35000"
                 value={form.price_per_night}
                 onChange={update('price_per_night')}
+              />
+            </Field>
+            <Field label="Cleaning fee (₦)" hint="Optional, charged once per stay.">
+              <input
+                type="number"
+                min="0"
+                step="500"
+                className={inputClass}
+                placeholder="e.g. 5000"
+                value={form.cleaning_fee}
+                onChange={update('cleaning_fee')}
               />
             </Field>
           </div>
