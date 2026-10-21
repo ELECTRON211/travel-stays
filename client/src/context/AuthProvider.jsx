@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { startTransition, useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { AuthContext } from './AuthContext'
@@ -25,9 +25,15 @@ export default function AuthProvider({ children }) {
       // 1. Forget the user in the app and leave the page straight away, so
       //    the navbar and protected pages update even if the network or
       //    Supabase's auth lock is slow.
-      setSession(null)
-      setProfile(null)
+      // React Router runs navigation as a transition. Clearing the user in the
+      // same transition means both land in one render — otherwise a
+      // protected page would briefly see "no user" and bounce to /login
+      // before the redirect below takes effect.
       navigate(redirectTo, { replace: true, state })
+      startTransition(() => {
+        setSession(null)
+        setProfile(null)
+      })
       toast.show(
         reason === 'idle'
           ? {
