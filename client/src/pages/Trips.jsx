@@ -81,6 +81,11 @@ function TripCard({ trip, isPast }) {
           </span>
           <span className="ml-auto font-semibold text-stone-900">{formatNaira(trip.total)}</span>
         </div>
+        {trip.status === 'confirmed' && trip.payment_status !== 'paid' && !isPast && (
+          <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-800 px-4 py-2 text-sm font-semibold text-white transition group-hover:bg-emerald-900">
+            Pay now <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </span>
+        )}
       </div>
     </Link>
   )
