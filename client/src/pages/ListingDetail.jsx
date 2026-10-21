@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowLeft, BedDouble, CalendarCheck, Grid2x2, Home, MapPin, ShieldCheck, Users, Zap } from 'lucide-react'
+import { ArrowLeft, BedDouble, Grid2x2, Home, MapPin, Users } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useAsync } from '../hooks/useAsync'
 import { fetchListing } from '../lib/listings'
-import { formatNaira } from '../lib/format'
 import { propertyLabel } from '../lib/constants'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import { ListingCover, Rating, TrustBadges } from '../components/ListingCard'
 import Lightbox from '../components/Lightbox'
+import BookingWidget from '../components/BookingWidget'
 import Reveal from '../components/Reveal'
 import NotFound from './NotFound'
 
@@ -79,6 +79,7 @@ function Fact({ icon: Icon, label, value }) {
 
 export default function ListingDetail() {
   const { id } = useParams()
+  const [searchParams] = useSearchParams() // dates and guests carried over from search
   const { user } = useAuth()
   const { data: listing, loading, error } = useAsync(() => fetchListing(id), id)
   const [photoIndex, setPhotoIndex] = useState(null)
@@ -177,26 +178,9 @@ export default function ListingDetail() {
             initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3, duration: 0.8, ease }}
-            className="sticky top-24 rounded-4xl bg-white p-7 shadow-2xl shadow-emerald-950/10 ring-1 ring-black/5"
+            className="sticky top-24 z-10"
           >
-            <p className="text-stone-500">
-              <span className="font-display text-4xl font-medium text-ink">{formatNaira(listing.price_per_night)}</span>{' '}
-              / night
-            </p>
-
-            <button
-              disabled
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-800 py-4 font-semibold text-white opacity-60"
-            >
-              {listing.booking_mode === 'instant' ? <Zap className="h-5 w-5" /> : <CalendarCheck className="h-5 w-5" />}
-              {listing.booking_mode === 'instant' ? 'Instant Book' : 'Request to book'}
-            </button>
-            <p className="mt-3 text-center text-xs text-stone-500">Online booking is coming soon.</p>
-
-            <div className="mt-6 flex items-start gap-3 rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-900">
-              <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-600" />
-              Your payment is held securely and only released to the host after check-in.
-            </div>
+            <BookingWidget listing={listing} initial={Object.fromEntries(searchParams)} />
           </motion.div>
         </aside>
       </div>

@@ -19,6 +19,15 @@ export default function App() {
         <Route path="/stays" element={<Stays />} />
         <Route path="/listings/:id" element={<ListingDetail />} />
 
+        <Route
+          path="/trips/:id"
+          element={
+            <ProtectedRoute>
+              <BookingConfirmation />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Host-only pages */}
         <Route
           path="/host/listings"

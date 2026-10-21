@@ -130,7 +130,7 @@ export function ListingCardSkeleton() {
 
 const gridClass = 'grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
 
-export function ListingGrid({ listings, loading, error, skeletons = 8 }) {
+export function ListingGrid({ listings, loading, error, skeletons = 8, search = '' }) {
   if (error) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
