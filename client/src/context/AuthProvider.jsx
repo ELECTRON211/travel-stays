@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { AuthContext } from './AuthContext'
-import { clearActivity } from '../lib/session'
+import { IDLE_TIMEOUT_MINUTES, clearActivity } from '../lib/session'
+import { useToast } from './ToastContext'
 
 export default function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
@@ -65,9 +66,20 @@ export default function AuthProvider({ children }) {
   const value = {
     user,
     loading,
-    signOut: () => {
+    // Pass { reason: 'idle' } when logging out because of inactivity.
+    signOut: async ({ reason } = {}) => {
       clearActivity()
-      return supabase.auth.signOut()
+      await supabase.auth.signOut()
+      toast.show(
+        reason === 'idle'
+          ? {
+              type: 'info',
+              title: 'Logged out for your security',
+              description: `You were inactive for ${IDLE_TIMEOUT_MINUTES} minutes.`,
+              duration: 6000,
+            }
+          : { type: 'logout', title: "You've been logged out", description: 'See you on your next trip.' },
+      )
     },
     refreshProfile: () => setProfileVersion((v) => v + 1),
   }

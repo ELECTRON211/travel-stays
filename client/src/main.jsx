@@ -6,10 +6,12 @@ import './index.css'
 import App from './App.jsx'
 import AuthProvider from './context/AuthProvider.jsx'
 import SavedProvider from './context/SavedProvider.jsx'
+import ToastProvider from './context/ToastProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
+      <ToastProvider>
       <AuthProvider>
         <SavedProvider>
           {/* Turns animations off for people who ask their device to reduce motion */}
@@ -18,6 +20,7 @@ createRoot(document.getElementById('root')).render(
           </MotionConfig>
         </SavedProvider>
       </AuthProvider>
+      </ToastProvider>
     </BrowserRouter>
   </StrictMode>,
 )
