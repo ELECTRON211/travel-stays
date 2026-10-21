@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { CalendarCheck, ImagePlus, Loader2, X, Zap } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { createListing } from '../lib/listings'
+import { createListing, updateListing } from '../lib/listings'
+import { useToast } from '../context/ToastContext'
 import { AMENITIES, CANCELLATION_POLICIES, HOUSE_RULES, PROPERTY_TYPES } from '../lib/constants'
 import { formatTime } from '../lib/dates'
 import { Alert } from '../components/AuthShell'
@@ -45,38 +46,62 @@ function Field({ label, hint, children }) {
   )
 }
 
-export default function NewListing() {
+const EMPTY_FORM = {
+  title: '',
+  property_type: 'apartment',
+  description: '',
+  city: '',
+  address: '',
+  max_guests: 2,
+  bedrooms: 1,
+  price_per_night: '',
+  cleaning_fee: '',
+  booking_mode: 'request',
+  amenities: [],
+  house_rules: [],
+  extra_rules: '',
+  check_in_time: '14:00',
+  check_out_time: '11:00',
+  cancellation_policy: 'moderate',
+}
+
+// Fills the form from a saved listing (edit mode).
+function formFromListing(listing) {
+  return {
+    ...EMPTY_FORM,
+    ...Object.fromEntries(Object.keys(EMPTY_FORM).map((key) => [key, listing[key] ?? EMPTY_FORM[key]])),
+    description: listing.description ?? '',
+    address: listing.address ?? '',
+    extra_rules: listing.extra_rules ?? '',
+    cleaning_fee: listing.cleaning_fee || '',
+  }
+}
+
+// Used for both "List your place" and "Edit listing". Pass `existing` (a
+// saved listing) to edit it instead of creating a new one.
+export default function NewListing({ existing = null }) {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const toast = useToast()
+  const editing = Boolean(existing)
 
-  const [form, setForm] = useState({
-    title: '',
-    property_type: 'apartment',
-    description: '',
-    city: '',
-    address: '',
-    max_guests: 2,
-    bedrooms: 1,
-    price_per_night: '',
-    cleaning_fee: '',
-    booking_mode: 'request',
-    amenities: [],
-    house_rules: [],
-    extra_rules: '',
-    check_in_time: '14:00',
-    check_out_time: '11:00',
-    cancellation_policy: 'moderate',
-  })
-  const [photos, setPhotos] = useState([]) // [{ id, file, preview }]
+  const [form, setForm] = useState(() => (existing ? formFromListing(existing) : EMPTY_FORM))
+  // [{ id, preview, file }] for new photos; [{ id, preview, url, existing: true }] for saved ones
+  const [photos, setPhotos] = useState(() =>
+    (existing?.photos ?? []).map((url) => ({ id: url, url, preview: url, existing: true })),
+  )
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  // Free the photo preview URLs when leaving the page.
+  // Free the preview URLs of newly picked photos when leaving the page.
   const photosRef = useRef(photos)
   useEffect(() => {
     photosRef.current = photos
   })
-  useEffect(() => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.preview)), [])
+  useEffect(
+    () => () => photosRef.current.filter((p) => !p.existing).forEach((p) => URL.revokeObjectURL(p.preview)),
+    [],
+  )
 
   function update(field) {
     return (e) => setForm({ ...form, [field]: e.target.value })
@@ -111,8 +136,14 @@ export default function NewListing() {
 
   function removePhoto(id) {
     const photo = photos.find((p) => p.id === id)
-    if (photo) URL.revokeObjectURL(photo.preview)
+    if (photo && !photo.existing) URL.revokeObjectURL(photo.preview)
     setPhotos(photos.filter((p) => p.id !== id))
+  }
+
+  // Moves a photo to the front so it becomes the cover.
+  function makeCover(id) {
+    const photo = photos.find((p) => p.id === id)
+    setPhotos([photo, ...photos.filter((p) => p.id !== id)])
   }
 
   function validate() {
@@ -136,9 +167,7 @@ export default function NewListing() {
     setError('')
     setSubmitting(true)
     try {
-      const listing = await createListing(
-        user.id,
-        {
+      const values = {
           title: form.title.trim(),
           property_type: form.property_type,
           description: form.description.trim(),
@@ -155,10 +184,21 @@ export default function NewListing() {
           check_in_time: form.check_in_time,
           check_out_time: form.check_out_time,
           cancellation_policy: form.cancellation_policy,
-        },
-        photos.map((p) => p.file),
-      )
-      navigate(`/listings/${listing.id}`)
+      }
+
+      if (editing) {
+        await updateListing(existing, values, photos)
+        toast.show({ title: 'Listing updated', description: 'Your changes are live.' })
+        navigate(`/listings/${existing.id}`)
+      } else {
+        const listing = await createListing(
+          user.id,
+          values,
+          photos.map((p) => p.file),
+        )
+        toast.show({ title: 'Your place is live!', description: 'Travellers can now find and book it.' })
+        navigate(`/listings/${listing.id}`)
+      }
     } catch (err) {
       setError(err.message)
       setSubmitting(false)
@@ -169,9 +209,13 @@ export default function NewListing() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-display text-5xl font-medium tracking-tight text-ink">
-        List your <em className="text-emerald-700">place.</em>
+        {editing ? 'Edit your' : 'List your'} <em className="text-emerald-700">{editing ? 'listing.' : 'place.'}</em>
       </h1>
-      <p className="mt-2 text-stone-500">Tell travellers about your space. You can pause or delete it any time.</p>
+      <p className="mt-2 text-stone-500">
+        {editing
+          ? 'Update photos, price, amenities or rules. Changes go live as soon as you save.'
+          : 'Tell travellers about your space. You can pause or delete it any time.'}
+      </p>
 
       {error && (
         <div className="mt-6">

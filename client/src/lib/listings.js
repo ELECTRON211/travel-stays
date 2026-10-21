@@ -90,6 +90,32 @@ export async function createListing(hostId, values, files) {
   return data
 }
 
+// Saves changes to a listing. `photos` is the final ordered list from the
+// form: { existing: true, url } for photos already uploaded, { file } for new
+// ones. New photos are uploaded first; photos the host removed are deleted
+// from storage once the listing has been saved.
+export async function updateListing(listing, values, photos) {
+  const newFiles = photos.filter((p) => !p.existing).map((p) => p.file)
+  const uploaded = newFiles.length ? await uploadPhotos(listing.host_id, newFiles) : []
+
+  let next = 0
+  const urls = photos.map((p) => (p.existing ? p.url : uploaded[next++].url))
+
+  const { data, error } = await supabase
+    .from('listings')
+    .update({ ...values, photos: urls })
+    .eq('id', listing.id)
+    .select('id')
+
+  if (error || !data.length) {
+    if (uploaded.length) await supabase.storage.from(PHOTO_BUCKET).remove(uploaded.map((p) => p.path))
+    throw error ?? new Error('You can only edit your own listings.')
+  }
+
+  const removed = (listing.photos ?? []).filter((url) => !urls.includes(url)).map(photoPath).filter(Boolean)
+  if (removed.length) await supabase.storage.from(PHOTO_BUCKET).remove(removed)
+}
+
 // Row-level security silently skips rows the user doesn't own, so we ask for
 // the changed rows back and treat "nothing changed" as an error.
 export async function updateListingStatus(id, status) {
