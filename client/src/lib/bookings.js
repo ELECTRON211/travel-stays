@@ -33,6 +33,11 @@ export async function createBooking({ listingId, checkIn, checkOut, guests }) {
   return data
 }
 
+export async function cancelBooking(id) {
+  const { error } = await supabase.rpc('cancel_booking', { p_booking_id: id })
+  if (error) throw new Error(error.message)
+}
+
 export async function fetchBooking(id) {
   const { data, error } = await supabase
     .from('bookings')
