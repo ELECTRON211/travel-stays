@@ -30,6 +30,13 @@ export function formatLongDate(value) {
   })
 }
 
+// "14:00" → "2:00 pm"
+export function formatTime(value) {
+  if (!value) return ''
+  const [h, m] = value.split(':').map(Number)
+  return new Date(2000, 0, 1, h, m).toLocaleTimeString('en-NG', { hour: 'numeric', minute: '2-digit' })
+}
+
 export function nightsBetween(checkIn, checkOut) {
   return Math.round((parseISODate(checkOut) - parseISODate(checkIn)) / 86_400_000)
 }
