@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
-import { LogOut, Luggage, Menu, X } from 'lucide-react'
+import { LogOut, Luggage, Menu, UserRound, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { initials } from '../lib/format'
 import { ease } from '../lib/motion'
@@ -119,11 +119,18 @@ export default function Navbar({ overlay = false }) {
                     >
                       <div className="border-b border-stone-100 px-5 py-4">
                         <p className="truncate font-semibold text-stone-900">{user.fullName}</p>
-                        <p className="truncate text-sm text-stone-500">{user.email}</p>
+                        <p className="truncate text-sm text-stone-500">{maskEmail(user.email)}</p>
                         <span className="mt-3 inline-block rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
                           {roleLabels[user.role] ?? user.role}
                         </span>
                       </div>
+                      <Link
+                        to="/profile"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex w-full items-center gap-2 px-5 py-3.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
+                      >
+                        <UserRound className="h-4 w-4" /> Profile
+                      </Link>
                       <Link
                         to="/trips"
                         onClick={() => setMenuOpen(false)}
@@ -215,9 +222,16 @@ export default function Navbar({ overlay = false }) {
                   <div className="px-3 py-2">
                     <p className="font-semibold text-stone-900">{user.fullName}</p>
                     <p className="text-sm text-stone-500">
-                      {user.email} · {roleLabels[user.role] ?? user.role}
+                      {maskEmail(user.email)} · {roleLabels[user.role] ?? user.role}
                     </p>
                   </div>
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium text-stone-700"
+                  >
+                    <UserRound className="h-4 w-4" /> Profile
+                  </Link>
                   <button
                     onClick={() => {
                       setMobileOpen(false)

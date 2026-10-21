@@ -8,6 +8,7 @@ import MyListings from './pages/MyListings'
 import NewListing from './pages/NewListing'
 import BookingConfirmation from './pages/BookingConfirmation'
 import Trips from './pages/Trips'
+import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import NotFound from './pages/NotFound'
@@ -21,6 +22,14 @@ export default function App() {
         <Route path="/stays" element={<Stays />} />
         <Route path="/listings/:id" element={<ListingDetail />} />
 
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/trips"
           element={
