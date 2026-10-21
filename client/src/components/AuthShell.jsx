@@ -31,7 +31,8 @@ export default function AuthShell({ title, subtitle, children }) {
       <div className="relative hidden h-screen self-start p-3 lg:sticky lg:top-0 lg:block">
         <div className="relative h-full overflow-hidden rounded-4xl">
           <motion.img
-            src={images.auth}
+            key={image}
+            src={image}
             alt=""
             initial={{ scale: 1.2 }}
             animate={{ scale: 1 }}
@@ -46,10 +47,8 @@ export default function AuthShell({ title, subtitle, children }) {
             className="absolute inset-x-10 bottom-10 rounded-3xl border border-white/20 bg-white/10 p-8 text-white backdrop-blur-xl"
           >
             <ShieldCheck className="h-8 w-8 text-emerald-300" />
-            <p className="mt-4 font-display text-3xl leading-snug">
-              Every host and tour guide is <em className="text-emerald-300">verified</em> before they can list.
-            </p>
-            <p className="mt-3 text-sm text-white/70">Book stays and experiences with confidence.</p>
+            <p className="mt-4 font-display text-3xl leading-snug">{quote}</p>
+            <p className="mt-3 text-sm text-white/70">{quoteNote}</p>
           </motion.div>
         </div>
       </div>
