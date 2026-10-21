@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowRight, CalendarDays, Hourglass, MapPin, Users, XCircle } from 'lucide-react'
+import { ArrowRight, BadgeCheck, CalendarDays, Hourglass, MapPin, Users, XCircle } from 'lucide-react'
+import PayButton from '../components/PayButton'
 import { useAsync } from '../hooks/useAsync'
 import { cancelBooking, fetchBooking } from '../lib/bookings'
 import { formatLongDate, todayISO } from '../lib/dates'
@@ -247,10 +248,52 @@ export default function BookingConfirmation() {
               <span>Total</span>
               <span className="tabular-nums">{formatNaira(booking.total)}</span>
             </div>
-            <p className="pt-1 text-xs text-stone-400">No payment has been taken yet. Online payment is coming soon.</p>
+            <p className="pt-1 text-xs text-stone-400">
+              {booking.payment_status === 'paid'
+                ? `Paid${booking.paid_at ? ` on ${formatLongDate(booking.paid_at.slice(0, 10))}` : ''} · Ref ${booking.payment_reference}`
+                : booking.status === 'pending'
+                  ? "You'll pay once the host accepts your request."
+                  : booking.status === 'confirmed'
+                    ? 'Payment due — pay securely below.'
+                    : 'No payment was taken.'}
+            </p>
           </div>
         </div>
       </motion.div>
+
+      {booking.status === 'confirmed' && booking.payment_status !== 'paid' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.6, ease }}
+          className="mt-6 grid items-center gap-6 rounded-3xl bg-white p-6 shadow-xl shadow-emerald-950/5 ring-1 ring-emerald-800/15 sm:p-8 md:grid-cols-2"
+        >
+          <div>
+            <h2 className="font-display text-2xl text-stone-900">Complete your payment</h2>
+            <p className="mt-1 text-sm text-stone-500">
+              Pay {formatNaira(booking.total)} to secure your stay. Your money is held safely and released to the host
+              after check-in.
+            </p>
+          </div>
+          <PayButton booking={booking} onPaid={reload} />
+        </motion.div>
+      )}
+
+      {booking.payment_status === 'paid' && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mt-6 flex items-center gap-4 rounded-3xl bg-emerald-50 p-5 ring-1 ring-emerald-200"
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald-800 text-white">
+            <BadgeCheck className="h-6 w-6" />
+          </span>
+          <div className="text-sm">
+            <p className="font-semibold text-emerald-900">Payment received — {formatNaira(booking.total)}</p>
+            <p className="text-emerald-800/80">Reference {booking.payment_reference}. Keep this for your records.</p>
+          </div>
+        </motion.div>
+      )}
 
       {cancelError && (
         <div className="mt-6">
