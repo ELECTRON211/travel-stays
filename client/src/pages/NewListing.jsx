@@ -54,6 +54,7 @@ export default function NewListing() {
     max_guests: 2,
     bedrooms: 1,
     price_per_night: '',
+    cleaning_fee: '',
     booking_mode: 'request',
   })
   const [photos, setPhotos] = useState([]) // [{ id, file, preview }]

@@ -314,7 +314,7 @@ export default function Stays() {
           </Reveal>
 
           <div className="mt-10">
-            <ListingGrid listings={sorted} loading={loading} error={error} />
+            <ListingGrid listings={sorted} loading={loading} error={error} search={bookingSearch} />
           </div>
 
           {!loading && !error && listings.length === 0 && (

@@ -74,10 +74,12 @@ export function Rating({ listing, className = '' }) {
   )
 }
 
-export default function ListingCard({ listing }) {
+// `search` ("?checkin=...&guests=...") carries the visitor's search into the
+// listing page so the booking box starts with the same dates.
+export default function ListingCard({ listing, search = '' }) {
   return (
     <Link
-      to={`/listings/${listing.id}`}
+      to={`/listings/${listing.id}${search}`}
       className="group block transition-transform duration-300 ease-out hover:scale-[1.02]"
     >
       <div className="relative aspect-4/3 overflow-hidden rounded-xl bg-stone-200 ring-1 ring-stone-900/5 transition-shadow duration-300 group-hover:shadow-xl group-hover:shadow-stone-900/15">
