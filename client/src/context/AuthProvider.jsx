@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { AuthContext } from './AuthContext'
-import { IDLE_TIMEOUT_MINUTES, clearActivity } from '../lib/session'
+import { IDLE_TIMEOUT_MINUTES, clearActivity, clearStoredAuth } from '../lib/session'
 import { useToast } from './ToastContext'
 
 export default function AuthProvider({ children }) {
@@ -12,6 +12,47 @@ export default function AuthProvider({ children }) {
   const [profileVersion, setProfileVersion] = useState(0) // bump to re-load the profile after edits
   const toast = useToast()
   const navigate = useNavigate()
+  const signingOut = useRef(false)
+
+  // Logs out on this device. Options:
+  //   reason: 'idle'      → the "logged out for your security" message
+  //   redirectTo / state  → where to go afterwards (home by default)
+  const signOut = useCallback(
+    async ({ reason, redirectTo = '/', state } = {}) => {
+      signingOut.current = true
+      clearActivity()
+
+      // 1. Forget the user in the app and leave the page straight away, so
+      //    the navbar and protected pages update even if the network or
+      //    Supabase's auth lock is slow.
+      setSession(null)
+      setProfile(null)
+      navigate(redirectTo, { replace: true, state })
+      toast.show(
+        reason === 'idle'
+          ? {
+              type: 'info',
+              title: 'Logged out for your security',
+              description: `You were inactive for ${IDLE_TIMEOUT_MINUTES} minutes.`,
+              duration: 6000,
+            }
+          : { type: 'logout', title: "You've been logged out", description: 'See you on your next trip.' },
+      )
+
+      // 2. Remove the stored tokens from this device. 'local' needs no server
+      //    round-trip; the timeout stops a stuck call from hanging, and the
+      //    manual wipe guarantees nothing is left behind either way.
+      try {
+        const timeout = new Promise((resolve) => setTimeout(() => resolve({ error: new Error('timed out') }), 3000))
+        const { error } = await Promise.race([supabase.auth.signOut({ scope: 'local' }), timeout])
+        if (error) console.warn('Supabase sign-out did not finish cleanly:', error.message)
+      } catch (error) {
+        console.warn('Supabase sign-out failed:', error.message)
+      }
+      clearStoredAuth()
+    },
+    [navigate, toast],
+  )
 
   // 1. Restore the session on page load, then keep listening for login/logout.
   useEffect(() => {
@@ -20,7 +61,11 @@ export default function AuthProvider({ children }) {
       setLoading(false)
     })
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (event === 'SIGNED_IN') signingOut.current = false
+      // While logging out, ignore anything that would bring the old session
+      // back — e.g. a token refresh that was already in flight.
+      else if (signingOut.current && newSession) return
       setSession(newSession)
     })
 
@@ -69,29 +114,7 @@ export default function AuthProvider({ children }) {
   const value = {
     user,
     loading,
-    // Logs out on this device and leaves the page. Options:
-    //   reason: 'idle'      → the "logged out for your security" message
-    //   redirectTo / state  → where to go afterwards (home by default)
-    signOut: async ({ reason, redirectTo = '/', state } = {}) => {
-      clearActivity()
-      // 'local' clears the session on this device immediately, without
-      // waiting on the server — so logging out works even on a bad connection.
-      const { error } = await supabase.auth.signOut({ scope: 'local' })
-      if (error) console.error('Sign out problem (logged out locally anyway):', error.message)
-      setSession(null)
-      setProfile(null)
-      navigate(redirectTo, { replace: true, state })
-      toast.show(
-        reason === 'idle'
-          ? {
-              type: 'info',
-              title: 'Logged out for your security',
-              description: `You were inactive for ${IDLE_TIMEOUT_MINUTES} minutes.`,
-              duration: 6000,
-            }
-          : { type: 'logout', title: "You've been logged out", description: 'See you on your next trip.' },
-      )
-    },
+    signOut,
     refreshProfile: () => setProfileVersion((v) => v + 1),
   }
 

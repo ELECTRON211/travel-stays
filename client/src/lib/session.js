@@ -26,6 +26,19 @@ export function lastActivity() {
   }
 }
 
+// Supabase keeps the login (access + refresh tokens) in localStorage under
+// keys like "sb-<project>-auth-token". Used as a fallback on logout in case
+// supabase.auth.signOut() can't finish, so no token is ever left behind.
+export function clearStoredAuth() {
+  try {
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith('sb-') && key.includes('-auth-token'))
+      .forEach((key) => localStorage.removeItem(key))
+  } catch {
+    // Storage unavailable — nothing was stored there in the first place.
+  }
+}
+
 export function clearActivity() {
   try {
     localStorage.removeItem(KEY)
