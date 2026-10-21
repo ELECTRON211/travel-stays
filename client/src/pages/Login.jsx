@@ -64,6 +64,11 @@ export default function Login() {
           autoComplete="current-password"
           required
         />
+        <div className="-mt-2 text-right">
+          <Link to="/forgot-password" className="text-sm font-semibold text-emerald-800 hover:text-emerald-900">
+            Forgot password?
+          </Link>
+        </div>
         <button
           disabled={submitting}
           className="w-full rounded-xl bg-emerald-800 py-3 font-semibold text-white transition hover:bg-emerald-900 disabled:opacity-60"

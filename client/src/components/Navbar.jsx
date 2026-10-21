@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
-import { LogOut, Luggage, Menu, UserRound, X } from 'lucide-react'
+import { Heart, LogOut, Luggage, Menu, UserRound, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { initials, maskEmail } from '../lib/format'
 import { ease } from '../lib/motion'
@@ -19,6 +19,7 @@ function linksFor(user) {
   if (user) {
     return [
       { to: '/stays', label: 'Stays' },
+      { to: '/saved', label: 'Saved' },
       { to: '/trips', label: 'My trips' },
     ]
   }
@@ -137,6 +138,13 @@ export default function Navbar({ overlay = false }) {
                         className="flex w-full items-center gap-2 px-5 py-3.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
                       >
                         <Luggage className="h-4 w-4" /> My trips
+                      </Link>
+                      <Link
+                        to="/saved"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex w-full items-center gap-2 px-5 py-3.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
+                      >
+                        <Heart className="h-4 w-4" /> Saved
                       </Link>
                       <button
                         onClick={() => {

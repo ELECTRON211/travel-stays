@@ -10,6 +10,9 @@ import NewListing from './pages/NewListing'
 import BookingConfirmation from './pages/BookingConfirmation'
 import Trips from './pages/Trips'
 import Profile from './pages/Profile'
+import Saved from './pages/Saved'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import NotFound from './pages/NotFound'
@@ -25,6 +28,14 @@ export default function App() {
         <Route path="/stays" element={<Stays />} />
         <Route path="/listings/:id" element={<ListingDetail />} />
 
+        <Route
+          path="/saved"
+          element={
+            <ProtectedRoute>
+              <Saved />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/profile"
           element={
@@ -74,6 +85,8 @@ export default function App() {
       {/* Full-screen auth pages */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </>
   )

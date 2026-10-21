@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Clock } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
@@ -13,12 +13,16 @@ const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchst
 export default function SessionTimeout() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [secondsLeft, setSecondsLeft] = useState(null) // null = no warning showing
   const warningRef = useRef(false)
   const userId = user?.id
 
   useEffect(() => {
     if (!userId) return
+    // Arriving from a password-reset email signs the user in without going
+    // through the login form, so start their inactivity clock here.
+    if (pathname === '/reset-password') markActive()
 
     let lastWrite = 0
     function onActivity() {
@@ -61,7 +65,7 @@ export default function SessionTimeout() {
       ACTIVITY_EVENTS.forEach((event) => window.removeEventListener(event, onActivity))
       clearInterval(timer)
     }
-  }, [userId, signOut, navigate])
+  }, [userId, signOut, navigate, pathname])
 
   function stayLoggedIn() {
     markActive()

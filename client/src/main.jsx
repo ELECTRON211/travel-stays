@@ -5,6 +5,7 @@ import { MotionConfig } from 'motion/react'
 import './index.css'
 import App from './App.jsx'
 import AuthProvider from './context/AuthProvider.jsx'
+import SavedProvider from './context/SavedProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
