@@ -16,9 +16,10 @@ export default function AuthProvider({ children }) {
 
   // Logs out on this device. Options:
   //   reason: 'idle'      → the "logged out for your security" message
-  //   redirectTo / state  → where to go afterwards (home by default)
+  //   redirectTo / state  → where to go afterwards (the log in page by
+  //                         default, so it's always obvious you're logged out)
   const signOut = useCallback(
-    async ({ reason, redirectTo = '/', state } = {}) => {
+    async ({ reason, redirectTo = '/login', state } = {}) => {
       signingOut.current = true
       clearActivity()
 
