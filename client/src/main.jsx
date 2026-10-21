@@ -11,10 +11,12 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        {/* Turns animations off for people who ask their device to reduce motion */}
-        <MotionConfig reducedMotion="user">
-          <App />
-        </MotionConfig>
+        <SavedProvider>
+          {/* Turns animations off for people who ask their device to reduce motion */}
+          <MotionConfig reducedMotion="user">
+            <App />
+          </MotionConfig>
+        </SavedProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

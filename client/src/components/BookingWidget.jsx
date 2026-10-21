@@ -140,7 +140,7 @@ export default function BookingWidget({ listing, initial = {} }) {
                     exit={{ opacity: 0, y: 8, scale: 0.98 }}
                     transition={{ duration: 0.2, ease }}
                     className={`absolute right-0 top-full z-30 mt-2 rounded-2xl bg-white p-5 shadow-2xl shadow-stone-900/20 ring-1 ring-stone-900/5 ${
-                      open === 'dates' ? 'w-full lg:w-[40rem]' : 'w-full'
+                      open === 'dates' ? 'w-full lg:w-160' : 'w-full'
                     }`}
                   >
                     {open === 'dates' ? (
