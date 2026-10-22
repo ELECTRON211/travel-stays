@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import { nightsBetween } from './dates'
+import { fetchReviewsForBookings } from './reviews'
 
 // Must match the service fee in create_booking (supabase/migrations/003_bookings.sql).
 // The server always recalculates the price; this is only for showing it.
@@ -48,7 +49,9 @@ export async function fetchMyTrips(travelerId) {
     .eq('traveler_id', travelerId)
     .order('check_in', { ascending: false })
   if (error) throw error
-  return data ?? []
+  const trips = data ?? []
+  const reviews = await fetchReviewsForBookings(trips.map((t) => t.id))
+  return trips.map((trip) => ({ ...trip, review: reviews[trip.id] ?? null }))
 }
 
 // Bookings on the host's listings, each with the guest's name attached.
@@ -86,5 +89,7 @@ export async function fetchBooking(id) {
     .eq('id', id)
     .maybeSingle()
   if (error) throw error
-  return data
+  if (!data) return null
+  const reviews = await fetchReviewsForBookings([data.id])
+  return { ...data, review: reviews[data.id] ?? null }
 }
