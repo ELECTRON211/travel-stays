@@ -22,6 +22,8 @@ import Privacy from './pages/Privacy'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import NotFound from './pages/NotFound'
+import Admin from './pages/Admin'
+import AuthCallback from './pages/AuthCallback'
 
 export default function App() {
   return (
@@ -105,6 +107,16 @@ export default function App() {
           }
         />
 
+        {/* Admin-only dashboard */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -113,6 +125,7 @@ export default function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
     </>
   )

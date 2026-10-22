@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
+import GoogleButton from '../components/GoogleButton'
 
 const roles = [
   { value: 'traveler', label: 'Traveler', text: 'Book stays and tours', icon: Luggage },
@@ -116,6 +117,10 @@ export default function Signup() {
             ))}
           </div>
         </fieldset>
+
+        <div>
+          <GoogleButton role={role} onError={setError} />
+        </div>
 
         <TextField
           icon={User}

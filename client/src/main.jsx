@@ -7,18 +7,21 @@ import App from './App.jsx'
 import AuthProvider from './context/AuthProvider.jsx'
 import SavedProvider from './context/SavedProvider.jsx'
 import ToastProvider from './context/ToastProvider.jsx'
+import PresenceProvider from './context/PresenceProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <ToastProvider>
       <AuthProvider>
+        <PresenceProvider>
         <SavedProvider>
           {/* Turns animations off for people who ask their device to reduce motion */}
           <MotionConfig reducedMotion="user">
             <App />
           </MotionConfig>
         </SavedProvider>
+        </PresenceProvider>
       </AuthProvider>
       </ToastProvider>
     </BrowserRouter>

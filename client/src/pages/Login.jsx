@@ -7,6 +7,7 @@ import { videos } from '../lib/images'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
+import GoogleButton from '../components/GoogleButton'
 
 export default function Login() {
   const { user } = useAuth()
@@ -47,6 +48,7 @@ export default function Login() {
 
   return (
     <AuthShell video={videos.login} title="Welcome back" subtitle="Log in to manage your trips and bookings.">
+      <GoogleButton onError={setError} />
       <form onSubmit={handleSubmit} className="space-y-5">
         {location.state?.reason === 'idle' && !error && (
           <Alert type="success">
