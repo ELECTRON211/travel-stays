@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { ArrowRight, BadgeCheck, CalendarDays, Hourglass, MapPin, Users, XCircle } from 'lucide-react'
 import PayButton from '../components/PayButton'
+import ReviewForm, { YourReview } from '../components/ReviewForm'
 import { useAsync } from '../hooks/useAsync'
 import { cancelBooking, fetchBooking } from '../lib/bookings'
 import { formatLongDate, todayISO } from '../lib/dates'
@@ -294,6 +295,13 @@ export default function BookingConfirmation() {
             <p className="text-emerald-800/80">Reference {booking.payment_reference}. Keep this for your records.</p>
           </div>
         </motion.div>
+      )}
+
+      {booking.review ? (
+        <YourReview review={booking.review} />
+      ) : (
+        ['confirmed', 'completed'].includes(booking.status) &&
+        booking.check_out <= todayISO() && <ReviewForm booking={booking} onSubmitted={reload} />
       )}
 
       {cancelError && (

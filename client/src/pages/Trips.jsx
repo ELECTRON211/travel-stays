@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowRight, CalendarDays, Luggage, MapPin, Users } from 'lucide-react'
+import { ArrowRight, CalendarDays, Luggage, MapPin, Star, Users } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useAsync } from '../hooks/useAsync'
 import { fetchMyTrips } from '../lib/bookings'
@@ -9,6 +9,7 @@ import { formatShortDate, todayISO } from '../lib/dates'
 import { formatNaira } from '../lib/format'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import { ListingCover } from '../components/ListingCard'
+import StarRating from '../components/StarRating'
 import { Alert } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
 
@@ -87,6 +88,16 @@ function TripCard({ trip, isPast }) {
             Pay now <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </span>
         )}
+        {isPast && ['confirmed', 'completed'].includes(trip.status) &&
+          (trip.review ? (
+            <span className="flex items-center gap-2 text-sm text-stone-500">
+              <StarRating value={trip.review.rating} size="h-4 w-4" /> You reviewed this stay
+            </span>
+          ) : (
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-amber-950 transition group-hover:bg-amber-300">
+              <Star className="h-4 w-4 fill-current" /> Leave a review
+            </span>
+          ))}
       </div>
     </Link>
   )

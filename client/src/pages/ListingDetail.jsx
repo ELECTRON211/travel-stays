@@ -17,6 +17,7 @@ import SaveButton from '../components/SaveButton'
 import ShareButton from '../components/ShareButton'
 import NotFound from './NotFound'
 import TypeWriter from '../components/TypeWriter'
+import ListingReviews from '../components/ListingReviews'
 
 function AmenitiesSection({ listing }) {
   const offered = AMENITIES.filter((a) => listing.amenities?.includes(a.value))
@@ -269,6 +270,7 @@ export default function ListingDetail() {
 
           <AmenitiesSection listing={listing} />
           <ThingsToKnow listing={listing} />
+          <ListingReviews listing={listing} isOwner={isOwner} />
         </div>
 
         <aside>
