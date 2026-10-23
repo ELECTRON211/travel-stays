@@ -24,6 +24,7 @@ import Signup from './pages/Signup'
 import NotFound from './pages/NotFound'
 import Admin from './pages/Admin'
 import AuthCallback from './pages/AuthCallback'
+import LoggedOut from './pages/LoggedOut'
 
 export default function App() {
   return (
@@ -126,6 +127,7 @@ export default function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/logged-out" element={<LoggedOut />} />
       </Routes>
     </>
   )

@@ -2,24 +2,22 @@ import { startTransition, useCallback, useEffect, useRef, useState } from 'react
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { AuthContext } from './AuthContext'
-import { IDLE_TIMEOUT_MINUTES, clearActivity, clearStoredAuth } from '../lib/session'
-import { useToast } from './ToastContext'
+import { clearActivity, clearStoredAuth } from '../lib/session'
 
 export default function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [profileVersion, setProfileVersion] = useState(0) // bump to re-load the profile after edits
-  const toast = useToast()
   const navigate = useNavigate()
   const signingOut = useRef(false)
 
   // Logs out on this device. Options:
-  //   reason: 'idle'      → the "logged out for your security" message
-  //   redirectTo / state  → where to go afterwards (the log in page by
-  //                         default, so it's always obvious you're logged out)
+  //   redirectTo / state  → where to go afterwards. By default the "logged
+  //                         out" page, so it's always obvious it worked;
+  //                         state { reason: 'idle' } changes its message.
   const signOut = useCallback(
-    async ({ reason, redirectTo = '/login', state } = {}) => {
+    async ({ redirectTo = '/logged-out', state } = {}) => {
       signingOut.current = true
       clearActivity()
 
@@ -35,16 +33,6 @@ export default function AuthProvider({ children }) {
         setSession(null)
         setProfile(null)
       })
-      toast.show(
-        reason === 'idle'
-          ? {
-              type: 'info',
-              title: 'Logged out for your security',
-              description: `You were inactive for ${IDLE_TIMEOUT_MINUTES} minutes.`,
-              duration: 6000,
-            }
-          : { type: 'logout', title: "You've been logged out", description: 'See you on your next trip.' },
-      )
 
       // 2. Remove the stored tokens from this device. 'local' needs no server
       //    round-trip; the timeout stops a stuck call from hanging, and the
@@ -58,7 +46,7 @@ export default function AuthProvider({ children }) {
       }
       clearStoredAuth()
     },
-    [navigate, toast],
+    [navigate],
   )
 
   // 1. Restore the session on page load, then keep listening for login/logout.
