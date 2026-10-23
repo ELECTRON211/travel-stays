@@ -34,7 +34,7 @@ stays(city, state, area, title, property_type, bedrooms, max_guests, price, phot
     ('Bauchi',         'Bauchi',      'GRA',                  'Bauchi GRA Family Home',            'house',      3, 6, 40000, 3, 'a good base for trips to Yankari Game Reserve'),
     ('Yenagoa',        'Bayelsa',     'Ovom',                 'Yenagoa Creekside Apartment',       'apartment',  2, 4, 38000, 2, 'minutes from the Ox-Bow Lake'),
     ('Makurdi',        'Benue',       'High Level',           'Makurdi High Level Guesthouse',     'guesthouse', 1, 2, 20000, 9, 'close to the Benue River bridges'),
-    ('Maiduguri',      'Borno',       'GRA',                  'Maiduguri GRA Hotel Room',          'hotel_room', 1, 2, 25000, 5, 'in the quiet, secure GRA'),
+    ('Maiduguri',      'Borno',       'GRA',                  'Maiduguri GRA Hotel Room',          'hotel_room', 1, 2, 25000, 5, 'close to the city centre'),
     ('Asaba',          'Delta',       'Okpanam Road',         'Asaba Riverview Apartment',         'apartment',  2, 4, 45000, 0, 'near the Niger Bridge and the Asaba waterfront'),
     ('Abakaliki',      'Ebonyi',      'Kpirikpiri',           'Abakaliki Cosy Guesthouse',         'guesthouse', 1, 2, 18000, 6, 'close to the city centre'),
     ('Benin City',     'Edo',         'GRA',                  'Benin GRA Heritage Home',           'house',      3, 6, 55000, 7, 'near the Oba''s Palace and the National Museum'),
@@ -55,7 +55,7 @@ stays(city, state, area, title, property_type, bedrooms, max_guests, price, phot
     ('Osogbo',         'Osun',        'Oke-Fia',              'Osogbo Sacred Grove Guesthouse',    'guesthouse', 1, 2, 20000, 6, 'close to the Osun-Osogbo Sacred Grove'),
     ('Jos',            'Plateau',     'Rayfield',             'Jos Rayfield Cool-Climate Home',    'house',      3, 6, 45000, 7, 'in the cool hills of Rayfield, near the Jos Wildlife Park'),
     ('Sokoto',         'Sokoto',      'GRA',                  'Sokoto GRA Hotel Room',             'hotel_room', 1, 2, 18000, 5, 'near the Sultan''s Palace'),
-    ('Jalingo',        'Taraba',      'Mayo-Gwoi',            'Jalingo Gateway Guesthouse',        'guesthouse', 1, 2, 18000, 9, 'a stop on the way to the Mambilla Plateau'),
+    ('Jalingo',        'Taraba',      'Mile Six',          'Jalingo Gateway Guesthouse',        'guesthouse', 1, 2, 18000, 9, 'a stop on the way to the Mambilla Plateau'),
     ('Damaturu',       'Yobe',        'GRA',                  'Damaturu Simple Hotel Room',        'hotel_room', 1, 2, 15000, 4, 'in the quiet GRA'),
     ('Gusau',          'Zamfara',     'GRA',                  'Gusau GRA Guesthouse',              'guesthouse', 1, 2, 15000, 6, 'close to the city centre')
 )
