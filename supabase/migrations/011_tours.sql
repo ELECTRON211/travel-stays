@@ -229,6 +229,17 @@ grant execute on function public.respond_tour_booking(uuid, boolean) to authenti
 grant execute on function public.cancel_tour_booking(uuid) to authenticated;
 grant execute on function public.tour_spots_left(uuid, date) to anon, authenticated;
 
+-- Guides upload tour photos to the same bucket as listings (own folder only).
+-- Replaces the hosts-only upload policy from 002.
+drop policy if exists "Hosts upload listing photos" on storage.objects;
+create policy "Hosts upload listing photos"
+  on storage.objects for insert to authenticated
+  with check (
+    bucket_id = 'listing-photos'
+    and (storage.foldername(name))[1] = auth.uid()::text
+    and (public.is_host() or public.is_guide())
+  );
+
 -- ---------------------------------------------------------------------------
 -- 4. Admin dashboard: include tours (replaces the version from 010)
 -- ---------------------------------------------------------------------------
