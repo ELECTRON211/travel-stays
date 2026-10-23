@@ -9,6 +9,7 @@
 | Admin | peter.m2300470@st.futminna.edu.ng | *given separately* |
 | Host | *host account email* | *given separately* |
 | Traveller | *traveller account email* | *given separately* |
+| Tour guide | *guide account email* | *given separately* |
 
 > Passwords are not stored in this repository, because it is public. They are provided with the submission.
 > Assessors can also create their own traveller or host account on the Sign up page.
@@ -22,7 +23,7 @@ No real money is charged. When the Paystack window opens:
 
 ---
 
-## Demo script (about 7 minutes)
+## Demo script (about 8 minutes)
 
 Use two browser windows. **Window A** is a normal window for the host and the admin. **Window B** is an incognito window for the traveller.
 
@@ -51,6 +52,12 @@ Use two browser windows. **Window A** is a normal window for the host and the ad
 - Open a trip under **Past**. These are stays that have ended.
 - Leave a star rating and a comment. It appears on the listing page and updates the listing's average rating.
 
+### 5b. Tours (1 minute)
+- Open the **Tours** tab on the Stays page and filter by **Food tours**. Open the **Calabar Food Walk**.
+- Show the itinerary, meeting point and guide card. Pick a date, then click **Request to book**. Note that days the tour doesn't run are rejected.
+- Log in as the **guide** and open **My tours**: accept the request. The traveller sees it as **Confirmed** under **My trips → Tours**.
+- Open the **Trips** tab for Calabar: it shows stays and tours together.
+
 ### 6. Admin dashboard (1.5 minutes, window A)
 - Log out (this shows the logged-out page), then log in as the **admin** and click **Dashboard**.
 - **Online now** lists the traveller from window B, and which page they're on. Click around in window B and watch it update live.
@@ -65,6 +72,7 @@ Use two browser windows. **Window A** is a normal window for the host and the ad
 
 ## Before the demo: checklist
 - [ ] The host account has listings (run `supabase/demo/seed_listings.sql` with the host's email).
+- [ ] The guide account has tours (run `supabase/demo/seed_tours.sql` with the guide's email).
 - [ ] The traveller has a finished stay to review (run `supabase/demo/past_booking.sql` with the traveller's email).
 - [ ] All three accounts can log in.
 - [ ] The latest code is pushed to GitHub, and Vercel shows the deployment as **Ready**.

@@ -1,6 +1,6 @@
 # Travel & Stays
 
-A two-sided marketplace for Nigeria where **travellers** find and book verified places to stay, and **hosts** list and manage their properties. Payments go through Paystack, and an **admin dashboard** shows live platform activity.
+A two-sided marketplace for Nigeria where **travellers** find and book verified places to stay and local tours, **hosts** list and manage their properties, and **tour guides** list experiences. Payments go through Paystack, and an **admin dashboard** shows live platform activity.
 
 **Live site:** https://travel-stays.vercel.app
 **Built from:** the Travel & Stays Product Requirements Document (PRD)
@@ -24,6 +24,13 @@ A two-sided marketplace for Nigeria where **travellers** find and book verified 
 - Accept or decline booking requests, or allow instant booking
 - **Availability calendar**: block dates when the place isn't available
 - Reply publicly to reviews
+
+### Tour guides
+- Create tours with an itinerary, duration, start time, meeting point, maximum group size, price per person, what's included, languages, the days it runs, and photos
+- Accept or decline booking requests from the **My tours** dashboard
+- See upcoming departures, the number of guests coming, and confirmed earnings
+- Travellers browse tours by city and category (food, adventure, culture, nature), pick a date and number of people, and request a place
+- The **Trips** tab shows a city's stays and tours together
 
 ### Admins
 - **Dashboard** at `/admin`:
@@ -65,7 +72,7 @@ travel-stays/
 │   └── src/lib/               Data access (Supabase queries) and helpers
 ├── supabase/
 │   ├── schema.sql             Base tables: profiles and listings
-│   ├── migrations/            002–010, run in order
+│   ├── migrations/            002–011, run in order
 │   ├── functions/verify-payment/   Edge Function that confirms Paystack payments
 │   └── demo/                  Optional demo data scripts
 └── docs/                      Demo guide and "how it works" notes
@@ -88,7 +95,7 @@ travel-stays/
    VITE_SUPABASE_ANON_KEY=your-anon-or-publishable-key
    VITE_PAYSTACK_PUBLIC_KEY=pk_test_...
    ```
-3. **Set up the database.** In Supabase, open **SQL Editor** and run `supabase/schema.sql`, then each file in `supabase/migrations/` in number order (002 to 010).
+3. **Set up the database.** In Supabase, open **SQL Editor** and run `supabase/schema.sql`, then each file in `supabase/migrations/` in number order (002 to 011).
 4. **Deploy the payment function** (optional, only needed for payments):
    - Deploy `supabase/functions/verify-payment`.
    - Add the secret `PAYSTACK_SECRET_KEY` under **Edge Functions → Secrets**.
@@ -100,6 +107,7 @@ travel-stays/
 
 **Optional demo data:**
 - `supabase/demo/seed_listings.sql` adds stays in Calabar, Lagos, Abuja and more.
+- `supabase/demo/seed_tours.sql` adds tours: a Calabar food walk, Agbokim Waterfalls, Obudu, Yankari and more.
 - `supabase/demo/past_booking.sql` creates a finished stay so a review can be left.
 
 ---

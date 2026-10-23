@@ -23,6 +23,11 @@ Short answers to the questions assessors are likely to ask.
 - This holds even if two people click "Book" at exactly the same moment: the database accepts one booking and rejects the other.
 - Dates a host blocks on their calendar are checked in the same way when a booking is created.
 
+## 3b. How are tours kept from being overbooked?
+- Each tour has a maximum group size. When someone books, the database function **locks that tour's row**, adds up the people already booked for that date, and refuses the booking if it would go over the limit.
+- Two people booking the last places at the same moment are therefore handled safely: the second booking waits for the first to finish, then sees the updated count.
+- The same function checks that the tour runs on that day of the week, and that the date is between today and 6 months ahead.
+
 ## 4. How are prices calculated?
 - **Total = nights × price per night + cleaning fee + 10% service fee.**
 - The total is calculated **on the server**, in a database function, when the booking is created. Someone editing the page in their browser can't change what they pay.
@@ -58,7 +63,7 @@ Every table has rules that the database enforces on every request:
 - The activity timer is shared between browser tabs, so being active in one tab keeps you logged in in all of them.
 
 ## 10. What would come next?
-- Tours and experiences for tour guides. The tab and the account role already exist.
+- Paystack payment and reviews for tours (tours currently use request-and-confirm, with payment on the day).
 - In-app messaging between guests and hosts.
 - Email notifications for booking updates.
 - Refunds through Paystack when a booking is cancelled.
