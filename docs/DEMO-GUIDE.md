@@ -7,9 +7,9 @@
 | Role | Email | Password |
 |---|---|---|
 | Admin | peter.m2300470@st.futminna.edu.ng | *given separately* |
-| Host | *host account email* | *given separately* |
+| Host | afolabiprosper329@gmail.com | *given separately* |
 | Traveller | *traveller account email* | *given separately* |
-| Tour guide | *guide account email* | *given separately* |
+| Tour guide | anyhow680@gmail.com | *given separately* |
 
 > Passwords are not stored in this repository, because it is public. They are provided with the submission.
 > Assessors can also create their own traveller or host account on the Sign up page.
