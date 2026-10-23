@@ -38,16 +38,16 @@ export default function LoggedOut() {
         className="absolute inset-0 -z-10 bg-linear-to-b from-stone-950/70 via-stone-950/40 to-stone-950"
       />
 
-      <header className="px-6 py-6 sm:px-10">
+      <header className="px-6 py-5 sm:px-10">
         <Logo light />
       </header>
 
-      <main className="flex flex-1 items-center justify-center px-4 pb-16">
+      <main className="flex flex-1 items-center justify-center px-4 pb-8">
         <motion.div
           variants={stagger(0.1, 0.15)}
           initial="hidden"
           animate="show"
-          className="w-full max-w-xl rounded-4xl bg-white/10 p-8 text-center shadow-2xl ring-1 ring-white/20 backdrop-blur-xl sm:p-12"
+          className="w-full max-w-xl rounded-4xl bg-white/10 p-8 text-center shadow-2xl ring-1 ring-white/20 backdrop-blur-xl sm:p-10"
         >
           <motion.span
             initial={{ scale: 0, rotate: -30 }}
@@ -97,7 +97,7 @@ export default function LoggedOut() {
             </Link>
           </motion.div>
 
-          <motion.div variants={fadeUp} className="mt-10 border-t border-white/15 pt-6">
+          <motion.div variants={fadeUp} className="mt-8 border-t border-white/15 pt-5">
             <div className="flex flex-wrap justify-center gap-2">
               {QUICK_LINKS.map(({ to, label, icon: Icon }) => (
                 <Link
