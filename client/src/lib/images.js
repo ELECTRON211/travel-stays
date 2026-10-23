@@ -21,6 +21,27 @@ export const videos = {
   showcase: mixkit(9902), // aerial view of a seaside resort
 }
 
+// Playlists for the rotating background videos (each clip shows for ~8 s).
+export const videoReels = {
+  hero: [
+    videos.hero,
+    mixkit(1564), // tropical beach with palm trees
+    mixkit(2213), // rainforest waterfall
+    mixkit(4119), // sunset over the sea
+    mixkit(26070), // green hills from above
+  ],
+  login: [
+    videos.login,
+    mixkit(5016), // waves rolling onto a beach
+    mixkit(2408), // flying above the clouds
+  ],
+  signup: [
+    videos.signup,
+    mixkit(1093), // beach at sunset
+    mixkit(9909), // mountain valley from above
+  ],
+}
+
 export const propertyTypeImages = {
   apartment: unsplash('1522708323590-d24dbb6b0267', 900),
   guesthouse: unsplash('1566073771259-6a8506099945', 900),

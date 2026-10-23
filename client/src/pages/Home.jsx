@@ -23,7 +23,7 @@ import { ListingGrid } from '../components/ListingCard'
 import { useListings } from '../hooks/useListings'
 import { useAuth } from '../context/AuthContext'
 import { PROPERTY_TYPES } from '../lib/constants'
-import { images, propertyTypeImages, videos } from '../lib/images'
+import { images, propertyTypeImages, videos, videoReels } from '../lib/images'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import TypeWriter, { RotatingTyper } from '../components/TypeWriter'
 
@@ -141,7 +141,7 @@ function Hero() {
         />
         {/* Cinematic background video on larger screens; the photo stays as its poster. */}
         <BackgroundVideo
-          src={videos.hero}
+          src={videoReels.hero}
           poster={images.hero}
           paused={videoPaused}
           onReady={() => setVideoReady(true)}

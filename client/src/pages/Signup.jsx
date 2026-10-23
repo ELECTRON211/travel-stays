@@ -4,7 +4,7 @@ import { motion } from 'motion/react'
 import { Compass, Home, Lock, Luggage, Mail, User } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { markActive } from '../lib/session'
-import { images, videos } from '../lib/images'
+import { images, videoReels } from '../lib/images'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
@@ -79,7 +79,7 @@ export default function Signup() {
       title="Create your account"
       subtitle="Join as a traveler, host or tour guide."
       image={images.signup}
-      video={videos.signup}
+      video={videoReels.signup}
       quote={
         <>
           Find a stay you'll love, or <em className="text-emerald-300"><TypeWriter text="earn from your space." /></em>

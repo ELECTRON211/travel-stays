@@ -3,7 +3,7 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Lock, Mail } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { IDLE_TIMEOUT_MINUTES, markActive } from '../lib/session'
-import { videos } from '../lib/images'
+import { videoReels } from '../lib/images'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
@@ -47,7 +47,7 @@ export default function Login() {
   }
 
   return (
-    <AuthShell video={videos.login} title="Welcome back" subtitle="Log in to manage your trips and bookings.">
+    <AuthShell video={videoReels.login} title="Welcome back" subtitle="Log in to manage your trips and bookings.">
       <GoogleButton onError={setError} />
       <form onSubmit={handleSubmit} className="space-y-5">
         {location.state?.reason === 'idle' && !error && (
