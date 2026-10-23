@@ -107,6 +107,7 @@ travel-stays/
 
 **Optional demo data:**
 - `supabase/demo/seed_listings.sql` adds stays in Calabar, Lagos, Abuja and more.
+- `supabase/demo/seed_all_states.sql` adds one stay in each remaining state, so all 36 states and the FCT are covered.
 - `supabase/demo/seed_tours.sql` adds tours: a Calabar food walk, Agbokim Waterfalls, Obudu, Yankari and more.
 - `supabase/demo/past_booking.sql` creates a finished stay so a review can be left.
 
