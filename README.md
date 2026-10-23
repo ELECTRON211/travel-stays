@@ -121,3 +121,4 @@ travel-stays/
 ## More documentation
 - [docs/DEMO-GUIDE.md](docs/DEMO-GUIDE.md): demo accounts, test payment details and a step-by-step demo script
 - [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md): how the key parts work (booking, payments, security, live presence)
+- [docs/CODE-GUIDE.md](docs/CODE-GUIDE.md): a file-by-file walkthrough of the code, with each feature traced step by step
