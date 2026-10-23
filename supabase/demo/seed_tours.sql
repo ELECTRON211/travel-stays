@@ -10,7 +10,7 @@ with guide as (
   select u.id
     from auth.users u
     join public.profiles p on p.id = u.id
-   where lower(u.email) = lower('YOUR-GUIDE-EMAIL@gmail.com')
+   where lower(u.email) = lower('anyhow680@gmail.com')
      and p.role = 'guide'
 )
 insert into public.tours (
