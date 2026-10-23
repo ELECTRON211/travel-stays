@@ -511,19 +511,27 @@ function CallsToAction({ isHost }) {
         </ImageCard>
 
         <ImageCard image={images.tours} className="lg:col-span-2" delay={0.1}>
-          <span className="w-fit rounded-full bg-amber-400 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-950">
-            Coming soon
+          <span className="w-fit rounded-full bg-emerald-400 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-950">
+            New
           </span>
           <h2 className="mt-4 font-display text-4xl leading-tight">Tours &amp; experiences</h2>
           <p className="mt-4 text-white/75">
             Food tours, hikes and cultural days, bookable right alongside your stay.
           </p>
-          <Link
-            to="/signup?role=guide"
-            className="mt-8 inline-flex w-fit items-center gap-2 rounded-full border border-white/40 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
-          >
-            Become a guide <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              to="/stays?mode=tours"
+              className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-ink transition hover:bg-emerald-50"
+            >
+              Explore tours <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/signup?role=guide"
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-white/40 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+            >
+              Become a guide
+            </Link>
+          </div>
         </ImageCard>
       </div>
     </section>

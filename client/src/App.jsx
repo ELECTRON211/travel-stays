@@ -25,6 +25,9 @@ import NotFound from './pages/NotFound'
 import Admin from './pages/Admin'
 import AuthCallback from './pages/AuthCallback'
 import LoggedOut from './pages/LoggedOut'
+import TourDetail from './pages/TourDetail'
+import MyTours from './pages/MyTours'
+import TourForm from './pages/TourForm'
 
 export default function App() {
   return (
@@ -36,6 +39,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/stays" element={<Stays />} />
         <Route path="/listings/:id" element={<ListingDetail />} />
+        <Route path="/tours/:id" element={<TourDetail />} />
         <Route path="/about" element={<About />} />
         <Route path="/help" element={<Help />} />
         <Route path="/terms" element={<Terms />} />
@@ -104,6 +108,32 @@ export default function App() {
           element={
             <ProtectedRoute role="host">
               <NewListing />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Guide-only pages */}
+        <Route
+          path="/guide/tours"
+          element={
+            <ProtectedRoute role="guide">
+              <MyTours />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/guide/tours/new"
+          element={
+            <ProtectedRoute role="guide">
+              <TourForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/guide/tours/:id/edit"
+          element={
+            <ProtectedRoute role="guide">
+              <TourForm />
             </ProtectedRoute>
           }
         />

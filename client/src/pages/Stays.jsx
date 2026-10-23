@@ -1,22 +1,15 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import {
-  ArrowRight,
-  BedDouble,
-  Compass,
-  Leaf,
-  MapPin,
-  Mountain,
-  Palette,
-  SearchX,
-  UtensilsCrossed,
-} from 'lucide-react'
+import { ArrowRight, BedDouble, Compass, MapPin, SearchX, UtensilsCrossed } from 'lucide-react'
 import SearchBar from '../components/SearchBar'
 import DiscoveryToggle from '../components/DiscoveryToggle'
 import Reveal from '../components/Reveal'
 import { ListingGrid } from '../components/ListingCard'
 import { useListings } from '../hooks/useListings'
+import { useAsync } from '../hooks/useAsync'
+import { TOUR_CATEGORIES, fetchTours } from '../lib/tours'
+import { CATEGORY_ICONS, TourGrid } from '../components/TourCard'
 import { DESTINATIONS, PROPERTY_TYPES, propertyLabel } from '../lib/constants'
 import { fadeUp, stagger } from '../lib/motion'
 import TypeWriter from '../components/TypeWriter'
@@ -58,101 +51,154 @@ function headingFor(mode, city) {
   return { ...base, eyebrow: `Destination · ${base.eyebrow.replace('Explore ', '')}`, lead: `${noun} in`, accent: city }
 }
 
-const tourCategories = [
-  { icon: UtensilsCrossed, label: 'Food tours', text: 'Suya spots, buka favourites and market walks' },
-  { icon: Mountain, label: 'Adventure', text: 'Hikes, waterfalls and canopy walks' },
-  { icon: Palette, label: 'Culture', text: 'Festivals, art galleries and heritage sites' },
-  { icon: Leaf, label: 'Nature', text: 'Beaches, lakes and wildlife reserves' },
-]
-
 const tripSteps = [
   { icon: BedDouble, day: 'Day 1', title: 'Check in to your stay', text: 'Your apartment in Calabar is ready.' },
   { icon: Compass, day: 'Day 2', title: 'Join a guided tour', text: 'A morning hike to Agbokim Waterfalls.' },
   { icon: UtensilsCrossed, day: 'Day 3', title: 'Food tour, then check out', text: 'Everything on one itinerary.' },
 ]
 
-// Shown for the Tours and Combined Trips tabs until those features launch.
-function ComingSoon({ mode, city }) {
-  const tours = mode === 'tours'
+// Tours tab: real tours for the destination, filtered by category.
+function ToursResults({ city }) {
+  const [category, setCategory] = useState('')
+  const { data, loading, error } = useAsync(() => fetchTours({ city, category }), `${city}|${category}`)
+  const tours = data ?? []
+  const options = [{ value: '', label: 'All tours' }, ...TOUR_CATEGORIES]
+
   return (
-    <motion.div
-      key={mode}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="overflow-hidden rounded-2xl bg-white ring-1 ring-stone-900/5"
-    >
-      <div className="grid gap-10 p-8 sm:p-12 lg:grid-cols-5">
-        <div className="lg:col-span-2">
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-800">
-            Coming soon
-          </span>
-          <h2 className="mt-5 font-display text-4xl font-medium leading-tight tracking-tight text-stone-900">
-            {tours ? (
-              <>
-                Tours &amp; experiences are <em className="text-emerald-800"><TypeWriter text="almost here." /></em>
-              </>
-            ) : (
-              <>
-                One trip, <em className="text-emerald-800"><TypeWriter text="one itinerary." /></em>
-              </>
-            )}
-          </h2>
-          <p className="mt-4 leading-relaxed text-stone-600">
-            {tours
-              ? 'Local guides are joining Travel & Stays now. Soon you will be able to book food tours, hikes and cultural days right next to your stay.'
-              : 'Combined trips bring your stay and your tours together, so every booking for your trip lives in one shareable plan.'}
+    <>
+      <Reveal delay={0.2} className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 lg:mx-0 lg:px-0">
+          {options.map((option) => {
+            const active = category === option.value
+            const Icon = CATEGORY_ICONS[option.value]
+            return (
+              <button
+                key={option.value}
+                onClick={() => setCategory(option.value)}
+                className={`relative flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
+                  active ? 'text-white' : 'bg-white text-stone-600 ring-1 ring-stone-900/5 hover:text-stone-900'
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="tour-pill"
+                    className="absolute inset-0 rounded-full bg-emerald-800"
+                    transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                  />
+                )}
+                {Icon && <Icon className="relative h-4 w-4" />}
+                <span className="relative">{option.label}</span>
+              </button>
+            )
+          })}
+        </div>
+        {!loading && (
+          <p className="text-sm text-stone-500">
+            <span className="font-semibold text-stone-900">{tours.length}</span> {tours.length === 1 ? 'tour' : 'tours'}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+        )}
+      </Reveal>
+
+      <div className="mt-10">
+        <TourGrid tours={tours} loading={loading} error={error} skeletons={4} />
+      </div>
+
+      {!loading && !error && tours.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl bg-white px-6 py-16 text-center ring-1 ring-stone-900/5"
+        >
+          <Compass className="mx-auto h-12 w-12 text-emerald-800" strokeWidth={1.5} />
+          <h2 className="mt-5 font-display text-3xl tracking-tight text-stone-900">
+            {city ? `No tours in ${city} yet` : 'No tours match that filter'}
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-stone-500">
+            Local guides are joining every week. Know your city well? Share it with travellers.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              to="/signup?role=guide"
+              className="rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900"
+            >
+              Become a guide
+            </Link>
             <Link
               to={city ? `/stays?city=${encodeURIComponent(city)}` : '/stays'}
-              className="inline-flex items-center gap-2 rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900"
+              className="rounded-full px-6 py-3 text-sm font-semibold text-stone-900 ring-1 ring-stone-300 transition hover:ring-stone-900"
             >
-              Browse stays{city ? ` in ${city}` : ''} <ArrowRight className="h-4 w-4" />
+              Browse stays{city ? ` in ${city}` : ''}
             </Link>
-            {tours && (
-              <Link
-                to="/signup?role=guide"
-                className="inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold text-stone-900 ring-1 ring-stone-300 transition hover:ring-stone-900"
-              >
-                Become a guide
-              </Link>
-            )}
           </div>
-        </div>
-
-        <motion.div
-          variants={stagger(0.08, 0.15)}
-          initial="hidden"
-          animate="show"
-          className={`lg:col-span-3 ${tours ? 'grid gap-3 sm:grid-cols-2' : 'relative space-y-3'}`}
-        >
-          {tours
-            ? tourCategories.map(({ icon: Icon, label, text }) => (
-                <motion.div key={label} variants={fadeUp} className="rounded-xl bg-stone-50 p-6 ring-1 ring-stone-900/5">
-                  <Icon className="h-7 w-7 text-emerald-800" strokeWidth={1.5} />
-                  <p className="mt-4 font-semibold text-stone-900">{label}</p>
-                  <p className="mt-1 text-sm text-stone-500">{text}</p>
-                </motion.div>
-              ))
-            : tripSteps.map(({ icon: Icon, day, title, text }) => (
-                <motion.div
-                  key={day}
-                  variants={fadeUp}
-                  className="flex items-center gap-5 rounded-xl bg-stone-50 p-5 ring-1 ring-stone-900/5"
-                >
-                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-emerald-800 text-white">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800">{day}</p>
-                    <p className="font-semibold text-stone-900">{title}</p>
-                    <p className="text-sm text-stone-500">{text}</p>
-                  </div>
-                </motion.div>
-              ))}
         </motion.div>
-      </div>
-    </motion.div>
+      )}
+    </>
+  )
+}
+
+// Combined trips tab: a place to stay and things to do in the same city.
+function CombinedTrip({ city }) {
+  const stays = useListings({ city, limit: 4 })
+  const tours = useAsync(() => fetchTours({ city, limit: 4 }), `trip|${city}`)
+  const withCity = (mode) => {
+    const params = new URLSearchParams()
+    if (city) params.set('city', city)
+    if (mode) params.set('mode', mode)
+    return `/stays${params.size ? `?${params}` : ''}`
+  }
+
+  return (
+    <div className="space-y-14">
+      <motion.div
+        variants={stagger(0.08)}
+        initial="hidden"
+        animate="show"
+        className="grid gap-3 rounded-2xl bg-white p-5 ring-1 ring-stone-900/5 sm:grid-cols-3"
+      >
+        {tripSteps.map(({ icon: Icon, day, title, text }) => (
+          <motion.div key={day} variants={fadeUp} className="flex items-center gap-4 rounded-xl bg-stone-50 p-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-emerald-800 text-white">
+              <Icon className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800">{day}</p>
+              <p className="text-sm font-semibold text-stone-900">{title}</p>
+              <p className="text-xs text-stone-500">{text}</p>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      <section>
+        <div className="flex items-end justify-between gap-4">
+          <h2 className="font-display text-3xl tracking-tight text-stone-900">
+            1. Where to <em className="text-emerald-800">stay</em>
+          </h2>
+          <Link to={withCity('')} className="flex items-center gap-1 text-sm font-semibold text-emerald-800 hover:text-emerald-900">
+            All stays <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="mt-6">
+          <ListingGrid listings={stays.listings} loading={stays.loading} error={stays.error} skeletons={4} />
+          {!stays.loading && !stays.listings.length && <p className="text-stone-500">No stays here yet.</p>}
+        </div>
+      </section>
+
+      <section>
+        <div className="flex items-end justify-between gap-4">
+          <h2 className="font-display text-3xl tracking-tight text-stone-900">
+            2. Things to <em className="text-emerald-800">do</em>
+          </h2>
+          <Link to={withCity('tours')} className="flex items-center gap-1 text-sm font-semibold text-emerald-800 hover:text-emerald-900">
+            All tours <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="mt-6">
+          <TourGrid tours={tours.data ?? []} loading={tours.loading} error={tours.error} skeletons={4} />
+          {!tours.loading && !tours.data?.length && <p className="text-stone-500">No tours here yet.</p>}
+        </div>
+      </section>
+    </div>
   )
 }
 
@@ -282,9 +328,13 @@ export default function Stays() {
         </div>
       </Reveal>
 
-      {mode !== 'stays' ? (
+      {mode === 'tours' ? (
         <div className="mt-10">
-          <ComingSoon mode={mode} city={city} />
+          <ToursResults key={city} city={city} />
+        </div>
+      ) : mode === 'trips' ? (
+        <div className="mt-10">
+          <CombinedTrip city={city} />
         </div>
       ) : (
         <>

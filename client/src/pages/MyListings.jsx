@@ -87,8 +87,7 @@ function ReviewSummary({ listing }) {
   )
 }
 
-// "⋯" menu with the actions for one listing. Edit and calendar arrive with
-// the booking work, so they are shown but marked as coming soon.
+// "⋯" menu with the actions for one listing.
 function ActionMenu({ listing, busy, onToggle, onDelete }) {
   const [open, setOpen] = useState(false)
   const paused = listing.status !== 'active'

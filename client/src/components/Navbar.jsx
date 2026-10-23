@@ -9,6 +9,13 @@ import Logo from './Logo'
 
 // Hosts get their hosting pages; logged-out visitors are invited to host.
 function linksFor(user) {
+  if (user?.role === 'guide') {
+    return [
+      { to: '/stays?mode=tours', label: 'Tours' },
+      { to: '/guide/tours', label: 'My tours' },
+      { to: '/guide/tours/new', label: 'Create a tour' },
+    ]
+  }
   if (user?.role === 'admin') {
     return [
       { to: '/stays', label: 'Stays' },

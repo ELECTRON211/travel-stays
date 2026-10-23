@@ -307,7 +307,7 @@ export default function Admin() {
                 icon={BedDouble}
                 label="Listings"
                 value={s.listings}
-                note={`${s.active_listings} live in search`}
+                note={`${s.active_listings} live in search · ${s.tours ?? 0} tours`}
                 accent="text-amber-800 bg-amber-50"
               />
               <StatCard

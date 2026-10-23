@@ -17,7 +17,70 @@ const TABS = [
   { value: 'upcoming', label: 'Upcoming' },
   { value: 'past', label: 'Past' },
   { value: 'cancelled', label: 'Cancelled' },
+  { value: 'tours', label: 'Tours' },
 ]
+
+const TOUR_STATUS = {
+  pending: { label: 'Awaiting guide', className: 'bg-amber-100 text-amber-800' },
+  confirmed: { label: 'Confirmed', className: 'bg-emerald-100 text-emerald-800' },
+  completed: { label: 'Completed', className: 'bg-stone-100 text-stone-700' },
+  declined: { label: 'Declined', className: 'bg-stone-100 text-stone-600' },
+  cancelled: { label: 'Cancelled', className: 'bg-stone-100 text-stone-600' },
+}
+
+function TourBookingCard({ booking, onCancel, busy }) {
+  const tour = booking.tour ?? { id: booking.tour_id, title: 'Tour no longer available', city: '' }
+  const past = booking.tour_date < todayISO()
+  const status = past && booking.status === 'confirmed' ? TOUR_STATUS.completed : TOUR_STATUS[booking.status]
+  const canCancel = !past && ['pending', 'confirmed'].includes(booking.status)
+
+  return (
+    <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-900/5 sm:flex-row">
+      <Link to={`/tours/${tour.id}`} className="relative aspect-video shrink-0 overflow-hidden sm:aspect-auto sm:w-56">
+        <ListingCover listing={tour} className="transition-transform duration-700 hover:scale-105" />
+      </Link>
+      <div className="flex flex-1 flex-col justify-between gap-4 p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <Link to={`/tours/${tour.id}`} className="font-semibold tracking-tight text-stone-900 hover:underline">
+              {tour.title}
+            </Link>
+            {tour.city && (
+              <p className="mt-1 flex items-center gap-1 text-sm text-stone-500">
+                <MapPin className="h-3.5 w-3.5" /> {tour.city}
+                {tour.meeting_point && booking.status === 'confirmed' && ` · Meet at ${tour.meeting_point}`}
+              </p>
+            )}
+          </div>
+          <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${status.className}`}>{status.label}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-stone-600">
+          <span className="flex items-center gap-1.5">
+            <CalendarDays className="h-4 w-4 text-emerald-800" /> {formatLongDate(booking.tour_date)}
+          </span>
+          {tour.start_time && (
+            <span className="flex items-center gap-1.5">
+              <Clock className="h-4 w-4 text-emerald-800" /> {formatTime(tour.start_time)}
+            </span>
+          )}
+          <span className="flex items-center gap-1.5">
+            <Users className="h-4 w-4 text-emerald-800" /> {booking.people} {booking.people === 1 ? 'person' : 'people'}
+          </span>
+          <span className="ml-auto font-semibold text-stone-900">{formatNaira(booking.total)}</span>
+        </div>
+        {canCancel && (
+          <button
+            disabled={busy}
+            onClick={() => onCancel(booking)}
+            className="w-fit rounded-full px-4 py-2 text-sm font-semibold text-stone-700 ring-1 ring-stone-300 transition hover:ring-stone-900 disabled:opacity-50"
+          >
+            Cancel booking
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
 
 const STATUS_STYLES = {
   pending: { label: 'Awaiting host', className: 'bg-amber-100 text-amber-800' },
@@ -108,6 +171,7 @@ function EmptyTab({ tab }) {
     upcoming: { title: 'No trips booked… yet', text: 'Time to dust off your bags and plan your next escape.' },
     past: { title: 'No past trips', text: 'Your completed stays will appear here.' },
     cancelled: { title: 'Nothing cancelled', text: 'Cancelled or declined bookings would show up here.' },
+    tours: { title: 'No tours booked yet', text: 'Food walks, hikes and cultural days, led by local guides.' },
   }[tab]
 
   return (
@@ -121,10 +185,18 @@ function EmptyTab({ tab }) {
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-emerald-50 text-emerald-800"
       >
-        <Luggage className="h-8 w-8" strokeWidth={1.5} />
+        {tab === 'tours' ? <Compass className="h-8 w-8" strokeWidth={1.5} /> : <Luggage className="h-8 w-8" strokeWidth={1.5} />}
       </motion.span>
       <h2 className="mt-6 font-display text-2xl text-stone-900">{copy.title}</h2>
       <p className="mt-2 text-stone-500">{copy.text}</p>
+      {tab === 'tours' && (
+        <Link
+          to="/stays?mode=tours"
+          className="mt-8 inline-flex items-center gap-2 rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900"
+        >
+          Explore tours <ArrowRight className="h-4 w-4" />
+        </Link>
+      )}
       {tab === 'upcoming' && (
         <Link
           to="/stays"
@@ -139,10 +211,27 @@ function EmptyTab({ tab }) {
 
 export default function Trips() {
   const { user } = useAuth()
+  const toast = useToast()
+  const [searchParams] = useSearchParams()
   const { data: trips, loading, error } = useAsync(() => fetchMyTrips(user.id), user.id)
-  const [tab, setTab] = useState('upcoming')
-  const groups = groupTrips(trips ?? [])
+  const tourBookings = useAsync(() => fetchMyTourBookings(user.id), user.id)
+  const [tab, setTab] = useState(TABS.some((t) => t.value === searchParams.get('tab')) ? searchParams.get('tab') : 'upcoming')
+  const [busy, setBusy] = useState(null)
+  const groups = { ...groupTrips(trips ?? []), tours: tourBookings.data ?? [] }
   const shown = groups[tab]
+
+  async function cancelTour(booking) {
+    if (!window.confirm('Cancel this tour booking?')) return
+    setBusy(booking.id)
+    try {
+      await cancelTourBooking(booking.id)
+      toast.show({ title: 'Tour booking cancelled', description: 'Your places have been released.' })
+      tourBookings.reload()
+    } catch (err) {
+      toast.show({ type: 'error', title: 'Could not cancel', description: err.message })
+    }
+    setBusy(null)
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
@@ -209,6 +298,8 @@ export default function Trips() {
               >
                 {shown.length === 0 ? (
                   <EmptyTab tab={tab} />
+                ) : tab === 'tours' ? (
+                  shown.map((b) => <TourBookingCard key={b.id} booking={b} onCancel={cancelTour} busy={busy === b.id} />)
                 ) : (
                   shown.map((trip) => <TripCard key={trip.id} trip={trip} isPast={tab === 'past'} />)
                 )}

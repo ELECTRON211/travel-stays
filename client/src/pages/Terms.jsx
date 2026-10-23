@@ -13,7 +13,7 @@ export default function Terms() {
       <InfoSection title="1. About Travel & Stays">
         <p>
           Travel &amp; Stays is an online marketplace that connects travellers with hosts who offer places to stay
-          and, soon, local guides who offer tours. We provide the platform; hosts are responsible for their own
+          and local guides who offer tours. We provide the platform; hosts are responsible for their own
           listings and stays.
         </p>
       </InfoSection>

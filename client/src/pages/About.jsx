@@ -36,7 +36,6 @@ const AUDIENCES = [
   {
     icon: Compass,
     title: 'Tour guides',
-    badge: 'Coming soon',
     text: 'Food tours, hikes and cultural days, bookable right next to the stays travellers have already chosen.',
     points: ['Be discovered by visitors nearby', 'Manage group sizes and dates', 'Get paid after each tour'],
     cta: { label: 'Join as a guide', to: '/signup?role=guide' },
