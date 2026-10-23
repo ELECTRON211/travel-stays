@@ -9,7 +9,7 @@
 -- 2. Run in Supabase → SQL Editor. Run it again for more demo stays.
 
 with traveller as (
-  select id from auth.users where email = 'YOUR-TRAVELLER-EMAIL@gmail.com'
+  select id from auth.users where email = 'afolabiprosper061@gmail.com'
 ),
 listing as (
   -- any active listing the traveller doesn't own, without an overlapping booking

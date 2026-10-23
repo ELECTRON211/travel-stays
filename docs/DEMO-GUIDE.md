@@ -8,7 +8,7 @@
 |---|---|---|
 | Admin | peter.m2300470@st.futminna.edu.ng | *given separately* |
 | Host | afolabiprosper329@gmail.com | *given separately* |
-| Traveller | *traveller account email* | *given separately* |
+| Traveller | afolabiprosper061@gmail.com | *given separately* |
 | Tour guide | anyhow680@gmail.com | *given separately* |
 
 > Passwords are not stored in this repository, because it is public. They are provided with the submission.
