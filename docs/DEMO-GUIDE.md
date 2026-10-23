@@ -74,5 +74,5 @@ Use two browser windows. **Window A** is a normal window for the host and the ad
 - [ ] The host account has listings (run `supabase/demo/seed_listings.sql` with the host's email).
 - [ ] The guide account has tours (run `supabase/demo/seed_tours.sql` with the guide's email).
 - [ ] The traveller has a finished stay to review (run `supabase/demo/past_booking.sql` with the traveller's email).
-- [ ] All three accounts can log in.
+- [ ] All four accounts can log in.
 - [ ] The latest code is pushed to GitHub, and Vercel shows the deployment as **Ready**.
