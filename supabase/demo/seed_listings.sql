@@ -10,7 +10,7 @@ with host as (
   select u.id
     from auth.users u
     join public.profiles p on p.id = u.id
-   where lower(u.email) = lower('YOUR-HOST-EMAIL@gmail.com')
+   where lower(u.email) = lower('afolabiprosper329@gmail.com')
      and p.role = 'host'
 )
 insert into public.listings (
