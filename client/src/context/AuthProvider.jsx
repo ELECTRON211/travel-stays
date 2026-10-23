@@ -101,6 +101,7 @@ export default function AuthProvider({ children }) {
         role: activeProfile?.role ?? metadata.role ?? 'traveler',
         phone: activeProfile?.phone ?? '',
         bio: activeProfile?.bio ?? '',
+        verified: Boolean(activeProfile?.verified),
         createdAt: activeProfile?.created_at ?? session.user.created_at,
         emailConfirmed: Boolean(session.user.email_confirmed_at),
       }

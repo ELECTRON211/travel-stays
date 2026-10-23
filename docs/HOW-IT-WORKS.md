@@ -58,6 +58,12 @@ Every table has rules that the database enforces on every request:
 - After each review, the listing's average rating and review count are recalculated.
 - Hosts can post one public reply to each review.
 
+## 8b. How do you keep out scammers and dangerous people?
+- **ID verification:** hosts and guides upload a government ID (NIN, driver's licence, passport or voter's card) and a selfie. The files go into a **private** storage bucket: only the owner and admins can open them, and only through links that expire after 10 minutes.
+- An admin compares the ID with the selfie and the account name, then **approves** (which turns on the Verified badge) or **rejects** with a reason the user can see.
+- **Reports:** any logged-in user can report a listing or tour (fraud, safety concern, fake details, inappropriate content). Reports are private, and admins can dismiss them or **pause** the listing or tour so it disappears from search at once.
+- **Our limits:** we can't run criminal background checks, because that needs government partnerships. The Safety page says this openly and gives travellers practical tips (pay only in the app, meet guides at public points, call 112 in an emergency).
+
 ## 9. What about inactive users?
 - After **30 minutes with no activity**, the user sees a "Still there?" warning. One minute later, they're logged out automatically.
 - The activity timer is shared between browser tabs, so being active in one tab keeps you logged in in all of them.

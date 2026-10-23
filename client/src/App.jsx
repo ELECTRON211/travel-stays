@@ -26,6 +26,7 @@ import Admin from './pages/Admin'
 import AuthCallback from './pages/AuthCallback'
 import LoggedOut from './pages/LoggedOut'
 import TourDetail from './pages/TourDetail'
+import Safety from './pages/Safety'
 import MyTours from './pages/MyTours'
 import TourForm from './pages/TourForm'
 
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/tours/:id" element={<TourDetail />} />
         <Route path="/about" element={<About />} />
         <Route path="/help" element={<Help />} />
+        <Route path="/safety" element={<Safety />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
 

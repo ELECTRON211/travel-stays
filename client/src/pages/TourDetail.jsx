@@ -13,6 +13,7 @@ import {
   Minus,
   Plus,
   Route,
+  ShieldCheck,
   UserRound,
   Users,
 } from 'lucide-react'
@@ -38,6 +39,7 @@ import { Alert } from '../components/AuthShell'
 import Lightbox from '../components/Lightbox'
 import Reveal from '../components/Reveal'
 import TypeWriter from '../components/TypeWriter'
+import ReportButton from '../components/ReportButton'
 import NotFound from './NotFound'
 
 function Gallery({ tour, onOpen }) {
@@ -348,7 +350,14 @@ export default function TourDetail() {
               <UserRound className="h-6 w-6" />
             </span>
             <div>
-              <h2 className="font-display text-2xl text-ink">Your guide{tour.guide?.first_name ? `: ${tour.guide.first_name}` : ''}</h2>
+              <h2 className="flex flex-wrap items-center gap-2 font-display text-2xl text-ink">
+                Your guide{tour.guide?.first_name ? `: ${tour.guide.first_name}` : ''}
+                {tour.guide?.verified && (
+                  <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 font-sans text-xs font-semibold text-emerald-800">
+                    <ShieldCheck className="h-3.5 w-3.5" /> ID verified
+                  </span>
+                )}
+              </h2>
               <p className="mt-2 leading-relaxed text-stone-600">
                 {tour.guide?.bio || 'A local guide who knows the city inside out.'}
               </p>
@@ -364,6 +373,11 @@ export default function TourDetail() {
             className="sticky top-24 z-10"
           >
             <BookingBox tour={tour} isOwner={isOwner} />
+            {!isOwner && (
+              <div className="mt-4 text-center">
+                <ReportButton targetType="tour" targetId={tour.id} label="Report this tour" />
+              </div>
+            )}
           </motion.div>
         </aside>
       </div>

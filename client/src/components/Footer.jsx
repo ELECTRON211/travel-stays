@@ -21,7 +21,7 @@ const support = {
     { to: '/about', label: 'About us' },
     { to: '/help', label: 'Help centre' },
     { to: '/help#cancellation', label: 'Cancellation options' },
-    { to: '/help#safety', label: 'Safety tips' },
+    { to: '/safety', label: 'Trust & safety' },
     { to: '/help#contact', label: 'Contact us' },
   ],
 }

@@ -40,6 +40,11 @@ A two-sided marketplace for Nigeria where **travellers** find and book verified 
   - Totals for users by role, listings, bookings, revenue, platform fees and reviews
   - Searchable list of all users
 
+### Trust and safety
+- **ID verification:** hosts and guides upload a government ID and a selfie to a private storage bucket. An admin approves or rejects each request, and approval adds the **Verified** badge to the person's listings and tours.
+- A **Report** button on every listing and tour. Admins review reports and can pause a listing or tour immediately.
+- A **Trust & safety** page with travel tips and Nigeria's emergency number (112)
+
 ### Accounts and security
 - Email/password sign-up with a choice of role (traveller, host or tour guide), plus **Continue with Google**
 - Password reset by email
@@ -72,7 +77,7 @@ travel-stays/
 │   └── src/lib/               Data access (Supabase queries) and helpers
 ├── supabase/
 │   ├── schema.sql             Base tables: profiles and listings
-│   ├── migrations/            002–011, run in order
+│   ├── migrations/            002–012, run in order
 │   ├── functions/verify-payment/   Edge Function that confirms Paystack payments
 │   └── demo/                  Optional demo data scripts
 └── docs/                      Demo guide and "how it works" notes
@@ -95,7 +100,7 @@ travel-stays/
    VITE_SUPABASE_ANON_KEY=your-anon-or-publishable-key
    VITE_PAYSTACK_PUBLIC_KEY=pk_test_...
    ```
-3. **Set up the database.** In Supabase, open **SQL Editor** and run `supabase/schema.sql`, then each file in `supabase/migrations/` in number order (002 to 011).
+3. **Set up the database.** In Supabase, open **SQL Editor** and run `supabase/schema.sql`, then each file in `supabase/migrations/` in number order (002 to 012).
 4. **Deploy the payment function** (optional, only needed for payments):
    - Deploy `supabase/functions/verify-payment`.
    - Add the secret `PAYSTACK_SECRET_KEY` under **Edge Functions → Secrets**.

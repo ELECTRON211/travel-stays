@@ -23,6 +23,7 @@ import { initials, maskEmail, maskPhone } from '../lib/format'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import { Alert } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
+import VerificationCard from '../components/VerificationCard'
 
 const ROLE_LABELS = { traveler: 'Traveler', host: 'Host', guide: 'Tour guide', admin: 'Admin' }
 const PHONE_PATTERN = /^[0-9+() -]{7,20}$/
@@ -343,6 +344,7 @@ export default function Profile() {
     ...(user.role === 'host'
       ? [{ to: '/host/listings', icon: Building2, label: 'My listings', text: 'Your places and bookings' }]
       : []),
+    ...(user.role === 'guide' ? [{ to: '/guide/tours', icon: Building2, label: 'My tours', text: 'Your tours and bookings' }] : []),
   ]
 
   return (
@@ -373,6 +375,11 @@ export default function Profile() {
               <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-800">
                 {ROLE_LABELS[user.role] ?? user.role}
               </span>
+              {user.verified && (
+                <span className="flex items-center gap-1 rounded-full bg-emerald-800 px-3 py-1 font-semibold text-white">
+                  <ShieldCheck className="h-4 w-4" /> ID verified
+                </span>
+              )}
               {user.emailConfirmed && (
                 <span className="flex items-center gap-1 rounded-full bg-stone-100 px-3 py-1 font-medium text-stone-700">
                   <BadgeCheck className="h-4 w-4 text-emerald-700" /> Email verified
@@ -387,6 +394,7 @@ export default function Profile() {
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <motion.div variants={stagger(0.08, 0.15)} initial="hidden" animate="show" className="space-y-6 lg:col-span-2">
           <PersonalDetails user={user} refreshProfile={refreshProfile} />
+          {['host', 'guide'].includes(user.role) && <VerificationCard />}
           <Security />
         </motion.div>
 

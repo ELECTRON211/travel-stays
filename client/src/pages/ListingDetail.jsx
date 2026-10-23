@@ -18,6 +18,7 @@ import ShareButton from '../components/ShareButton'
 import NotFound from './NotFound'
 import TypeWriter from '../components/TypeWriter'
 import ListingReviews from '../components/ListingReviews'
+import ReportButton from '../components/ReportButton'
 
 function AmenitiesSection({ listing }) {
   const offered = AMENITIES.filter((a) => listing.amenities?.includes(a.value))
@@ -210,6 +211,7 @@ export default function ListingDetail() {
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to stays
         </Link>
         <div className="flex items-center gap-2">
+          {!isOwner && <ReportButton targetType="listing" targetId={listing.id} className="mr-2" />}
           <ShareButton title={listing.title} />
           <SaveButton listingId={listing.id} variant="pill" />
         </div>

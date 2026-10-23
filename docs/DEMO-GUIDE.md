@@ -63,6 +63,12 @@ Use two browser windows. **Window A** is a normal window for the host and the ad
 - **Online now** lists the traveller from window B, and which page they're on. Click around in window B and watch it update live.
 - Show active users, sign-ups, bookings, revenue, platform fees and the user list.
 
+### 6b. Trust and safety (1 minute)
+- As the **host** or **guide**, open **Profile → Identity verification** and upload an ID photo and a selfie.
+- As the **admin**, open the dashboard. Under **ID verification**, click **ID** or **Selfie** to view the documents, then click **Approve**. The **Verified** badge now appears on that person's listings and tours.
+- As the **traveller**, click **Report** on a listing and choose a reason. It appears under **Reports** on the admin dashboard, where you can dismiss it or **Pause** the listing.
+- Show the **Trust & safety** page (link in the footer).
+
 ### 7. Security extras (30 seconds)
 - Show **Continue with Google** on the log-in page.
 - Mention the automatic logout after 30 minutes of inactivity, with a one-minute warning.

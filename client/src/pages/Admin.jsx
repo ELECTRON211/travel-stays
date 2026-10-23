@@ -19,6 +19,7 @@ import { formatNaira, initials } from '../lib/format'
 import { fadeUp, stagger } from '../lib/motion'
 import { Alert } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
+import AdminTrust from '../components/AdminTrust'
 
 const ROLE_STYLES = {
   traveler: 'bg-sky-50 text-sky-800',
@@ -346,6 +347,8 @@ export default function Admin() {
           </>
         )
       )}
+
+      {s && <AdminTrust onChange={reloadStats} />}
 
       {users.data && (
         <div className="mt-6">
