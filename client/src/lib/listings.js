@@ -3,7 +3,7 @@ import { supabase } from './supabase'
 // All reads and writes of the `listings` table (and listing photos) go
 // through here, so pages never build Supabase queries themselves.
 
-const PHOTO_BUCKET = 'listing-photos'
+export const PHOTO_BUCKET = 'listing-photos'
 
 // '*' so new columns (e.g. cleaning_fee) are picked up without a code change.
 const LISTING_FIELDS = '*'
@@ -44,7 +44,7 @@ export async function fetchHostListings(hostId) {
 
 // Uploads every photo to <host id>/<random id>.<ext>. If any upload fails,
 // the ones that succeeded are removed so no orphan files are left behind.
-async function uploadPhotos(hostId, files) {
+export async function uploadPhotos(hostId, files) {
   const bucket = supabase.storage.from(PHOTO_BUCKET)
 
   const results = await Promise.allSettled(
@@ -68,7 +68,7 @@ async function uploadPhotos(hostId, files) {
   return paths.map((path) => ({ path, url: bucket.getPublicUrl(path).data.publicUrl }))
 }
 
-function photoPath(url) {
+export function photoPath(url) {
   const marker = `/object/public/${PHOTO_BUCKET}/`
   const index = url.indexOf(marker)
   return index === -1 ? null : url.slice(index + marker.length)
