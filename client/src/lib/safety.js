@@ -123,6 +123,39 @@ export async function fetchOpenReports() {
   return data ?? []
 }
 
+// ---------------------------------------------------------------- contact form (migration 014)
+
+export const CONTACT_SUBJECTS = [
+  { value: 'booking', label: 'A booking' },
+  { value: 'payment', label: 'A payment' },
+  { value: 'account', label: 'My account' },
+  { value: 'safety', label: 'A safety concern' },
+  { value: 'hosting', label: 'Hosting or guiding' },
+  { value: 'other', label: 'Something else' },
+]
+
+export async function sendContactMessage({ name, email, subject, message, bookingRef }) {
+  const { error } = await supabase.rpc('submit_contact_message', {
+    p_name: name,
+    p_email: email,
+    p_subject: subject,
+    p_message: message,
+    p_booking_ref: bookingRef || null,
+  })
+  if (error) throw new Error(error.message)
+}
+
+export async function fetchContactMessages() {
+  const { data, error } = await supabase.rpc('admin_contact_messages')
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
+export async function markMessageHandled(id) {
+  const { error } = await supabase.rpc('resolve_contact_message', { p_message_id: id })
+  if (error) throw new Error(error.message)
+}
+
 export async function resolveReport(id, pause) {
   const { error } = await supabase.rpc('resolve_report', { p_report_id: id, p_pause: pause })
   if (error) throw new Error(error.message)
