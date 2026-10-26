@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { CreditCard, Lock, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
-import { SUPPORT_EMAIL } from './InfoPage'
 import TypeWriter from './TypeWriter'
 
 const explore = {
@@ -71,12 +70,12 @@ export default function Footer() {
             <p className="mt-6 max-w-sm font-display text-3xl leading-snug text-white">
               Wherever you're headed, <em className="text-emerald-400"><TypeWriter text="feel at home." /></em>
             </p>
-            <a
-              href={`mailto:${SUPPORT_EMAIL}`}
+            <Link
+              to="/help#contact"
               className="mt-6 inline-flex items-center gap-2 text-sm transition-colors hover:text-emerald-400"
             >
-              <Mail className="h-4 w-4" /> {SUPPORT_EMAIL}
-            </a>
+              <Mail className="h-4 w-4" /> Contact us
+            </Link>
             <div className="mt-6 flex flex-wrap items-center gap-2 text-xs">
               <span className="flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1.5 ring-1 ring-white/10">
                 <Lock className="h-3.5 w-3.5 text-emerald-400" /> Secure connection
