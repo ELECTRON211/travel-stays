@@ -4,6 +4,8 @@ import { motion } from 'motion/react'
 import { Compass, Home, Lock, Luggage, Mail, User } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { markActive } from '../lib/session'
+import { friendlyAuthError } from '../lib/authErrors'
+import { useCooldown } from '../hooks/useCooldown'
 import { images, videoReels } from '../lib/images'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -31,6 +33,7 @@ export default function Signup() {
   const [error, setError] = useState('')
   const [confirmEmail, setConfirmEmail] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [cooldown, setCooldown] = useCooldown()
 
   if (user) return <Navigate to="/" replace />
 
@@ -49,8 +52,11 @@ export default function Signup() {
     })
     setSubmitting(false)
 
-    if (error) setError(error.message)
-    else if (data.session) {
+    if (error) {
+      const friendly = friendlyAuthError(error)
+      setError(friendly.message)
+      if (friendly.wait) setCooldown(friendly.wait)
+    } else if (data.session) {
       toast.show({
         title: `Welcome to Travel & Stays, ${fullName.trim().split(' ')[0]}!`,
         description: 'Your account is ready.',
@@ -154,10 +160,10 @@ export default function Signup() {
         />
 
         <button
-          disabled={submitting}
+          disabled={submitting || cooldown > 0}
           className="w-full rounded-xl bg-emerald-800 py-3 font-semibold text-white transition hover:bg-emerald-900 disabled:opacity-60"
         >
-          {submitting ? 'Creating account…' : 'Create account'}
+          {submitting ? 'Creating account…' : cooldown > 0 ? `Try again in ${cooldown}s` : 'Create account'}
         </button>
       </form>
 

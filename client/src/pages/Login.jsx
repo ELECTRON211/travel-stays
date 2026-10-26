@@ -25,6 +25,8 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [cooldown, setCooldown] = useCooldown()
+  const failures = useRef(0)
 
   if (user) return <Navigate to={redirectTo} replace />
 
