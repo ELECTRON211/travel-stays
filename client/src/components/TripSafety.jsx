@@ -20,6 +20,7 @@ export default function TripSafety({ booking }) {
     `When: ${formatLongDate(booking.check_in)} to ${formatLongDate(booking.check_out)}`,
     `Booking reference: ${reference}`,
     listing.id && `${window.location.origin}/listings/${listing.id}`,
+    'In an emergency in Nigeria, call 112 (police, fire, ambulance).',
   ]
     .filter(Boolean)
     .join('\n')
@@ -72,7 +73,7 @@ export default function TripSafety({ booking }) {
         </div>
       </div>
 
-      <div className="rounded-3xl bg-red-50 p-6 ring-1 ring-red-200 sm:p-7">
+      <div className="order-first rounded-3xl bg-red-50 p-6 ring-1 ring-red-200 sm:p-7 md:order-last">
         <h2 className="flex items-center gap-2 font-display text-2xl text-red-900">
           <Siren className="h-5 w-5 text-red-600" /> In an emergency
         </h2>
