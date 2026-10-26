@@ -152,15 +152,21 @@ export default function AdminTrust({ onChange }) {
             <li key={r.id} className="rounded-xl bg-stone-50 p-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <Link
-                    to={`/${r.target_type === 'tour' ? 'tours' : 'listings'}/${r.target_id}`}
-                    className="font-medium text-stone-900 hover:underline"
-                  >
-                    {r.target_title}
-                  </Link>
+                  {r.target_type === 'guest' ? (
+                    <p className="font-medium text-stone-900">{r.target_title}</p>
+                  ) : (
+                    <Link
+                      to={`/${r.target_type === 'tour' ? 'tours' : 'listings'}/${r.target_id}`}
+                      className="font-medium text-stone-900 hover:underline"
+                    >
+                      {r.target_title}
+                    </Link>
+                  )}
                   <p className="text-xs text-stone-500">
-                    {r.target_type === 'tour' ? 'Tour' : 'Listing'} by {r.owner_name || 'unknown'} · reported by {r.reporter_name || 'a user'} ·{' '}
-                    {timeAgo(r.created_at)}
+                    {r.target_type === 'guest'
+                      ? 'Guest'
+                      : `${r.target_type === 'tour' ? 'Tour' : 'Listing'} by ${r.owner_name || 'unknown'}`}{' '}
+                    · reported by {r.reporter_name || 'a user'} · {timeAgo(r.created_at)}
                   </p>
                 </div>
                 <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">{reportCategoryLabel(r.category)}</span>
