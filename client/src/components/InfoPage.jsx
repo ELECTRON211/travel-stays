@@ -3,8 +3,6 @@ import { fadeUp, stagger } from '../lib/motion'
 import Reveal from './Reveal'
 import TypeWriter from './TypeWriter'
 
-export const SUPPORT_EMAIL = 'afolabiprosper329@gmail.com'
-
 // Shared layout for Help, Terms and Privacy.
 export default function InfoPage({ eyebrow, title, accent, intro, updated, children }) {
   return (
