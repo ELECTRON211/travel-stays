@@ -39,6 +39,7 @@ export function friendlyAuthError(error) {
   if (text.includes('invalid login credentials')) return MESSAGES.invalid_credentials
   if (text.includes('email not confirmed')) return MESSAGES.email_not_confirmed
   if (text.includes('already registered') || text.includes('already been registered')) return MESSAGES.user_already_exists
+  if (text.includes('different from the old')) return MESSAGES.same_password
   if (text.includes('password should be')) return MESSAGES.weak_password
   if (text.includes('failed to fetch') || text.includes('network')) {
     return { message: 'We can’t reach the server. Check your internet connection and try again.' }
