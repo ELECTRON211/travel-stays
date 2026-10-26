@@ -20,28 +20,45 @@ function timeAgo(value) {
   return `${Math.round(hours / 24)} d ago`
 }
 
-function DocButton({ path, label }) {
-  const toast = useToast()
-  const [opening, setOpening] = useState(false)
-
-  async function open() {
-    setOpening(true)
-    try {
-      window.open(await documentUrl(path), '_blank', 'noopener')
-    } catch (err) {
-      toast.show({ type: 'error', title: 'Could not open document', description: err.message })
-    }
-    setOpening(false)
-  }
-
+function Thumb({ label, url, pdf }) {
   return (
-    <button
-      type="button"
-      onClick={open}
-      className="flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-stone-300 hover:ring-stone-900"
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      className="group relative grid aspect-4/3 place-items-center overflow-hidden rounded-xl bg-white ring-1 ring-stone-200"
     >
-      {opening ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ExternalLink className="h-3.5 w-3.5" />} {label}
-    </button>
+      {!url ? (
+        <Loader2 className="h-5 w-5 animate-spin text-stone-400" />
+      ) : pdf ? (
+        <span className="flex items-center gap-1.5 text-sm font-semibold text-stone-700">
+          <ExternalLink className="h-4 w-4" /> Open PDF
+        </span>
+      ) : (
+        <img src={url} alt={label} className="h-full w-full object-cover transition group-hover:scale-105" />
+      )}
+      <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-xs font-semibold text-white">{label}</span>
+    </a>
+  )
+}
+
+// The ID and the selfie side by side, so the admin can check the faces match.
+function DocPair({ idPath, selfiePath }) {
+  const { data, error } = useAsync(
+    () => Promise.all([documentUrl(idPath), documentUrl(selfiePath)]),
+    `${idPath}|${selfiePath}`,
+  )
+  const [idUrl, selfieUrl] = data ?? []
+
+  if (error) return <p className="mt-3 text-sm text-red-700">Could not load the photos: {error}</p>
+  return (
+    <div className="mt-3">
+      <div className="grid grid-cols-2 gap-2">
+        <Thumb label="ID" url={idUrl} pdf={idPath.toLowerCase().endsWith('.pdf')} />
+        <Thumb label="Selfie" url={selfieUrl} />
+      </div>
+      <p className="mt-2 text-xs text-stone-500">Does the face in the selfie match the ID, and does the name match the account?</p>
+    </div>
   )
 }
 
@@ -111,11 +128,8 @@ export default function AdminTrust({ onChange }) {
                     {v.email} · {idTypeLabel(v.id_type)} · {timeAgo(v.created_at)}
                   </p>
                 </div>
-                <div className="flex gap-1.5">
-                  <DocButton path={v.id_doc_path} label="ID" />
-                  <DocButton path={v.selfie_path} label="Selfie" />
-                </div>
               </div>
+              <DocPair idPath={v.id_doc_path} selfiePath={v.selfie_path} />
               <div className="mt-3 flex gap-2">
                 <button
                   disabled={busy === v.id}
