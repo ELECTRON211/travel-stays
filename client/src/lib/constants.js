@@ -1,4 +1,12 @@
 import {
+  AlarmSmoke,
+  BriefcaseMedical,
+  Cctv,
+  DoorOpen,
+  Fence,
+  FireExtinguisher,
+  Lightbulb,
+  Video,
   AirVent,
   Baby,
   Ban,
@@ -74,6 +82,21 @@ export const PROPERTY_TYPES = [
   { value: 'hotel_room', label: 'Hotel room' },
   { value: 'house', label: 'Entire house' },
 ]
+
+// Safety features a host can declare on a listing (stored in listings.safety_features).
+// `indoor_cameras` is a disclosure, not a feature: it is shown to guests as a notice.
+export const SAFETY_FEATURES = [
+  { value: 'smoke_alarm', label: 'Smoke alarm', icon: AlarmSmoke },
+  { value: 'fire_extinguisher', label: 'Fire extinguisher', icon: FireExtinguisher },
+  { value: 'first_aid', label: 'First-aid kit', icon: BriefcaseMedical },
+  { value: 'security_guard', label: 'Security guard', icon: ShieldCheck },
+  { value: 'gated', label: 'Gated compound', icon: Fence },
+  { value: 'cctv_outside', label: 'Outdoor CCTV', icon: Cctv },
+  { value: 'well_lit', label: 'Well-lit entrance', icon: Lightbulb },
+  { value: 'emergency_exit', label: 'Emergency exit', icon: DoorOpen },
+]
+
+export const INDOOR_CAMERAS = { value: 'indoor_cameras', label: 'Cameras inside the home', icon: Video }
 
 export const DESTINATIONS = [
   { city: 'Lagos', note: 'Beaches, nightlife and business' },
