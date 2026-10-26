@@ -212,6 +212,75 @@ export default function AdminTrust({ onChange }) {
           {!reports.loading && !open.length && <li className="text-sm text-stone-500">No open reports.</li>}
         </ul>
       </section>
+      <MessagesPanel />
     </div>
+  )
+}
+
+// Messages sent through the Help centre's contact form (migration 014).
+function MessagesPanel() {
+  const toast = useToast()
+  const messages = useAsync(fetchContactMessages, 'contact-messages')
+  const [busy, setBusy] = useState(null)
+  const list = messages.data ?? []
+
+  async function handled(m) {
+    setBusy(m.id)
+    try {
+      await markMessageHandled(m.id)
+      toast.show({ title: 'Marked as handled', description: `Message from ${m.name}` })
+      messages.reload()
+    } catch (err) {
+      toast.show({ type: 'error', title: 'Something went wrong', description: err.message })
+    }
+    setBusy(null)
+  }
+
+  return (
+    <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-stone-900/5 lg:col-span-2">
+      <div className="flex items-center justify-between">
+        <h2 className="flex items-center gap-2 font-semibold text-stone-900">
+          <Mail className="h-5 w-5 text-sky-700" /> Messages
+        </h2>
+        <span className="rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-800">{list.length} open</span>
+      </div>
+      <p className="text-sm text-stone-500">Sent through the contact form in the Help centre. Reply by email, then mark as handled.</p>
+      {messages.error && <p className="mt-4 text-sm text-red-700">{messages.error}</p>}
+      <ul className="mt-4 grid gap-3 lg:grid-cols-2">
+        {list.map((m) => (
+          <li key={m.id} className="flex flex-col rounded-xl bg-stone-50 p-4">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="font-medium text-stone-900">{m.name}</p>
+                <p className="truncate text-xs text-stone-500">
+                  {m.email} · {timeAgo(m.created_at)}
+                  {m.booking_ref && ` · booking ${m.booking_ref}`}
+                </p>
+              </div>
+              <span className="rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-800">
+                {CONTACT_SUBJECTS.find((s) => s.value === m.subject)?.label ?? m.subject}
+              </span>
+            </div>
+            <p className="mt-2 flex-1 whitespace-pre-line text-sm text-stone-700">{m.message}</p>
+            <div className="mt-3 flex gap-2">
+              <a
+                href={`mailto:${m.email}?subject=${encodeURIComponent('Re: your message to Travel & Stays')}`}
+                className="flex items-center gap-1 rounded-full bg-emerald-800 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-900"
+              >
+                <Reply className="h-4 w-4" /> Reply by email
+              </a>
+              <button
+                disabled={busy === m.id}
+                onClick={() => handled(m)}
+                className="flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-semibold text-stone-700 ring-1 ring-stone-300 hover:ring-stone-900 disabled:opacity-50"
+              >
+                <Check className="h-4 w-4" /> Mark handled
+              </button>
+            </div>
+          </li>
+        ))}
+        {!messages.loading && !list.length && <li className="text-sm text-stone-500">No new messages.</li>}
+      </ul>
+    </section>
   )
 }
