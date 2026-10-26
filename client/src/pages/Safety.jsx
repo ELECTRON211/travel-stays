@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { BadgeCheck, CreditCard, Flag, Lock, PhoneCall, Star } from 'lucide-react'
-import InfoPage, { InfoSection, SUPPORT_EMAIL } from '../components/InfoPage'
+import InfoPage, { InfoSection } from '../components/InfoPage'
 import { fadeUp, stagger } from '../lib/motion'
 
 const PROTECTIONS = [
@@ -44,7 +44,7 @@ export default function Safety() {
         <ul>
           <li>Get somewhere safe first, then report the listing or tour to us so we can act.</li>
           <li>
-            Contact our team at <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> with your booking reference.
+            Message our team through the <Link to="/help#contact">contact form</Link> with your booking reference.
           </li>
         </ul>
       </InfoSection>

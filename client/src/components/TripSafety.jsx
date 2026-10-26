@@ -1,9 +1,9 @@
+import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { LifeBuoy, MessageCircle, PhoneCall, Share2, Siren } from 'lucide-react'
 import { useToast } from '../context/ToastContext'
 import { formatLongDate } from '../lib/dates'
 import { ease } from '../lib/motion'
-import { SUPPORT_EMAIL } from './InfoPage'
 
 // Emergency help and "Share my trip" on an upcoming booking, so family always
 // knows where the traveller is staying.
@@ -87,12 +87,12 @@ export default function TripSafety({ booking }) {
           >
             <PhoneCall className="h-4 w-4" /> Call 112
           </a>
-          <a
-            href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(`Urgent: booking ${reference}`)}`}
+          <Link
+            to="/help#contact"
             className="flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-red-800 ring-1 ring-red-200 transition hover:ring-red-400"
           >
             <LifeBuoy className="h-4 w-4" /> Contact support
-          </a>
+          </Link>
         </div>
       </div>
     </motion.section>
