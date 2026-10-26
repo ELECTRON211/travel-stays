@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { ChevronDown, Mail, ShieldAlert } from 'lucide-react'
+import { ChevronDown, ShieldAlert } from 'lucide-react'
 import { CANCELLATION_POLICIES } from '../lib/constants'
 import { ease } from '../lib/motion'
 import InfoPage, { InfoSection } from '../components/InfoPage'
