@@ -33,6 +33,7 @@ import { ease, fadeUp, stagger } from '../lib/motion'
 import { ListingCover, TrustBadges } from '../components/ListingCard'
 import { Alert } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
+import ReportButton from '../components/ReportButton'
 
 const VIEW_KEY = 'host-listings-view'
 
@@ -324,7 +325,8 @@ function HostBookings({ bookings, respondingId, onRespond }) {
                     </p>
                   </div>
                 </div>
-                <div className="mt-4 flex justify-end gap-2">
+                <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+                  <ReportButton targetType="guest" targetId={b.traveler_id} label="Report guest" className="mr-auto" />
                   <button
                     type="button"
                     disabled={respondingId === b.id}
@@ -369,6 +371,7 @@ function HostBookings({ bookings, respondingId, onRespond }) {
                       {b.guest_name} <span className="font-normal text-stone-500">· {b.listing?.title}</span>
                     </p>
                     <p className="text-sm text-stone-500">{stayLabel(b)}</p>
+                    <ReportButton targetType="guest" targetId={b.traveler_id} label="Report guest" className="mt-1 text-xs" />
                   </div>
                   <span className="text-right text-sm">
                     <span className="block font-semibold text-stone-900">{formatNaira(hostPayout(b))}</span>

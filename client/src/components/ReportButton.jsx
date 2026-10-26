@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Flag, Loader2, ShieldAlert, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
-import { REPORT_CATEGORIES, submitReport } from '../lib/safety'
+import { GUEST_REPORT_CATEGORIES, REPORT_CATEGORIES, submitReport } from '../lib/safety'
 import { ease } from '../lib/motion'
 import { Alert } from './AuthShell'
 
@@ -85,7 +85,11 @@ export default function ReportButton({ targetType, targetId, label = 'Report', c
                   <h2 id="report-title" className="flex items-center gap-2 font-display text-2xl text-stone-900">
                     <ShieldAlert className="h-6 w-6 text-red-600" /> Report a problem
                   </h2>
-                  <p className="mt-1 text-sm text-stone-500">Reports are private — the host or guide won't see who sent them.</p>
+                  <p className="mt-1 text-sm text-stone-500">
+                    {targetType === 'guest'
+                      ? 'Reports are private — the guest won’t see that you reported them.'
+                      : 'Reports are private — the host or guide won’t see who sent them.'}
+                  </p>
                 </div>
                 <button type="button" onClick={() => setOpen(false)} className="rounded-full p-1.5 hover:bg-stone-100" aria-label="Close">
                   <X className="h-5 w-5" />
@@ -98,7 +102,7 @@ export default function ReportButton({ targetType, targetId, label = 'Report', c
 
               <fieldset className="mt-5 space-y-2">
                 <legend className="text-sm font-medium text-stone-700">What's wrong?</legend>
-                {REPORT_CATEGORIES.map((c) => (
+                {(targetType === 'guest' ? GUEST_REPORT_CATEGORIES : REPORT_CATEGORIES).map((c) => (
                   <label
                     key={c.value}
                     className={`flex cursor-pointer items-start gap-3 rounded-xl p-3 ring-1 transition ${

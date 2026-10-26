@@ -20,6 +20,7 @@ import {
 import { ListingCover } from '../components/ListingCard'
 import { Alert } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
+import ReportButton from '../components/ReportButton'
 
 function Stat({ icon: Icon, label, value }) {
   return (
