@@ -59,6 +59,7 @@ const EMPTY_FORM = {
   cleaning_fee: '',
   booking_mode: 'request',
   amenities: [],
+  safety_features: [],
   house_rules: [],
   extra_rules: '',
   check_in_time: '14:00',
