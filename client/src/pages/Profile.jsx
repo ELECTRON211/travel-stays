@@ -24,6 +24,7 @@ import { ease, fadeUp, stagger } from '../lib/motion'
 import { Alert } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
 import VerificationCard from '../components/VerificationCard'
+import DeleteAccountCard from '../components/DeleteAccountCard'
 
 const ROLE_LABELS = { traveler: 'Traveler', host: 'Host', guide: 'Tour guide', admin: 'Admin' }
 const PHONE_PATTERN = /^[0-9+() -]{7,20}$/
@@ -396,6 +397,7 @@ export default function Profile() {
           <PersonalDetails user={user} refreshProfile={refreshProfile} />
           {['host', 'guide'].includes(user.role) && <VerificationCard />}
           <Security />
+          <DeleteAccountCard />
         </motion.div>
 
         <motion.aside variants={stagger(0.08, 0.3)} initial="hidden" animate="show" className="space-y-6">

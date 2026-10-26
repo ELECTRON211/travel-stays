@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { ease } from '../lib/motion'
+import { useAuth } from '../context/AuthContext'
 import Navbar from './Navbar'
 import Footer from './Footer'
 
@@ -9,7 +10,10 @@ import Footer from './Footer'
 // transparently over the hero photo; elsewhere the content starts below it.
 export default function Layout() {
   const { pathname, hash } = useLocation()
-  const overlay = pathname === '/'
+  const { user } = useAuth()
+  // Only the visitor landing page has the see-through navbar over its photo;
+  // logged-in people get their own home with a normal navbar.
+  const overlay = pathname === '/' && !user
 
   // Start each new page at the top — unless the link points at a section
   // (e.g. /help#safety), which the page scrolls to itself.

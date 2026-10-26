@@ -19,6 +19,7 @@ const QUICK_LINKS = [
 export default function LoggedOut() {
   const { state } = useLocation()
   const idle = state?.reason === 'idle'
+  const deleted = state?.reason === 'deleted'
   const [videoReady, setVideoReady] = useState(false)
 
   return (
@@ -67,7 +68,7 @@ export default function LoggedOut() {
             variants={fadeUp}
             className="mt-6 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300"
           >
-            {idle ? 'Logged out for your security' : 'Signed out safely'}
+            {deleted ? 'Account deleted' : idle ? 'Logged out for your security' : 'Signed out safely'}
           </motion.p>
           <motion.h1
             variants={fadeUp}
@@ -76,10 +77,13 @@ export default function LoggedOut() {
             Until your next <em className="text-emerald-300"><TypeWriter text="adventure." /></em>
           </motion.h1>
           <motion.p variants={fadeUp} className="mx-auto mt-4 max-w-md leading-relaxed text-white/75">
-            {idle
-              ? `You were inactive for ${IDLE_TIMEOUT_MINUTES} minutes, so we logged you out to keep your account safe.`
-              : "You've been logged out on this device."}{' '}
-            Your trips, saved stays and bookings are safe and waiting for you.
+            {deleted
+              ? 'Your account and your data have been permanently removed. Thank you for travelling with us.'
+              : `${
+                  idle
+                    ? `You were inactive for ${IDLE_TIMEOUT_MINUTES} minutes, so we logged you out to keep your account safe.`
+                    : "You've been logged out on this device."
+                } Your trips, saved stays and bookings are safe and waiting for you.`}
           </motion.p>
 
           <motion.div variants={fadeUp} className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
