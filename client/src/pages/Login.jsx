@@ -1,7 +1,12 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Lock, Mail } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { friendlyAuthError } from '../lib/authErrors'
+import { useCooldown } from '../hooks/useCooldown'
+
+const MAX_TRIES = 5 // wrong passwords in a row before a short pause
+const LOCKOUT_SECONDS = 30
 import { IDLE_TIMEOUT_MINUTES, markActive } from '../lib/session'
 import { videoReels } from '../lib/images'
 import { useAuth } from '../context/AuthContext'
@@ -35,9 +40,20 @@ export default function Login() {
     setSubmitting(false)
 
     if (error) {
-      setError(error.message)
+      const friendly = friendlyAuthError(error)
+      failures.current += 1
+      // After 5 wrong tries in a row, pause the form for 30 seconds.
+      if (!friendly.wait && failures.current >= MAX_TRIES) {
+        failures.current = 0
+        setError(`Too many wrong attempts. For your security, please wait ${LOCKOUT_SECONDS} seconds, or reset your password.`)
+        setCooldown(LOCKOUT_SECONDS)
+        return
+      }
+      setError(friendly.message)
+      if (friendly.wait) setCooldown(friendly.wait)
       return
     }
+    failures.current = 0
     const firstName = data.user?.user_metadata?.full_name?.split(' ')[0]
     toast.show({
       title: `Welcome back${firstName ? `, ${firstName}` : ''}!`,
@@ -83,10 +99,10 @@ export default function Login() {
           </Link>
         </div>
         <button
-          disabled={submitting}
+          disabled={submitting || cooldown > 0}
           className="w-full rounded-xl bg-emerald-800 py-3 font-semibold text-white transition hover:bg-emerald-900 disabled:opacity-60"
         >
-          {submitting ? 'Logging in…' : 'Log in'}
+          {submitting ? 'Logging in…' : cooldown > 0 ? `Try again in ${cooldown}s` : 'Log in'}
         </button>
       </form>
 

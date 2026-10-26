@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import BackgroundVideo from '../components/BackgroundVideo'
+import MemberHome from '../components/MemberHome'
 import VideoModal from '../components/VideoModal'
 import SearchBar from '../components/SearchBar'
 import DiscoveryToggle from '../components/DiscoveryToggle'
@@ -540,6 +541,18 @@ function CallsToAction({ isHost }) {
 
 export default function Home() {
   const { user } = useAuth()
+
+  // Logged-in people get their own home: a greeting and a snapshot for their
+  // role, then fresh stays. The marketing sections are for visitors.
+  if (user) {
+    return (
+      <>
+        <MemberHome />
+        <LatestStays />
+        <FeaturedCity />
+      </>
+    )
+  }
 
   return (
     <>
