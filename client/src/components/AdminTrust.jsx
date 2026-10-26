@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, ExternalLink, Flag, Loader2, Pause, ShieldCheck, X } from 'lucide-react'
+import { Check, ExternalLink, Flag, Loader2, Mail, Pause, Reply, ShieldCheck, X } from 'lucide-react'
 import { useToast } from '../context/ToastContext'
 import { useAsync } from '../hooks/useAsync'
 import {
+  CONTACT_SUBJECTS,
   documentUrl,
+  fetchContactMessages,
   fetchOpenReports,
+  markMessageHandled,
   fetchPendingVerifications,
   idTypeLabel,
   reportCategoryLabel,
