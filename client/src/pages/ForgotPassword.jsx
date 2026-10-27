@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { KeyRound, Loader2, Mail, MailCheck, RotateCw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { friendlyAuthError } from '../lib/authErrors'
 import { Alert, TextField } from '../components/AuthShell'
 import PasswordShell from '../components/PasswordShell'
 
@@ -38,7 +39,9 @@ export default function ForgotPassword() {
       setSent(true)
       setCooldown(RESEND_SECONDS)
     } catch (err) {
-      setError(err.message)
+      const friendly = friendlyAuthError(err)
+      setError(friendly.message)
+      if (friendly.wait) setCooldown(friendly.wait)
     } finally {
       setSubmitting(false)
     }
@@ -129,11 +132,11 @@ export default function ForgotPassword() {
           required
         />
         <button
-          disabled={submitting}
+          disabled={submitting || cooldown > 0}
           className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-800 py-3.5 font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:bg-emerald-900 disabled:opacity-60"
         >
           {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-          {submitting ? 'Sending link…' : 'Send reset link'}
+          {submitting ? 'Sending link…' : cooldown > 0 ? `Try again in ${cooldown}s` : 'Send reset link'}
         </button>
       </form>
       <p className="mt-6 text-center text-sm text-stone-500">

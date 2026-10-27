@@ -38,9 +38,31 @@ export default function App() {
       {/* Pages with the navbar and footer */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/stays" element={<Stays />} />
-        <Route path="/listings/:id" element={<ListingDetail />} />
-        <Route path="/tours/:id" element={<TourDetail />} />
+        {/* Browsing stays and tours needs a (free) account */}
+        <Route
+          path="/stays"
+          element={
+            <ProtectedRoute redirectTo="/signup">
+              <Stays />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/listings/:id"
+          element={
+            <ProtectedRoute redirectTo="/signup">
+              <ListingDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tours/:id"
+          element={
+            <ProtectedRoute redirectTo="/signup">
+              <TourDetail />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/about" element={<About />} />
         <Route path="/help" element={<Help />} />
         <Route path="/safety" element={<Safety />} />

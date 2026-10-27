@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import InfoPage, { InfoSection, SUPPORT_EMAIL } from '../components/InfoPage'
+import InfoPage, { InfoSection } from '../components/InfoPage'
 
 export default function Terms() {
   return (
@@ -87,8 +87,7 @@ export default function Terms() {
 
       <InfoSection title="9. Changes and contact">
         <p>
-          We may update these terms; the date at the top shows the latest version. Questions? Email{' '}
-          <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+          We may update these terms; the date at the top shows the latest version. Questions? <Link to="/help#contact">Contact us</Link>.
         </p>
       </InfoSection>
     </InfoPage>

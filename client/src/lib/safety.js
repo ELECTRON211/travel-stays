@@ -19,12 +19,28 @@ export const REPORT_CATEGORIES = [
   { value: 'other', label: 'Something else', text: 'Tell us what happened' },
 ]
 
+// Reasons a host or guide can report a guest.
+export const GUEST_REPORT_CATEGORIES = [
+  { value: 'unsafe', label: 'Threatening or unsafe', text: 'Aggressive, threatening or violent behaviour' },
+  { value: 'damage', label: 'Damage or theft', text: 'Broke or took things from the property' },
+  { value: 'rules', label: 'Broke the house rules', text: 'Parties, extra guests, smoking where not allowed' },
+  { value: 'fraud', label: 'Scam or fraud', text: 'Fake payment, asked for money outside the app' },
+  { value: 'other', label: 'Something else', text: 'Tell us what happened' },
+]
+
 export function idTypeLabel(value) {
   return ID_TYPES.find((t) => t.value === value)?.label ?? value
 }
 
 export function reportCategoryLabel(value) {
-  return REPORT_CATEGORIES.find((c) => c.value === value)?.label ?? value
+  return [...REPORT_CATEGORIES, ...GUEST_REPORT_CATEGORIES].find((c) => c.value === value)?.label ?? value
+}
+
+// Permanently deletes the logged-in user's account (refused while they have
+// stays or tours coming up). See delete_my_account() in migration 013.
+export async function deleteMyAccount() {
+  const { error } = await supabase.rpc('delete_my_account')
+  if (error) throw new Error(error.message)
 }
 
 // ---------------------------------------------------------------- verification
@@ -105,6 +121,39 @@ export async function fetchOpenReports() {
   const { data, error } = await supabase.rpc('admin_reports')
   if (error) throw new Error(error.message)
   return data ?? []
+}
+
+// ---------------------------------------------------------------- contact form (migration 014)
+
+export const CONTACT_SUBJECTS = [
+  { value: 'booking', label: 'A booking' },
+  { value: 'payment', label: 'A payment' },
+  { value: 'account', label: 'My account' },
+  { value: 'safety', label: 'A safety concern' },
+  { value: 'hosting', label: 'Hosting or guiding' },
+  { value: 'other', label: 'Something else' },
+]
+
+export async function sendContactMessage({ name, email, subject, message, bookingRef }) {
+  const { error } = await supabase.rpc('submit_contact_message', {
+    p_name: name,
+    p_email: email,
+    p_subject: subject,
+    p_message: message,
+    p_booking_ref: bookingRef || null,
+  })
+  if (error) throw new Error(error.message)
+}
+
+export async function fetchContactMessages() {
+  const { data, error } = await supabase.rpc('admin_contact_messages')
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
+export async function markMessageHandled(id) {
+  const { error } = await supabase.rpc('resolve_contact_message', { p_message_id: id })
+  if (error) throw new Error(error.message)
 }
 
 export async function resolveReport(id, pause) {

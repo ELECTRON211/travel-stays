@@ -5,6 +5,7 @@ import { Check, Eye, EyeOff, Loader2, Lock, LockKeyhole, ShieldAlert, ShieldChec
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { changePassword } from '../lib/profile'
+import { friendlyAuthError } from '../lib/authErrors'
 import { ease } from '../lib/motion'
 import { Alert } from '../components/AuthShell'
 import PasswordShell from '../components/PasswordShell'
@@ -137,7 +138,7 @@ export default function ResetPassword() {
       setDone(true)
       setTimeout(() => navigate('/', { replace: true }), 2500)
     } catch (err) {
-      setError(err.message)
+      setError(friendlyAuthError(err).message)
       setSaving(false)
     }
   }

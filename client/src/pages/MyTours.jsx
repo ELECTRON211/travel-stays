@@ -20,6 +20,7 @@ import {
 import { ListingCover } from '../components/ListingCard'
 import { Alert } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
+import ReportButton from '../components/ReportButton'
 
 function Stat({ icon: Icon, label, value }) {
   return (
@@ -49,6 +50,7 @@ function BookingRow({ booking, onRespond, busy }) {
           </span>
           <span className="font-medium text-stone-700">{formatNaira(booking.people * booking.price_per_person)}</span>
         </p>
+        <ReportButton targetType="guest" targetId={booking.traveler_id} label="Report guest" className="mt-1 text-xs" />
       </div>
       {onRespond ? (
         <div className="flex gap-2">

@@ -5,7 +5,7 @@ import { CalendarCheck, ImagePlus, Loader2, X, Zap } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { createListing, updateListing } from '../lib/listings'
 import { useToast } from '../context/ToastContext'
-import { AMENITIES, CANCELLATION_POLICIES, HOUSE_RULES, PROPERTY_TYPES } from '../lib/constants'
+import { AMENITIES, CANCELLATION_POLICIES, HOUSE_RULES, INDOOR_CAMERAS, PROPERTY_TYPES, SAFETY_FEATURES } from '../lib/constants'
 import { formatTime } from '../lib/dates'
 import { Alert } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
@@ -59,6 +59,7 @@ const EMPTY_FORM = {
   cleaning_fee: '',
   booking_mode: 'request',
   amenities: [],
+  safety_features: [],
   house_rules: [],
   extra_rules: '',
   check_in_time: '14:00',
@@ -180,6 +181,7 @@ export default function NewListing({ existing = null }) {
         cleaning_fee: Math.max(Math.round(Number(form.cleaning_fee) || 0), 0),
         booking_mode: form.booking_mode,
         amenities: form.amenities,
+        safety_features: form.safety_features,
         house_rules: form.house_rules,
         extra_rules: form.extra_rules.trim() || null,
         check_in_time: form.check_in_time,
@@ -335,6 +337,43 @@ export default function NewListing({ existing = null }) {
               )
             })}
           </div>
+        </Section>
+
+        <Section title="Safety" description="Guests look for these before booking. Only tick what your place really has.">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {SAFETY_FEATURES.map(({ value, label, icon: Icon }) => {
+              const on = form.safety_features.includes(value)
+              return (
+                <motion.button
+                  key={value}
+                  type="button"
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => toggleIn('safety_features', value)}
+                  aria-pressed={on}
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-3 text-left text-sm font-medium transition ${
+                    on
+                      ? 'bg-emerald-50 text-emerald-900 ring-2 ring-emerald-800'
+                      : 'bg-white text-stone-700 ring-1 ring-stone-900/10 hover:ring-stone-900/30'
+                  }`}
+                >
+                  <Icon className={`h-4.5 w-4.5 shrink-0 ${on ? 'text-emerald-800' : 'text-stone-400'}`} />
+                  {label}
+                </motion.button>
+              )
+            })}
+          </div>
+          <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 ring-1 ring-amber-200">
+            <input
+              type="checkbox"
+              checked={form.safety_features.includes(INDOOR_CAMERAS.value)}
+              onChange={() => toggleIn('safety_features', INDOOR_CAMERAS.value)}
+              className="mt-0.5 h-4 w-4 accent-amber-600"
+            />
+            <span>
+              <strong>There are cameras inside the home.</strong> You must tell guests about any indoor camera. Cameras
+              are never allowed in bedrooms or bathrooms.
+            </span>
+          </label>
         </Section>
 
         <Section title="House rules" description="Set expectations so there are no surprises for you or your guests.">

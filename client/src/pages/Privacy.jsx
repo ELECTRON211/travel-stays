@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import InfoPage, { InfoSection, SUPPORT_EMAIL } from '../components/InfoPage'
+import InfoPage, { InfoSection } from '../components/InfoPage'
 
 const VISIBILITY = [
   { item: 'Email address', who: 'Only you. Never shown to hosts or other users.' },
@@ -99,8 +99,8 @@ export default function Privacy() {
           </li>
           <li>Remove saved listings, or cancel bookings before check-in.</li>
           <li>
-            To get a copy of your data or delete your account, email{' '}
-            <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+            To get a copy of your data, <Link to="/help#contact">contact us</Link>. You can delete your account
+            yourself from your <Link to="/profile">Profile</Link> page.
           </li>
         </ul>
         <p>This policy is written with the Nigeria Data Protection Act 2023 in mind.</p>
@@ -108,7 +108,7 @@ export default function Privacy() {
 
       <InfoSection title="Contact">
         <p>
-          Questions about your privacy? Email <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
+          Questions about your privacy? <Link to="/help#contact">Send us a message</Link>.
         </p>
       </InfoSection>
     </InfoPage>

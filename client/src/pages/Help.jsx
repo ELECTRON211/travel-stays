@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { ChevronDown, Mail, ShieldAlert } from 'lucide-react'
+import { ChevronDown, ShieldAlert } from 'lucide-react'
 import { CANCELLATION_POLICIES } from '../lib/constants'
 import { ease } from '../lib/motion'
-import InfoPage, { InfoSection, SUPPORT_EMAIL } from '../components/InfoPage'
+import InfoPage, { InfoSection } from '../components/InfoPage'
+import ContactForm from '../components/ContactForm'
 
 const FAQ_GROUPS = [
   {
@@ -171,18 +172,8 @@ export default function Help() {
       </InfoSection>
 
       <InfoSection id="contact" title="Still need help?">
-        <div className="flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-stone-900/5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-semibold text-stone-900">Email our support team</p>
-            <p className="text-sm">We usually reply within one working day.</p>
-          </div>
-          <a
-            href={`mailto:${SUPPORT_EMAIL}`}
-            className="inline-flex items-center gap-2 rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold !text-white !no-underline transition hover:bg-emerald-900"
-          >
-            <Mail className="h-4 w-4" /> {SUPPORT_EMAIL}
-          </a>
-        </div>
+        <p>Send our support team a message and we'll reply by email, usually within one working day.</p>
+        <ContactForm />
         <p className="text-sm">
           See also our <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link>.
         </p>

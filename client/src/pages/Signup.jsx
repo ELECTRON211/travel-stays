@@ -1,15 +1,18 @@
 import { useState } from 'react'
-import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { Compass, Home, Lock, Luggage, Mail, User } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { markActive } from '../lib/session'
+import { friendlyAuthError } from '../lib/authErrors'
+import { useCooldown } from '../hooks/useCooldown'
 import { images, videoReels } from '../lib/images'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import AuthShell, { Alert, TextField } from '../components/AuthShell'
 import TypeWriter from '../components/TypeWriter'
 import GoogleButton from '../components/GoogleButton'
+import EmailCodeForm from '../components/EmailCodeForm'
 
 const roles = [
   { value: 'traveler', label: 'Traveler', text: 'Book stays and tours', icon: Luggage },
@@ -21,6 +24,8 @@ export default function Signup() {
   const { user } = useAuth()
   const toast = useToast()
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirectTo = location.state?.from ?? '/' // the page they were trying to open
   const [searchParams] = useSearchParams()
   const presetRole = roles.some((r) => r.value === searchParams.get('role')) ? searchParams.get('role') : 'traveler'
 
@@ -31,8 +36,9 @@ export default function Signup() {
   const [error, setError] = useState('')
   const [confirmEmail, setConfirmEmail] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [cooldown, setCooldown] = useCooldown()
 
-  if (user) return <Navigate to="/" replace />
+  if (user) return <Navigate to={redirectTo} replace />
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -49,27 +55,41 @@ export default function Signup() {
     })
     setSubmitting(false)
 
-    if (error) setError(error.message)
-    else if (data.session) {
+    if (error) {
+      const friendly = friendlyAuthError(error)
+      setError(friendly.message)
+      if (friendly.wait) setCooldown(friendly.wait)
+    } else if (data.session) {
       toast.show({
         title: `Welcome to Travel & Stays, ${fullName.trim().split(' ')[0]}!`,
         description: 'Your account is ready.',
       })
-      navigate('/', { replace: true })
+      navigate(redirectTo, { replace: true })
     }
     else setConfirmEmail(true) // email confirmation is switched on in Supabase
   }
 
   if (confirmEmail) {
     return (
-      <AuthShell title="Check your email" subtitle={`We sent a confirmation link to ${email}.`}>
-        <Alert type="success">Click the link in the email to activate your account, then log in.</Alert>
-        <Link
-          to="/login"
-          className="mt-6 block rounded-xl bg-emerald-800 py-3 text-center font-semibold text-white hover:bg-emerald-900"
+      <AuthShell title="Enter your code" subtitle="One last step to confirm your email address.">
+        <EmailCodeForm
+          email={email.trim()}
+          onVerified={() => {
+            markActive()
+            toast.show({
+              title: `Welcome to Travel & Stays, ${fullName.trim().split(' ')[0]}!`,
+              description: 'Your email is confirmed and your account is ready.',
+            })
+            navigate(redirectTo, { replace: true })
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => setConfirmEmail(false)}
+          className="mt-4 w-full text-center text-sm font-medium text-stone-500 hover:text-stone-900"
         >
-          Go to log in
-        </Link>
+          Use a different email
+        </button>
       </AuthShell>
     )
   }
@@ -88,6 +108,9 @@ export default function Signup() {
       quoteNote="Free to join. It takes less than a minute."
     >
       <form onSubmit={handleSubmit} className="space-y-5">
+        {location.state?.from && !error && (
+          <Alert type="success">Create a free account to see stays, tours and prices. It takes less than a minute.</Alert>
+        )}
         {error && <Alert>{error}</Alert>}
 
         <fieldset>
@@ -154,16 +177,16 @@ export default function Signup() {
         />
 
         <button
-          disabled={submitting}
+          disabled={submitting || cooldown > 0}
           className="w-full rounded-xl bg-emerald-800 py-3 font-semibold text-white transition hover:bg-emerald-900 disabled:opacity-60"
         >
-          {submitting ? 'Creating account…' : 'Create account'}
+          {submitting ? 'Creating account…' : cooldown > 0 ? `Try again in ${cooldown}s` : 'Create account'}
         </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-stone-500">
         Already have an account?{' '}
-        <Link to="/login" className="font-semibold text-emerald-700 hover:text-emerald-800">
+        <Link to="/login" state={location.state} className="font-semibold text-emerald-700 hover:text-emerald-800">
           Log in
         </Link>
       </p>

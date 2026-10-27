@@ -85,7 +85,7 @@ export async function cancelBooking(id) {
 export async function fetchBooking(id) {
   const { data, error } = await supabase
     .from('bookings')
-    .select('*, listing:listings(id, title, city, photos, property_type, booking_mode)')
+    .select('*, listing:listings(id, title, city, address, photos, property_type, booking_mode)')
     .eq('id', id)
     .maybeSingle()
   if (error) throw error

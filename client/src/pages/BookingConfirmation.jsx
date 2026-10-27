@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { ArrowRight, BadgeCheck, CalendarDays, Hourglass, MapPin, Users, XCircle } from 'lucide-react'
 import PayButton from '../components/PayButton'
+import TripSafety from '../components/TripSafety'
 import ReviewForm, { YourReview } from '../components/ReviewForm'
 import { useAsync } from '../hooks/useAsync'
 import { cancelBooking, fetchBooking } from '../lib/bookings'
@@ -273,8 +274,8 @@ export default function BookingConfirmation() {
           <div>
             <h2 className="font-display text-2xl text-stone-900">Complete your payment</h2>
             <p className="mt-1 text-sm text-stone-500">
-              Pay {formatNaira(booking.total)} to secure your stay. Your money is held safely and released to the host
-              after check-in.
+              Pay {formatNaira(booking.total)} to secure your stay. Payments go through Paystack and are checked by our
+              server before your booking is marked as paid.
             </p>
           </div>
           <PayButton booking={booking} onPaid={reload} />
@@ -295,6 +296,10 @@ export default function BookingConfirmation() {
             <p className="text-emerald-800/80">Reference {booking.payment_reference}. Keep this for your records.</p>
           </div>
         </motion.div>
+      )}
+
+      {['pending', 'confirmed'].includes(booking.status) && booking.check_out >= todayISO() && (
+        <TripSafety booking={booking} />
       )}
 
       {booking.review ? (

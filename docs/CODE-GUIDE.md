@@ -210,6 +210,7 @@ Run in this order in the SQL Editor. Each file is safe to run again.
 | `009_reviews.sql` | `reviews`; `submit_review()` (only after check-out, once per booking, recalculates the rating); `reply_to_review()` |
 | `010_admin_and_google.sql` | `last_seen_at`, `is_admin()`, `admin_stats()`, `admin_users()`, `set_initial_role()` for Google sign-ups |
 | `011_tours.sql` | `tours` and `tour_bookings`; `create_tour_booking()` (locks the tour while counting places); places left, accept, decline, cancel; guide photo uploads |
+| `013_more_safety.sql` | listing safety features, reporting guests, `delete_my_account()` |
 | `012_safety.sql` | `profiles.verified`, the private `verification-docs` bucket, verification requests, reports, and the admin review functions |
 
 **Edge Function: `functions/verify-payment/index.ts`** (runs on Supabase's servers, in Deno):

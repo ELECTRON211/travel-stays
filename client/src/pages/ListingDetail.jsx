@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowLeft, BedDouble, CalendarX, Clock, Grid2x2, Home, MapPin, ScrollText, Users } from 'lucide-react'
+import { ArrowLeft, BedDouble, CalendarX, Clock, Grid2x2, Home, MapPin, ScrollText, ShieldCheck, Users } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useAsync } from '../hooks/useAsync'
 import { useListings } from '../hooks/useListings'
 import { fetchListing } from '../lib/listings'
-import { AMENITIES, HOUSE_RULES, cancellationPolicy, propertyLabel } from '../lib/constants'
+import { AMENITIES, HOUSE_RULES, INDOOR_CAMERAS, SAFETY_FEATURES, cancellationPolicy, propertyLabel } from '../lib/constants'
 import { formatTime } from '../lib/dates'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import { ListingCover, ListingGrid, Rating, TrustBadges } from '../components/ListingCard'
@@ -35,6 +35,47 @@ function AmenitiesSection({ listing }) {
           </div>
         ))}
       </div>
+    </Reveal>
+  )
+}
+
+// What the host says the place has for safety, plus a clear notice if there
+// are cameras inside.
+function SafetySection({ listing }) {
+  const declared = listing.safety_features ?? []
+  const offered = SAFETY_FEATURES.filter((f) => declared.includes(f.value))
+  const missing = SAFETY_FEATURES.filter((f) => ['smoke_alarm', 'first_aid'].includes(f.value) && !declared.includes(f.value))
+  const indoorCameras = declared.includes(INDOOR_CAMERAS.value)
+
+  return (
+    <Reveal className="mt-12 border-t border-black/5 pt-10">
+      <h2 className="flex items-center gap-2 font-display text-2xl text-ink">
+        <ShieldCheck className="h-6 w-6 text-emerald-700" /> Safety
+      </h2>
+      {offered.length ? (
+        <div className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2">
+          {offered.map(({ value, label, icon: Icon }) => (
+            <div key={value} className="flex items-center gap-3 text-stone-700">
+              <Icon className="h-5 w-5 shrink-0 text-emerald-800" strokeWidth={1.75} />
+              {label}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-4 text-stone-500">The host hasn’t listed any safety features yet. Ask them before you book.</p>
+      )}
+      {offered.length > 0 && missing.length > 0 && (
+        <p className="mt-4 text-sm text-stone-500">Not listed: {missing.map((f) => f.label.toLowerCase()).join(', ')}.</p>
+      )}
+      {indoorCameras && (
+        <p className="mt-5 flex items-start gap-2.5 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 ring-1 ring-amber-200">
+          <INDOOR_CAMERAS.icon className="mt-0.5 h-4 w-4 shrink-0" />
+          The host says there are cameras inside the home (never in bedrooms or bathrooms).
+        </p>
+      )}
+      <Link to="/safety" className="mt-5 inline-block text-sm font-semibold text-emerald-800 underline-offset-4 hover:underline">
+        Read our safety tips
+      </Link>
     </Reveal>
   )
 }
@@ -271,6 +312,7 @@ export default function ListingDetail() {
           </Reveal>
 
           <AmenitiesSection listing={listing} />
+          <SafetySection listing={listing} />
           <ThingsToKnow listing={listing} />
           <ListingReviews listing={listing} isOwner={isOwner} />
         </div>

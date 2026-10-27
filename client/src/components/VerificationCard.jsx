@@ -1,31 +1,80 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'motion/react'
-import { BadgeCheck, Camera, Clock, FileText, Loader2, ShieldCheck, XCircle } from 'lucide-react'
+import { BadgeCheck, Camera, Clock, FileText, IdCard, ImageUp, Loader2, ScanFace, ShieldCheck, XCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { useAsync } from '../hooks/useAsync'
 import { ID_TYPES, fetchMyVerification, idTypeLabel, submitVerification } from '../lib/safety'
 import { fadeUp } from '../lib/motion'
 import { Alert } from './AuthShell'
+import CameraCapture from './CameraCapture'
 
 const MAX_BYTES = 5 * 1024 * 1024
 
-function FilePick({ icon: Icon, label, hint, accept, file, onChange }) {
-  return (
-    <label className="flex cursor-pointer items-center gap-3 rounded-xl p-4 ring-1 ring-stone-300 transition hover:ring-emerald-700">
-      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-emerald-50 text-emerald-800">
-        <Icon className="h-5 w-5" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-sm font-semibold text-stone-900">{label}</span>
-        <span className="block truncate text-xs text-stone-500">{file ? file.name : hint}</span>
-      </span>
-      <input type="file" accept={accept} className="hidden" onChange={(e) => onChange(e.target.files[0] ?? null)} />
+// One of the two matching boxes: ID photo or selfie, with a live preview.
+function PhotoSlot({ step, title, hint, icon: Icon, file, accept, onFile, onCamera, cameraFirst, cameraLabel }) {
+  const preview = useMemo(() => (file && file.type.startsWith('image/') ? URL.createObjectURL(file) : null), [file])
+  useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview])
+
+  const uploadButton = (primary) => (
+    <label
+      className={`flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+        primary ? 'bg-emerald-800 text-white hover:bg-emerald-900' : 'text-stone-700 ring-1 ring-stone-300 hover:ring-stone-900'
+      }`}
+    >
+      <ImageUp className="h-4 w-4" /> {primary ? 'Upload photo' : 'Upload instead'}
+      <input type="file" accept={accept} className="hidden" onChange={(e) => onFile(e.target.files?.[0] ?? null)} />
     </label>
+  )
+  const cameraButton = (primary) => (
+    <button
+      type="button"
+      onClick={onCamera}
+      className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+        primary ? 'bg-emerald-800 text-white hover:bg-emerald-900' : 'text-stone-700 ring-1 ring-stone-300 hover:ring-stone-900'
+      }`}
+    >
+      <Camera className="h-4 w-4" /> {cameraLabel}
+    </button>
+  )
+
+  return (
+    <div className="flex flex-col rounded-2xl bg-stone-50 p-4 ring-1 ring-stone-200">
+      <p className="flex items-center gap-2 text-sm font-semibold text-stone-900">
+        <span className="grid h-6 w-6 place-items-center rounded-full bg-emerald-800 text-xs text-white">{step}</span>
+        {title}
+      </p>
+      <div className="mt-3 grid aspect-4/3 place-items-center overflow-hidden rounded-xl bg-white ring-1 ring-stone-200">
+        {preview ? (
+          <img src={preview} alt={title} className="h-full w-full object-cover" />
+        ) : file ? (
+          <span className="flex flex-col items-center gap-2 p-4 text-center text-sm text-stone-600">
+            <FileText className="h-8 w-8 text-emerald-700" /> {file.name}
+          </span>
+        ) : (
+          <span className="flex flex-col items-center gap-2 p-4 text-center text-sm text-stone-500">
+            <Icon className="h-10 w-10 text-stone-300" strokeWidth={1.5} /> {hint}
+          </span>
+        )}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {cameraFirst ? (
+          <>
+            {cameraButton(true)}
+            {uploadButton(false)}
+          </>
+        ) : (
+          <>
+            {uploadButton(true)}
+            {cameraButton(false)}
+          </>
+        )}
+      </div>
+    </div>
   )
 }
 
-// Hosts and guides send an ID + selfie; an admin reviews it and grants the Verified badge.
+// Hosts and guides send an ID + selfie; an admin compares the two and grants the Verified badge.
 export default function VerificationCard() {
   const { user, refreshProfile } = useAuth()
   const toast = useToast()
@@ -33,6 +82,7 @@ export default function VerificationCard() {
   const [idType, setIdType] = useState('nin')
   const [idFile, setIdFile] = useState(null)
   const [selfieFile, setSelfieFile] = useState(null)
+  const [cameraFor, setCameraFor] = useState(null) // 'id' | 'selfie' | null
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
 
@@ -40,7 +90,7 @@ export default function VerificationCard() {
     e.preventDefault()
     setError('')
     if (!idFile || !selfieFile) return setError('Add both a photo of your ID and a selfie.')
-    if (idFile.size > MAX_BYTES || selfieFile.size > MAX_BYTES) return setError('Each file must be under 5 MB.')
+    if (idFile.size > MAX_BYTES || selfieFile.size > MAX_BYTES) return setError('Each photo must be under 5 MB.')
     setSending(true)
     try {
       await submitVerification(user.id, { idType, idFile, selfieFile })
@@ -79,7 +129,7 @@ export default function VerificationCard() {
     )
   } else {
     body = (
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {request?.status === 'rejected' && (
           <div className="flex items-start gap-3 rounded-xl bg-red-50 p-4 text-sm text-red-800">
             <XCircle className="mt-0.5 h-5 w-5 shrink-0" />
@@ -90,7 +140,7 @@ export default function VerificationCard() {
         )}
         <p className="text-sm leading-relaxed text-stone-600">
           Verified {user.role === 'guide' ? 'guides' : 'hosts'} get a badge that tells travellers a real, checked person is behind the
-          {user.role === 'guide' ? ' tour' : ' listing'}. Your documents are stored privately and only our review team can see them.
+          {user.role === 'guide' ? ' tour' : ' listing'}. Your photos are stored privately and only our review team can see them.
         </p>
         <label className="block">
           <span className="text-sm font-medium text-stone-700">ID type</span>
@@ -106,10 +156,37 @@ export default function VerificationCard() {
             ))}
           </select>
         </label>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <FilePick icon={FileText} label="Photo of your ID" hint="JPG, PNG or PDF, under 5 MB" accept="image/jpeg,image/png,image/webp,application/pdf" file={idFile} onChange={setIdFile} />
-          <FilePick icon={Camera} label="A clear selfie" hint="Face visible, no sunglasses" accept="image/jpeg,image/png,image/webp" file={selfieFile} onChange={setSelfieFile} />
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <PhotoSlot
+            step="1"
+            title="Photo of your ID"
+            hint="All four corners visible, no glare"
+            icon={IdCard}
+            file={idFile}
+            accept="image/jpeg,image/png,image/webp,application/pdf"
+            onFile={setIdFile}
+            onCamera={() => setCameraFor('id')}
+            cameraLabel="Use camera"
+          />
+          <PhotoSlot
+            step="2"
+            title="Your selfie"
+            hint="Face the camera in good light"
+            icon={ScanFace}
+            file={selfieFile}
+            accept="image/jpeg,image/png,image/webp"
+            onFile={setSelfieFile}
+            onCamera={() => setCameraFor('selfie')}
+            cameraFirst
+            cameraLabel="Take a selfie"
+          />
         </div>
+        <p className="flex items-center gap-2 text-xs text-stone-500">
+          <ShieldCheck className="h-4 w-4 text-emerald-700" />
+          We compare the two photos: your face in the selfie must match the photo on your ID.
+        </p>
+
         {error && <Alert>{error}</Alert>}
         <button
           disabled={sending}
@@ -118,6 +195,14 @@ export default function VerificationCard() {
           {sending && <Loader2 className="h-4 w-4 animate-spin" />}
           {sending ? 'Uploading…' : 'Send for review'}
         </button>
+
+        <CameraCapture
+          open={cameraFor !== null}
+          facingMode={cameraFor === 'id' ? 'environment' : 'user'}
+          title={cameraFor === 'id' ? 'Photograph your ID' : 'Take a selfie'}
+          onCapture={cameraFor === 'id' ? setIdFile : setSelfieFile}
+          onClose={() => setCameraFor(null)}
+        />
       </form>
     )
   }

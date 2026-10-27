@@ -3,7 +3,7 @@ const unsplash = (id, width = 1600) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${width}&q=75`
 
 export const images = {
-  hero: unsplash('1520250497591-112f2f40a3f4', 2200),
+  hero: unsplash('1507525428034-b723cf961d3e', 2200), // bright tropical beach at sunrise
   lagos: unsplash('1618828665011-0abd973f7bb8', 1400),
   auth: unsplash('1596394516093-501ba68a0ba6', 1600), // log in: bed on a mountain deck
   signup: unsplash('1540541338287-41700207dee6', 1600), // sign up: palm-lined villa at sunset
@@ -24,11 +24,11 @@ export const videos = {
 // Playlists for the rotating background videos (each clip shows for ~8 s).
 export const videoReels = {
   hero: [
-    videos.hero,
-    mixkit(1564), // tropical beach with palm trees
+    mixkit(1564), // tropical beach with palm trees (matches the hero photo)
     mixkit(2213), // rainforest waterfall
     mixkit(4119), // sunset over the sea
     mixkit(26070), // green hills from above
+    mixkit(2408), // flying above the clouds
   ],
   login: [
     videos.login,
