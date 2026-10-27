@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import {
   Activity,
@@ -31,9 +31,12 @@ import { initials } from '../lib/format'
 import { fadeUp, stagger } from '../lib/motion'
 import { ListingCover } from './ListingCard'
 import SearchBar from './SearchBar'
+import DiscoveryToggle from './DiscoveryToggle'
 import TypeWriter from './TypeWriter'
 
 const ROLE_LABELS = { traveler: 'Traveller', host: 'Host', guide: 'Tour guide', admin: 'Admin' }
+
+const POPULAR_CITIES = ['Lagos', 'Abuja', 'Calabar', 'Port Harcourt', 'Ibadan']
 
 const SUBTITLES = {
   traveler: 'Where to next? Pick up where you left off, or find somewhere new.',
@@ -322,6 +325,7 @@ function AdminPanel() {
 // app-style dashboard with a greeting, shortcuts and a snapshot for their role.
 export default function MemberHome() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const firstName = user.fullName.split(' ')[0]
   const role = user.role in SUBTITLES ? user.role : 'traveler'
   const today = new Date().toLocaleDateString('en-NG', { weekday: 'long', day: 'numeric', month: 'long' })

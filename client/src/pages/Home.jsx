@@ -193,56 +193,47 @@ function Hero() {
           to match, all in one place.
         </motion.p>
 
+        {/* Visitors are invited to join; searching lives on the members' home. */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.1, duration: 0.9, ease }}
-          className="mt-10 max-w-5xl"
+          className="mt-10 flex flex-wrap items-center gap-3"
         >
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Each tab takes you to that part of the site. */}
-            <DiscoveryToggle
-              value="stays"
-              onChange={(mode) => navigate(mode === 'stays' ? '/stays' : `/stays?mode=${mode}`)}
-              dark
-            />
-            <button
-              type="button"
-              onClick={() => setShowVideo(true)}
-              className="group flex items-center gap-2.5 rounded-full bg-white/10 py-1 pl-1 pr-4 text-sm font-medium text-white ring-1 ring-white/20 backdrop-blur-md transition hover:bg-white/20"
-            >
-              <span className="relative grid h-9 w-9 place-items-center rounded-full bg-white text-emerald-900">
-                <span className="absolute inset-0 animate-ping rounded-full bg-white/40" />
-                <Play className="relative h-4 w-4 translate-x-px" fill="currentColor" />
-              </span>
-              Watch the video
-            </button>
-          </div>
-          <div className="mt-4">
-            <SearchBar variant="hero" />
-          </div>
+          <Link
+            to="/signup"
+            className="group inline-flex items-center gap-2 rounded-full bg-white px-7 py-4 font-semibold text-ink shadow-xl shadow-black/20 transition hover:bg-emerald-50"
+          >
+            Get started — it’s free
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+          <Link
+            to="/login"
+            className="inline-flex items-center rounded-full px-7 py-4 font-semibold text-white ring-1 ring-white/40 backdrop-blur-md transition hover:bg-white/10"
+          >
+            Log in
+          </Link>
+          <button
+            type="button"
+            onClick={() => setShowVideo(true)}
+            className="group flex items-center gap-2.5 rounded-full bg-white/10 py-1.5 pl-1.5 pr-5 font-medium text-white ring-1 ring-white/20 backdrop-blur-md transition hover:bg-white/20"
+          >
+            <span className="relative grid h-11 w-11 place-items-center rounded-full bg-white text-emerald-900">
+              <span className="absolute inset-0 animate-ping rounded-full bg-white/40" />
+              <Play className="relative h-4 w-4 translate-x-px" fill="currentColor" />
+            </span>
+            Watch the video
+          </button>
         </motion.div>
 
-        <motion.div
-          variants={stagger(0.06, 1.35)}
-          initial="hidden"
-          animate="show"
-          className="mt-6 flex flex-wrap items-center gap-2"
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4, duration: 0.8 }}
+          className="mt-6 text-sm text-white/70"
         >
-          <motion.span variants={fadeUp} className="mr-1 text-sm text-white/70">
-            Popular:
-          </motion.span>
-          {cities.slice(0, 5).map((city) => (
-            <motion.div key={city} variants={fadeUp}>
-              <Link
-                to={`/stays?city=${encodeURIComponent(city)}`}
-                className="block rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-sm text-white backdrop-blur-md transition hover:border-white/60 hover:bg-white/20"
-              >
-                {city}
-              </Link>
-            </motion.div>
-          ))}
-        </motion.div>
+          Free to join · Verified hosts · Pay safely with Paystack
+        </motion.p>
       </motion.div>
     </section>
   )
