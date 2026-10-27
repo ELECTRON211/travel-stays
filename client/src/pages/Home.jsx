@@ -547,7 +547,6 @@ export default function Home() {
       <Hero />
       <CityMarquee />
       <StayTypes />
-      <LatestStays />
       <FeaturedCity />
       <HowItWorks />
       <WhyUs />
