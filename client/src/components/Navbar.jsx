@@ -7,7 +7,7 @@ import { initials, maskEmail } from '../lib/format'
 import { ease } from '../lib/motion'
 import Logo from './Logo'
 
-// Hosts get their hosting pages; logged-out visitors are invited to host.
+// Hosts get their hosting pages; logged-out visitors get no links.
 function linksFor(user) {
   if (user?.role === 'guide') {
     return [
@@ -37,11 +37,7 @@ function linksFor(user) {
       { to: '/trips', label: 'My trips' },
     ]
   }
-  return [
-    { to: '/stays', label: 'Stays' },
-    { to: '/about', label: 'About' },
-    { to: '/signup?role=host', label: 'Become a host' },
-  ]
+  return []
 }
 
 const roleLabels = { traveler: 'Traveler', host: 'Host', guide: 'Guide', admin: 'Admin' }
@@ -239,7 +235,7 @@ export default function Navbar({ overlay = false }) {
                   </NavLink>
                 </motion.div>
               ))}
-              <hr className="my-2 border-stone-100" />
+              {links.length > 0 && <hr className="my-2 border-stone-100" />}
               {user ? (
                 <>
                   <div className="px-3 py-2">

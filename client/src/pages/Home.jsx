@@ -1,9 +1,8 @@
 import { useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
 import {
   ArrowRight,
-  ArrowUpRight,
   CalendarCheck,
   Compass,
   CreditCard,
@@ -15,15 +14,10 @@ import {
   Sparkles,
 } from 'lucide-react'
 import BackgroundVideo from '../components/BackgroundVideo'
-import VideoModal from '../components/VideoModal'
-import SearchBar from '../components/SearchBar'
-import DiscoveryToggle from '../components/DiscoveryToggle'
 import Reveal from '../components/Reveal'
-import { ListingGrid } from '../components/ListingCard'
-import { useListings } from '../hooks/useListings'
 import { useAuth } from '../context/AuthContext'
 import { PROPERTY_TYPES } from '../lib/constants'
-import { images, propertyTypeImages, videos, videoReels } from '../lib/images'
+import { images, propertyTypeImages, videoReels } from '../lib/images'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import TypeWriter, { RotatingTyper } from '../components/TypeWriter'
 
@@ -103,23 +97,14 @@ function Hero() {
   const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '35%'])
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
-  const navigate = useNavigate()
   const [videoReady, setVideoReady] = useState(false)
   const [videoPaused, setVideoPaused] = useState(false)
-  const [showVideo, setShowVideo] = useState(false)
 
   return (
     <section
       ref={ref}
       className="relative flex min-h-[100svh] items-end overflow-hidden rounded-b-[2.5rem] bg-ink pb-14 pt-32 sm:pb-20"
     >
-      <VideoModal
-        open={showVideo}
-        onClose={() => setShowVideo(false)}
-        src={videos.showcase}
-        poster={images.hero}
-        title="Seaside escapes, city apartments and quiet guesthouses: find yours on Travel & Stays."
-      />
       {videoReady && (
         <button
           type="button"
@@ -191,57 +176,6 @@ function Hero() {
           Handpicked apartments, guesthouses and homes across Nigeria from verified hosts, with local tours
           to match, all in one place.
         </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 0.9, ease }}
-          className="mt-10 max-w-5xl"
-        >
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Each tab takes you to that part of the site. */}
-            <DiscoveryToggle
-              value="stays"
-              onChange={(mode) => navigate(mode === 'stays' ? '/stays' : `/stays?mode=${mode}`)}
-              dark
-            />
-            <button
-              type="button"
-              onClick={() => setShowVideo(true)}
-              className="group flex items-center gap-2.5 rounded-full bg-white/10 py-1 pl-1 pr-4 text-sm font-medium text-white ring-1 ring-white/20 backdrop-blur-md transition hover:bg-white/20"
-            >
-              <span className="relative grid h-9 w-9 place-items-center rounded-full bg-white text-emerald-900">
-                <span className="absolute inset-0 animate-ping rounded-full bg-white/40" />
-                <Play className="relative h-4 w-4 translate-x-px" fill="currentColor" />
-              </span>
-              Watch the video
-            </button>
-          </div>
-          <div className="mt-4">
-            <SearchBar variant="hero" />
-          </div>
-        </motion.div>
-
-        <motion.div
-          variants={stagger(0.06, 1.35)}
-          initial="hidden"
-          animate="show"
-          className="mt-6 flex flex-wrap items-center gap-2"
-        >
-          <motion.span variants={fadeUp} className="mr-1 text-sm text-white/70">
-            Popular:
-          </motion.span>
-          {cities.slice(0, 5).map((city) => (
-            <motion.div key={city} variants={fadeUp}>
-              <Link
-                to={`/stays?city=${encodeURIComponent(city)}`}
-                className="block rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-sm text-white backdrop-blur-md transition hover:border-white/60 hover:bg-white/20"
-              >
-                {city}
-              </Link>
-            </motion.div>
-          ))}
-        </motion.div>
       </motion.div>
     </section>
   )
@@ -290,57 +224,21 @@ function StayTypes() {
         className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4"
       >
         {PROPERTY_TYPES.map((type) => (
-          <motion.div key={type.value} variants={fadeUp}>
-            <Link to={`/stays?type=${type.value}`} className="group relative block aspect-3/4 overflow-hidden rounded-3xl">
-              <img
-                src={propertyTypeImages[type.value]}
-                alt=""
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4 sm:p-5">
-                <span>
-                  <span className="block font-display text-xl text-white sm:text-2xl">{type.label}</span>
-                  <span className="hidden text-sm text-white/70 sm:block">{typeBlurbs[type.value]}</span>
-                </span>
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/20 text-white backdrop-blur transition-all duration-500 group-hover:rotate-45 group-hover:bg-white group-hover:text-ink">
-                  <ArrowUpRight className="h-5 w-5" />
-                </span>
-              </div>
-            </Link>
+          <motion.div key={type.value} variants={fadeUp} className="relative aspect-3/4 overflow-hidden rounded-3xl">
+            <img
+              src={propertyTypeImages[type.value]}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              <span className="block font-display text-xl text-white sm:text-2xl">{type.label}</span>
+              <span className="hidden text-sm text-white/70 sm:block">{typeBlurbs[type.value]}</span>
+            </div>
           </motion.div>
         ))}
       </motion.div>
-    </section>
-  )
-}
-
-function LatestStays() {
-  const { listings, loading, error } = useListings({ limit: 8 })
-
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mb-12 flex items-end justify-between gap-4">
-        <SectionHeading eyebrow="Just listed" title="Fresh places to" accent="stay." />
-        <Reveal>
-          <Link
-            to="/stays"
-            className="group hidden items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-ink shadow-sm ring-1 ring-black/5 transition hover:shadow-md sm:flex"
-          >
-            View all
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Link>
-        </Reveal>
-      </div>
-
-      <ListingGrid listings={listings} loading={loading} error={error} skeletons={4} />
-
-      {!loading && !error && listings.length === 0 && (
-        <p className="rounded-3xl border border-dashed border-stone-300 p-12 text-center text-stone-500">
-          No stays listed yet. Be the first host!
-        </p>
-      )}
     </section>
   )
 }
@@ -383,17 +281,6 @@ function FeaturedCity() {
                 {tag}
               </span>
             ))}
-          </Reveal>
-          <Reveal delay={0.3} className="mt-10">
-            <Link
-              to="/stays?city=Lagos"
-              className="group inline-flex items-center gap-3 rounded-full bg-emerald-800 py-3 pl-6 pr-3 font-semibold text-white transition hover:bg-emerald-900"
-            >
-              Explore stays in Lagos
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-white/15 transition-transform duration-500 group-hover:rotate-45">
-                <ArrowUpRight className="h-4 w-4" />
-              </span>
-            </Link>
           </Reveal>
         </div>
       </div>
@@ -546,7 +433,6 @@ export default function Home() {
       <Hero />
       <CityMarquee />
       <StayTypes />
-      <LatestStays />
       <FeaturedCity />
       <HowItWorks />
       <WhyUs />
