@@ -376,9 +376,25 @@ export default function MemberHome() {
           </motion.div>
         </div>
 
-        {/* Search */}
-        <motion.div variants={fadeUp} className="mt-8">
+        {/* Search: stays, tours or a combined trip */}
+        <motion.div variants={fadeUp} className="mt-8 space-y-4">
+          <DiscoveryToggle
+            value="stays"
+            onChange={(mode) => navigate(mode === 'stays' ? '/stays' : `/stays?mode=${mode}`)}
+          />
           <SearchBar />
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-sm text-stone-500">Popular:</span>
+            {POPULAR_CITIES.map((city) => (
+              <Link
+                key={city}
+                to={`/stays?city=${encodeURIComponent(city)}`}
+                className="rounded-full bg-white px-4 py-1.5 text-sm text-stone-700 ring-1 ring-stone-900/10 transition hover:text-stone-900 hover:ring-stone-900/30"
+              >
+                {city}
+              </Link>
+            ))}
+          </div>
         </motion.div>
 
         {/* Shortcuts */}
