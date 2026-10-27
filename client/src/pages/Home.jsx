@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
 import {
   ArrowRight,
@@ -17,8 +17,6 @@ import {
 import BackgroundVideo from '../components/BackgroundVideo'
 import MemberHome from '../components/MemberHome'
 import VideoModal from '../components/VideoModal'
-import SearchBar from '../components/SearchBar'
-import DiscoveryToggle from '../components/DiscoveryToggle'
 import Reveal from '../components/Reveal'
 import { ListingGrid } from '../components/ListingCard'
 import { useListings } from '../hooks/useListings'
@@ -104,7 +102,6 @@ function Hero() {
   const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '35%'])
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
-  const navigate = useNavigate()
   const [videoReady, setVideoReady] = useState(false)
   const [videoPaused, setVideoPaused] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
