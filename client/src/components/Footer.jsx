@@ -52,7 +52,10 @@ function columnsFor(user) {
         { to: '/signup', label: 'Create account' },
       ]
 
-  return [explore, { title: 'Hosting', links: hosting }, support, { title: 'Account', links: account }]
+  // Visitors get no Support column: everything except Terms/Privacy needs an account.
+  return user
+    ? [explore, { title: 'Hosting', links: hosting }, support, { title: 'Account', links: account }]
+    : [explore, { title: 'Hosting', links: hosting }, { title: 'Account', links: account }]
 }
 
 export default function Footer() {
@@ -71,10 +74,10 @@ export default function Footer() {
               Wherever you're headed, <em className="text-emerald-400"><TypeWriter text="feel at home." /></em>
             </p>
             <Link
-              to="/help#contact"
+              to={user ? '/help#contact' : '/signup'}
               className="mt-6 inline-flex items-center gap-2 text-sm transition-colors hover:text-emerald-400"
             >
-              <Mail className="h-4 w-4" /> Contact us
+              <Mail className="h-4 w-4" /> {user ? 'Contact us' : 'Create a free account'}
             </Link>
             <div className="mt-6 flex flex-wrap items-center gap-2 text-xs">
               <span className="flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1.5 ring-1 ring-white/10">
@@ -111,9 +114,11 @@ export default function Footer() {
             <Link to="/privacy" className="transition-colors hover:text-emerald-400">
               Privacy Policy
             </Link>
-            <Link to="/help" className="transition-colors hover:text-emerald-400">
-              Help centre
-            </Link>
+            {user && (
+              <Link to="/help" className="transition-colors hover:text-emerald-400">
+                Help centre
+              </Link>
+            )}
           </nav>
         </div>
       </div>
