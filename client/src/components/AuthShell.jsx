@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { Pause, Play, ShieldCheck } from 'lucide-react'
+import { Eye, EyeOff, Pause, Play, ShieldCheck } from 'lucide-react'
 import { images } from '../lib/images'
 import { ease, fadeUp, stagger } from '../lib/motion'
 import BackgroundVideo from './BackgroundVideo'
@@ -108,13 +108,31 @@ export default function AuthShell({
   )
 }
 
-export function TextField({ icon: Icon, label, ...props }) {
+// Password fields get an eye button to show or hide what was typed.
+export function TextField({ icon: Icon, label, type, ...props }) {
+  const [revealed, setRevealed] = useState(false)
+  const isPassword = type === 'password'
+
   return (
     <label className="block">
       <span className="text-sm font-medium text-stone-700">{label}</span>
       <span className="mt-1.5 flex items-center gap-3 rounded-2xl bg-white px-4 ring-1 ring-black/10 transition-shadow focus-within:shadow-lg focus-within:shadow-emerald-600/10 focus-within:ring-2 focus-within:ring-emerald-500">
         <Icon className="h-5 w-5 text-stone-400" />
-        <input className="w-full bg-transparent py-3.5 text-sm text-stone-900 outline-none" {...props} />
+        <input
+          className="w-full bg-transparent py-3.5 text-sm text-stone-900 outline-none"
+          type={isPassword && revealed ? 'text' : type}
+          {...props}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setRevealed(!revealed)}
+            className="text-stone-400 transition hover:text-stone-700"
+            aria-label={revealed ? 'Hide password' : 'Show password'}
+          >
+            {revealed ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
+        )}
       </span>
     </label>
   )
