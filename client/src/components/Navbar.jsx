@@ -7,10 +7,14 @@ import { initials, maskEmail } from '../lib/format'
 import { ease } from '../lib/motion'
 import Logo from './Logo'
 
+// Logged-in users' home ("/" shows the members' page once logged in).
+const home = { to: '/', label: 'Home' }
+
 // Each role gets its own links; logged-out visitors get none.
 function linksFor(user) {
   if (user?.role === 'guide') {
     return [
+      home,
       { to: '/stays?mode=tours', label: 'Tours' },
       { to: '/guide/tours', label: 'My tours' },
       { to: '/guide/tours/new', label: 'Create a tour' },
@@ -18,6 +22,7 @@ function linksFor(user) {
   }
   if (user?.role === 'admin') {
     return [
+      home,
       { to: '/stays', label: 'Stays' },
       { to: '/admin', label: 'Dashboard' },
       { to: '/trips', label: 'My trips' },
@@ -25,6 +30,7 @@ function linksFor(user) {
   }
   if (user?.role === 'host') {
     return [
+      home,
       { to: '/stays', label: 'Stays' },
       { to: '/host/listings', label: 'My listings' },
       { to: '/host/listings/new', label: 'List your place' },
@@ -32,6 +38,7 @@ function linksFor(user) {
   }
   if (user) {
     return [
+      home,
       { to: '/stays', label: 'Stays' },
       { to: '/saved', label: 'Saved' },
       { to: '/trips', label: 'My trips' },
