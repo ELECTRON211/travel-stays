@@ -7,7 +7,7 @@ import { initials, maskEmail } from '../lib/format'
 import { ease } from '../lib/motion'
 import Logo from './Logo'
 
-// Hosts get their hosting pages; logged-out visitors are invited to host.
+// Each role gets its own links; logged-out visitors get none.
 function linksFor(user) {
   if (user?.role === 'guide') {
     return [
@@ -37,11 +37,8 @@ function linksFor(user) {
       { to: '/trips', label: 'My trips' },
     ]
   }
-  return [
-    { to: '/stays', label: 'Stays' },
-    { to: '/about', label: 'About' },
-    { to: '/signup?role=host', label: 'Become a host' },
-  ]
+  // Visitors only see Log in / Sign up: everything else needs an account.
+  return []
 }
 
 const roleLabels = { traveler: 'Traveler', host: 'Host', guide: 'Guide', admin: 'Admin' }
