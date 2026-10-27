@@ -3,8 +3,9 @@ import { Loader2, Lock } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 // Wraps pages that need a logged-in user (and optionally a specific role).
-// Logged-out visitors are sent to /login and brought back afterwards.
-export default function ProtectedRoute({ role, children }) {
+// Logged-out visitors are sent to /login (or `redirectTo`, e.g. /signup for the
+// browsing pages) and brought back to this page afterwards.
+export default function ProtectedRoute({ role, redirectTo = '/login', children }) {
   const { user, loading } = useAuth()
   const location = useLocation()
 
