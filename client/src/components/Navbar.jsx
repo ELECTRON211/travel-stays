@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
-import { Heart, LogOut, Luggage, Menu, UserRound, X } from 'lucide-react'
+import { ArrowLeft, Heart, LogOut, Luggage, Menu, UserRound, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { initials, maskEmail } from '../lib/format'
 import { ease } from '../lib/motion'
@@ -53,8 +53,19 @@ export default function Navbar({ overlay = false }) {
   const { scrollY } = useScroll()
   useMotionValueEvent(scrollY, 'change', (y) => setScrolled(y > 24))
 
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const isHome = pathname === '/'
+
   const links = linksFor(user)
   const light = overlay && !scrolled && !mobileOpen
+
+  // Go to the previous page, or home if the visitor landed here directly
+  // (going back would otherwise leave the site).
+  const goBack = () => {
+    if (window.history.state?.idx > 0) navigate(-1)
+    else navigate('/')
+  }
 
   return (
     <motion.header
@@ -70,7 +81,21 @@ export default function Navbar({ overlay = false }) {
           scrolled ? 'h-16' : 'h-20'
         }`}
       >
-        <Logo light={light} />
+        <div className="flex items-center gap-2">
+          {!isHome && (
+            <button
+              type="button"
+              onClick={goBack}
+              aria-label="Go back"
+              className={`grid h-9 w-9 place-items-center rounded-full transition ${
+                light ? 'text-white hover:bg-white/15' : 'text-stone-700 ring-1 ring-black/10 hover:bg-stone-100'
+              }`}
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+          )}
+          <Logo light={light} />
+        </div>
 
         <div className="hidden items-center gap-1 md:flex">
           {links.map((link) => (
