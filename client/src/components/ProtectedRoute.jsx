@@ -17,7 +17,7 @@ export default function ProtectedRoute({ role, children }) {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />
+    return <Navigate to={redirectTo} replace state={{ from: location.pathname + location.search }} />
   }
 
   if (role && user.role !== role) {

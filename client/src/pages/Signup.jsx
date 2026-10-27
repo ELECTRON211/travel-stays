@@ -71,14 +71,25 @@ export default function Signup() {
 
   if (confirmEmail) {
     return (
-      <AuthShell title="Check your email" subtitle={`We sent a confirmation link to ${email}.`}>
-        <Alert type="success">Click the link in the email to activate your account, then log in.</Alert>
-        <Link
-          to="/login"
-          className="mt-6 block rounded-xl bg-emerald-800 py-3 text-center font-semibold text-white hover:bg-emerald-900"
+      <AuthShell title="Enter your code" subtitle="One last step to confirm your email address.">
+        <EmailCodeForm
+          email={email.trim()}
+          onVerified={() => {
+            markActive()
+            toast.show({
+              title: `Welcome to Travel & Stays, ${fullName.trim().split(' ')[0]}!`,
+              description: 'Your email is confirmed and your account is ready.',
+            })
+            navigate(redirectTo, { replace: true })
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => setConfirmEmail(false)}
+          className="mt-4 w-full text-center text-sm font-medium text-stone-500 hover:text-stone-900"
         >
-          Go to log in
-        </Link>
+          Use a different email
+        </button>
       </AuthShell>
     )
   }
